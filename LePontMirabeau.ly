@@ -6,7 +6,7 @@
 % For further info on this piece of music
 %   see http://wiki.delia-derbyshire.net/index.php?title=Le_Pont_Mirabeau
 
-\version "2.10"
+\version "2.14.2"
 % Don't print a header
 \header {
   tagline = ""
@@ -31,9 +31,6 @@
   <<
    % No curly bracket at the start of the staves, thank you
    \set GrandStaff.systemStartDelimiter = #'SystemStartBar
-   % Set tempo for MIDI output but don't include it in the printed score
-   \tempo 4=120
-   \set Score.tempoHideNote = ##t
 
    \new Lyrics = lyrics {
     % Set lyric text close to the top of the stave
@@ -41,6 +38,9 @@
     s1
    }
    \new Staff {
+    % Set tempo for MIDI output but don't include it in the printed score
+    \tempo 4=120
+    \set Score.tempoHideNote = ##t
     \time 3/4
     \key c \major
     \clef treble
