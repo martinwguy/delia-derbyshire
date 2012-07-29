@@ -11,9 +11,11 @@
 \header {
   tagline = ""
 }
-% Don't print page numbers
 \paper {
+  % Don't print page numbers
   printpagenumber = ##f
+  % Don't indent the first line of the score
+  indent = #0
 }
 % Don't print bar numbers
 \layout {
@@ -46,6 +48,7 @@
     \clef treble
     \relative c' {
      \new Voice = "verse1" {
+      \mark "VERSE I"
       \autoBeamOff
       c='4 d e f g8 a8 g4 ~ g2 d4 e2.
       \stemDown c'4 b \stemUp a \slurDown fis( g8) e c e g4 a b ~ b2.
