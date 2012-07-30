@@ -36,7 +36,7 @@ chorusmelody = \relative c' {
   \stemUp \tieUp \slurUp \autoBeamOff
   d'2\rest c,8. c16 gis'2 a4 ~ a4 d2\rest  d4\rest c,4. c8 fis4( g2) ~
   \break
-  g2 b4 b( c) a g2 e4 a f2 d( e4) ~ e2.
+  g2 b4 b( c) a g2 e4 a f2 d( e4) ~ e2. \bar "||"
 }
 chorusmelodyb = \relative c' {
   \stemDown \tieDown \autoBeamOff
@@ -60,7 +60,7 @@ verseIImelody = \relative c' {
   \stemUp \autoBeamOff 
   c='4 d e f2 fis4 g8 a8 g4 d dis( e2) |
   \stemDown c'4 b \stemUp a | g2 e4 gis( a) f e8 c d2
-  d4 e fis g a8 fis g4 ~ g d f! e2( fis4) ~ fis2.
+  d4 e fis g a8 fis g4 ~ g d f! e2( fis4) ~ fis2. \bar "||"
 }
 verseIIupperbass = \relative c' {
   \stemUp \tieUp
