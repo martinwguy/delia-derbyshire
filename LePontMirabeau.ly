@@ -67,19 +67,17 @@ choruslyrics = \lyricmode {
 }
 
 \score {
-  {
-
+ {
   % "\with..." is necessary to get lyrics above the first line of notes.
-  \new PianoStaff  \with { \accepts Lyrics }
+  \new PianoStaff \with { \accepts Lyrics }
   <<
    % No curly bracket at the start of the staves, thank you
    \set GrandStaff.systemStartDelimiter = #'SystemStartBar
 
+   % Set lyrics above the score
    \new Lyrics = lyrics {
-    % Set lyric text close to the top of the stave
-    \override Lyrics.VerticalAxisGroup #'minimum-Y-extent = #'(-0 . 0)
-    s1
    }
+
    % Treble staff of entire piece
    \new Staff {
     % Set tempo for MIDI output but don't include it in the printed score
@@ -121,7 +119,7 @@ choruslyrics = \lyricmode {
    \context Lyrics = lyrics \lyricsto chorus { \choruslyrics }
   >>
 
-  }
-  \midi {}
-  \layout {}
+ }
+ \midi {}
+ \layout {}
 }
