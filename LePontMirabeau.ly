@@ -34,21 +34,27 @@ verseIlyrics = \lyricmode {
 
 chorusmelody = \relative c' {
   \stemUp \tieUp \slurUp \autoBeamOff
+  \override Rest #'direction = #up
+  % lilypond 2.14.2 warns "too many colliding rests" here and below but
+  % that's a bug https://code.google.com/p/lilypond/issues/detail?id=1547
   d'2\rest c,8. c16 gis'2 a4 ~ a4 d2\rest  d4\rest c,4. c8 fis4( g2) ~
   \break
   g2 b4 b( c) a g2 e4 a f2 d( e4) ~ e2. \bar "||"
 }
 chorusmelodyb = \relative c' {
   \stemDown \tieDown \autoBeamOff
+  \override Rest #'direction = #up
   c='2\rest c8. c16 e2 f4 ~ f4 c2\rest  d4\rest a'4. f8 e2. ~
   e2 gis4 g!2 d4 d c e f d2 b2 c4 ~ c2.
 }
 chorusupperbass = \relative c' {
   \stemUp \tieUp	
+  \override Rest #'direction = #down
   g2.\rest c2 c4 ~ c4 c2 c2. c2. c2 c4 c2 c4 c2 c4 d c2 c2 c4 ~ c2.
 }
 choruslowerbass = \relative c' {
   \stemDown \tieDown
+  \override Rest #'direction = #down
   a,2.\rest f'=4 f f f f f f f f c c c c c f! e2 f4 e2 c4 c c c c c c ~ c2.
 }
 choruslyrics = \lyricmode {
