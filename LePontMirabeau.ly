@@ -8,6 +8,15 @@
 
 \version "2.14.2"
 
+\header {
+  title = "Le Pont Mirabeau"
+  % We abuse the category names to get three lines
+  composer = "Words:Apollinaire (trans. ~)"
+  arranger = "Music: Delia Derbyshire"
+  opus = "August 1968"
+  tagline = ""
+}
+
 verseImelody = \relative c' {
   \stemUp \autoBeamOff
   c='4 d e f g8 a8 g4 ~ g2 d4 e2.
@@ -86,10 +95,6 @@ verseIIlyrics = \lyricmode {
   Un- der the Pont Mi- ra- beau __ flows the Seine __
 }
 
-% Don't print a header
-\header {
-  tagline = ""
-}
 \paper {
   % Don't print page numbers
   printpagenumber = ##f
