@@ -168,7 +168,13 @@ verseIIlyrics = \lyricmode {
     % VERSE II
     \context Staff <<
      \new Voice { \verseIIupperbass }
-     \new Voice { \verseIIlowerbass }
+     \new Voice { \verseIIlowerbass
+                  \override Score.RehearsalMark
+                            #'self-alignment-X = #RIGHT
+                  \override Score.RehearsalMark
+                            #'direction = #DOWN
+                  \mark "CHORUS"
+                }
     >>
    }
    \context Lyrics = lyrics \lyricsto verseI  { \verseIlyrics }
