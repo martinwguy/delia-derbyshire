@@ -11,7 +11,7 @@
 \header {
   title = "Le Pont Mirabeau"
   % We abuse the category names to get three lines
-  composer = "Words:Apollinaire (trans. ~)"
+  composer = "Words: Apollinaire"
   arranger = "Music: Delia Derbyshire"
   opus = "August 1968"
   tagline = ""
