@@ -1,6 +1,6 @@
 % Notation for score from Delia Derbyshire's papers "Music To Undress To",
 % http://delia-derbyshire.net/papers/html/dd155635.html
-\version "2.12.3" \book {
+\version "2.12.3"
  \header {
  title = "Music to Undress to"
  composer = "Delia Derbyshire"
@@ -10,15 +10,18 @@
  <<
   % No curly bracket at the start of the staves, thank you
   \set GrandStaff.systemStartDelimiter = #'SystemStartBar
-  % Set tempo for MIDI output but don't include it in the printed score
-  \tempo 4=90
-  \set Score.tempoHideNote = ##t
 
   \new Staff {
    \time 4/4
    % No time signatures are printed in this score.
    \override Staff.TimeSignature #'stencil = ##f
+
+   % Set tempo for MIDI output but don't include it in the printed score
+   \tempo 4=90
+   \set Score.tempoHideNote = ##t
+
    \clef treble
+
    \relative c'' {
     \new Voice {
      \stemUp \autoBeamOff
@@ -74,6 +77,7 @@
   }
  >>
 
+ % Delia doesn't indent the first line of scores, so neither do we
  \layout { indent = #0 }
  \midi { }
-}}
+}
