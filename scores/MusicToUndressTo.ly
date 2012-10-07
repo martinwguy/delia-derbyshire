@@ -31,7 +31,10 @@
      e e8[ e~] e[ fis~] fis[ e] |
 
      b'4 gis8[ e~] e[ fis~] fis[ e] |
-     b'4 gis8[ e] << { e4 fis8[ e] } \\ { \stemUp s8 d'~ d[ c] } >>|
+     % In Delia's pencilled score, the stemDown notes are stemUp and the
+     % stems of the last two clash with the notes above.
+     % We stemDown the leading melody to avoid that.
+     \stemDown b'4 gis8[ e] << { \stemDown e4 fis8[ e] } \\ { \stemUp s8 d'~ d[ c] } >>|
      \time 3/4       b8[ a gis b] a[ g] |
      \time 5/8                              a4 e8 e4
      \once \override BarLine #'dash-period = #0.75
@@ -68,6 +71,7 @@
      %s1 * 4 |
      % Bass from dd104935 "Bass Cpt. to Undressing"
      c4 c c c | e8 b' cis b~ b gis g fis |
+     % From g, to c~c inclusive Delia pencils "8ve up?", not done here.
      f c' d ees  e g, gis d' a e' b c~c a4. |
      #(set-time-signature 8 8 '(2 2 2 2))
      e,4 gis8 b~b c~c d | e4 gis8 b~b c~c d |
