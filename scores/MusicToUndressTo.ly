@@ -1,10 +1,12 @@
 % Notation for score from Delia Derbyshire's papers "Music To Undress To",
 % http://delia-derbyshire.net/papers/html/dd155635.html
 \version "2.12.3"
- \header {
+
+\header {
  title = "Music to Undress to"
  composer = "Delia Derbyshire"
- }
+}
+
 \score {
  \new PianoStaff
  <<
