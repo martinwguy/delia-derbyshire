@@ -41,11 +41,11 @@
       #'(1 1 1 1)       % beatStructure
       #'()		% beamExceptions
      \time 4/4	e1 |
-     \time 3/4	c8 fis des g des gis %{ ~
+     \time 3/4	c8 fis des g d gis %{ ~
      \time 4/4	gis1 %} |
      \break
-     \time 3/4	c=''16 fis d! g d gis r8 r4 |
-     		c,=''16 fis des g des gis r8 r4 | % \bar "||"
+     \time 3/4	c=''16 fis des g d gis r8 r4 |
+     		c,=''16 fis des g d gis r8 r4 | % \bar "||"
 		d'='''16 aes c ges bes e, r8 r4 |
 		d'='''16 aes c ges bes e, r8 r4 |
      \break
@@ -62,7 +62,7 @@
 
    \relative c {
     \new Voice {
-     \time 4/4	c8 fis des g des gis ees a
+     \time 4/4	c8 fis des g d gis ees a
      \time 3/4	gis2.
      \time 4/4	d'8 aes c ges bes e, aes d,
      \time 3/4	fis2.
