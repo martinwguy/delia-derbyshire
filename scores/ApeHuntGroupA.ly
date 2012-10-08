@@ -19,16 +19,30 @@
    \numericTimeSignature
    % Don't print tempo changes at the end of the previous line: they are too
    % common.
-   \override Staff.TimeSignature #'break-visibility = #begin-of-line-visible
+   \override Staff.TimeSignature #'break-visibility = #end-of-line-invisible
+
+   % Beam 6 quavers in 2-2-2 groups, not the default 6-all-together
+   \overrideTimeSignatureSettings
+      #'(3 . 4)         % timeSignatureFraction
+      #'(1 . 4)         % baseMomentFraction
+      #'(1 1 1)         % beatStructure
+      #'()		% beamExceptions
 
    \relative c' {
     \new Voice {
      % From DD122833 "APE Hunt Group A"
+     % The first bar is beamed in groups of 4 quavers, as per lilypond default
      \time 4/4	s1 |
-     \time 3/4  d'8 aes c ges bes e, ~ |
+     \time 3/4	d'8 aes c ges bes e, ~ |
+     % but from here on, beam 8 quavers in 2-2-2-2 groups
+     \overrideTimeSignatureSettings
+      #'(4 . 4)         % timeSignatureFraction
+      #'(1 . 4)         % baseMomentFraction
+      #'(1 1 1 1)       % beatStructure
+      #'()		% beamExceptions
      \time 4/4	e1 |
-     \time 3/4	c8 fis des g des gis ~ |
-     \time 4/4	gis1 |
+     \time 3/4	c8 fis des g des gis %{ ~
+     \time 4/4	gis1 %} |
      \break
      \time 3/4	c=''16 fis d! g d gis r8 r4 |
      		c,=''16 fis des g des gis r8 r4 | % \bar "||"
@@ -44,7 +58,7 @@
   \new Staff {
    \clef bass
    \numericTimeSignature
-   \override Staff.TimeSignature #'break-visibility = #begin-of-line-visible
+   \override Staff.TimeSignature #'break-visibility = #end-of-line-invisible
 
    \relative c {
     \new Voice {
@@ -52,7 +66,7 @@
      \time 3/4	gis2.
      \time 4/4	d'8 aes c ges bes e, aes d,
      \time 3/4	fis2.
-     \time 4/4	s1
+     % \time 4/4	s1
      \break
      \time 3/4	gis=2. %{ c8 %} |
 		gis=2. %{ c8 %} |
