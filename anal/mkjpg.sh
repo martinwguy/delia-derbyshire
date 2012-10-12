@@ -6,20 +6,28 @@
 
 for a
 do
+	rm -f mkjpg.jpg
+
 	case "$a" in
 	*.ogg)	jpgfile="`basename "$a" .ogg`".jpg
 		wavfile=mkjpg.wav
-		oggdec -o mkjpg.wav "$a" ;;
+		oggdec -o mkjpg.wav "$a"
+		;;
 	*.mp3)	jpgfile="`basename "$a" .mp3`".jpg
 		wavfile=mkjpg.wav
-		sox "$a" "$wavfile" ;;
-	*.wav)	rm -f mkjpg.wav
-		ln "$a" mkjpg.wav ;;
+		sox "$a" "$wavfile"
+		;;
+	*.wav)	jpgfile="`basename "$a" .mp3`".jpg
+		rm -f mkjpg.wav
+		ln "$a" mkjpg.wav
+		;;
 	*)	echo "Eh? Ogg MP3 or WAV only." 1>&2
 		exit 1
+		;;
 	esac
 
-	make -f "`dirname $0`"/Makefile mkjpg.jpg && mv mkjpg.jpg "$jpgfile"
-
-	#rm mkjpg.wav
+	if make -f "`dirname $0`"/Makefile mkjpg.jpg
+	then mv mkjpg.jpg "$jpgfile"
+	else rm mkjpg.wav
+	fi
 done

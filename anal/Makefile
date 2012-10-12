@@ -79,7 +79,7 @@ print:
 		-fx "v.p{i,u[2] * $(LIN_HEIGHT)}" \
 		$*.ppm
 	cjpeg -progressive -optimize $*.ppm > $@
-	rm $*.png $*.ppm
+	rm $*.png $*.ppm map.png
 	rm width
 
 # The old code without the lookup table, for speed/quality comparisons
@@ -99,3 +99,6 @@ print:
 	cjpeg -progressive -optimize $*.ppm > $@
 	rm $*.png $*.ppm
 	rm width
+
+clean:
+	rm -f map.png mkjpg.jpg width
