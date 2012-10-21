@@ -468,7 +468,7 @@ EOT;
 <A NAME=Medea HREF="http://wiki.delia-derbyshire.net/wiki/Medea">Medea</A>
 </H3>
 <P>
-At Kaleidophon, she produced music for David Thompson's production of
+At Kaleidophon, she produced music for David Thomson's production of
 Euripides' play "Medea" which opened at the Greenwich Theatre on April 14
 (of which year?)
 <BR>&nbsp;&nbsp;&nbsp;-- Kirsten Cubitt's article
@@ -1115,7 +1115,7 @@ of the producer himself.
 <H3><A NAME=FourInventions HREF="http://wiki.delia-derbyshire.net/wiki/Inventions for Radio">Four Inventions for Radio</A></H3>
 <P>
 Working title: "Mid-Century Attitudes" by Barry Bermange,
-produced by David Thompson.
+produced by David Thomson.
 <BR>
 "Her collaborations with the poet and dramatist Barry Bermange for
 the Third Programme showed her at her elegant best."
@@ -1303,7 +1303,7 @@ undefined. In the second, some more assured voices cite concrete images; a
 defined notion of God begins to emerge. The third is a contest between those
 who love God and those who cannot believe in Him. The assured and confident
 voices in the last section are inspired by absolute faith."
-<BR>&nbsp;&nbsp;&nbsp;-- David Thompson in the Radio Times, 1965.
+<BR>&nbsp;&nbsp;&nbsp;-- David Thomson in the Radio Times, 1965.
 <P>
 A shortened version was played in the
 <A HREF="#UnitDeltaPlusConcertOfElectronicMusic">Unit Delta Plus 
