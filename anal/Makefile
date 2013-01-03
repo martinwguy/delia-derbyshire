@@ -14,10 +14,10 @@ SRATE=44100		# Sample rate of input audio
 # 6 octaves starting at 55, which is A: 55 110 220 440 880 1760 3520
 # 8 octaves starting at 27.5, which is A: 27.5 55 110 220 440 880 1760 3520 7040
 MIN_FREQ_OUT:=55
-OCTAVES:=7
-FFTFREQ:=3.125		# The lowest resolvable frequency and height of each
+OCTAVES:=6
+FFTFREQ:=6.250		# The lowest resolvable frequency and height of each
 			# frequency band in the linear spectrogram.
-PPSEC:=50               # Pixel columns per second
+PPSEC:=100              # Pixel columns per second
 PPSEMI:=16		# Pixels per semitone
 DYN_RANGE:=100		# Amplitude of black in dB under 0
 
@@ -53,8 +53,11 @@ print:
 
 %.jpg: %.wav
 	@rm -f $*.jpg $*.ppm
-	# the image width depends on the length of the piece
+	#
+	# Find the image width, which depends on the length of the piece.
+	# I can't see how to get this into a variable to avoid using a file.
 	expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
+	#
 	@echo "Producing `cat width` x $(LIN_HEIGHT) spectrogram for"
 	@echo "          `cat width` x $(LOG_HEIGHT) output"
 	time sndfile-spectrogram --dyn-range=$(DYN_RANGE) --no-border $< \
@@ -78,9 +81,9 @@ print:
 		-interpolate Mesh \
 		-fx "v.p{i,u[2] * $(LIN_HEIGHT)}" \
 		$*.ppm
+	rm width $*.png map.png
 	cjpeg -progressive -optimize $*.ppm > $@
-	rm $*.png $*.ppm map.png
-	rm width
+	rm $*.ppm
 
 # The old code without the lookup table, for speed/quality comparisons
 %.jpeg: %.wav
