@@ -7,10 +7,10 @@ page=http://localhost/martin/audio/D-D/index.php
 all: index.htm index.html
 
 index.html: index.php
-	wget -nv -O index.html $(page)
+	wget -nv -O index.html $(page) || rm $@
 
 index.htm: index.php
-	wget -nv -O index.htm $(page)'?audio'
+	wget -nv -O index.htm $(page)'?audio' || rm $@
 
 # quico:audio/D-D/
 # 4star: www/D-D
