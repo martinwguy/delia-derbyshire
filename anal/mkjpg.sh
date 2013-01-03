@@ -17,7 +17,7 @@ do
 		wavfile=mkjpg.wav
 		sox "$a" "$wavfile"
 		;;
-	*.wav)	jpgfile="`basename "$a" .mp3`".jpg
+	*.wav)	jpgfile="`basename "$a" .wav`".jpg
 		rm -f mkjpg.wav
 		ln "$a" mkjpg.wav
 		;;
