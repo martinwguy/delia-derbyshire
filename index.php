@@ -188,7 +188,7 @@ Delia's BBC Studio
 <BR><I>1963</I>
 <BR><A HREF="#KnowYourCar">Know Your Car</A>
 <BR><A HREF="#Cracksman">The Cracksman</A>
-<BR><A HREF="#FYinT">F. Y. in T.</A>
+<BR><A HREF="#Francis Younghusband in Tibet">Francis Younghusband in Tibet</A>
 <BR><A HREF="#RadioNewsreel">Radio Newsreel</A>
 <BR><A HREF="#OliverTwist">Oliver Twist</A>
 <BR><A HREF="#DoctorWho">Doctor Who</A>
@@ -313,6 +313,7 @@ Delia's BBC Studio
 <BR><A HREF="#OhDear">Oh Dear What Can The Matter Be</A>
 <BR><A HREF="#CircleOfLight">Circle Of Light</A>
 <BR><I>1973</I>
+<BR><A HREF="#MusicOfTheSpheres">Music of the Spheres</A>
 <BR><A HREF="#LegendOfHellHouse">The Legend Of Hell House</A>
 <BR><A HREF="#EenVanDieDagen">Een Van Die Dagen</A>
 <BR><I>1975</I>
@@ -632,12 +633,12 @@ pained expression).
 </P>
 
 <H3>
-<A NAME=FYinT HREF="http://wiki.delia-derbyshire.net/wiki/F. Y. in T.">F. Y. in T.</A> (April-May 1963)
+<A NAME=FYinT>/</A>
+<A NAME=FrancisYounghusbandInTibet HREF="http://wiki.delia-derbyshire.net/wiki/Francis Younghusband in Tibet">Francis Younghusband in Tibet</A> (April-May 1963)
 </H3>
 <P>
 In her papers are her notes for a piece she calls "F. Y. in T." (TRW&nbsp;5053),
 carried out 26th April to 6th May 1963 in collaboration with David Lyttle.
-<BR>What does her abbreviation "F. Y. in T." stand for?
 </P>
 
 <H3>
@@ -1046,46 +1047,46 @@ with special effects by the B.B.C. Radiophonic Workshop", first broadcast
 <UL>
  <LI>1. Achilles' plea to his goddess mother Thetis (1:13)
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/AngerOfAchilles/Anger of Achilles 01.ogg">
-    Ogg@67kbps/mono/44100Hz(606KB)</A>
-  / <A HREF="audio/AngerOfAchilles/Anger of Achilles 01.mp3">
-    MP3@82kbps/mono/44100Hz(734KB)</A>
+<BR><A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 01.ogg">
+    Ogg@80kbps/mono/44100Hz(606KB)</A>
+  / <A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 01.mp3">
+    MP3@128kbps/mono/44100Hz(734KB)</A>
 
 EOT;
 ?>
  <LI>2. Thunderclap (0:13)
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/AngerOfAchilles/Anger of Achilles 02.ogg">
-    Ogg@65kbps/mono/44100Hz(111KB)</A>
-  / <A HREF="audio/AngerOfAchilles/Anger of Achilles 02.mp3">
-    MP3@80kbps/mono/44100Hz(134KB)</A>
+<BR><A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 02.ogg">
+    Ogg@80kbps/mono/44100Hz(111KB)</A>
+  / <A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 02.mp3">
+    MP3@128kbps/mono/44100Hz(134KB)</A>
 
 EOT;
 ?>
  <LI>3. The sending of the false dream to Agamemnon (2:00)
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/AngerOfAchilles/Anger of Achilles 03.ogg">
-    Ogg@67kbps/mono/44100Hz(991KB)</A>
-  / <A HREF="audio/AngerOfAchilles/Anger of Achilles 03.mp3">
-    MP3@84kbps/mono/44100Hz(1.2MB)</A>
+<BR><A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 03.ogg">
+    Ogg@80kbps/mono/44100Hz(991KB)</A>
+  / <A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 03.mp3">
+    MP3@128kbps/mono/44100Hz(1.2MB)</A>
 
 EOT;
 ?>
  <LI>4. Father Zeus' message, thunderclap, horse effects (1:08)
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/AngerOfAchilles/Anger of Achilles 04.ogg">
-    Ogg@68kbps/mono/44100Hz(571KB)</A>
-  / <A HREF="audio/AngerOfAchilles/Anger of Achilles 04.mp3">
-    MP3@87kbps/mono/44100Hz(724KB)</A>
+<BR><A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 04.ogg">
+    Ogg@80kbps/mono/44100Hz(571KB)</A>
+  / <A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 04.mp3">
+    MP3@128kbps/mono/44100Hz(724KB)</A>
 
 EOT;
 ?>
  <LI>5. Thetis theme reprise (0:36)
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/AngerOfAchilles/Anger of Achilles 05.ogg">
-    Ogg@69kbps/mono/44100Hz(307KB)</A>
-  / <A HREF="audio/AngerOfAchilles/Anger of Achilles 05.mp3">
-    MP3@82kbps/mono/44100Hz(364KB)</A>
+<BR><A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 05.ogg">
+    Ogg@80kbps/mono/44100Hz(307KB)</A>
+  / <A HREF="audio/AngerOfAchilles/Delia Derbyshire - Anger of Achilles 05.mp3">
+    MP3@128kbps/mono/44100Hz(364KB)</A>
 
 EOT;
 ?>
@@ -1540,7 +1541,7 @@ The script, dated 20th April 1966, calls the piece "Outer space".
 </P>
 
 <H3>
-<A NAME="MoogiesBloogies" HREF="http://wiki.delia-derbyshire.net/wiki/Moogies Bloogies">Moogies Bloogies</A> (1966?) (8:08)
+<A NAME="MoogiesBloogies" HREF="http://wiki.delia-derbyshire.net/wiki/Moogies Bloogies">Moogies Bloogies</A> (1966?) (3:26)
 </H3>
 <P>
 <A HREF="lyrics/moogiesbloogies.txt">Lyrics</A>
@@ -1586,7 +1587,7 @@ the years passed she became exceptionally fond of it."
 <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://delia-derbyshire.org">delia-derbyshire.org</A>
 <?php if ($audio) echo <<<EOT
 <BR><A HREF="audio/Delia Derbyshire &amp; Anthony Newley - Moogies Bloogies.mp3">
-8:08/MP2L3@64kbps/22050Hz(1.6MB) from d-d.org</A>
+3:26/MP2L3@64kbps/22050Hz(1.6MB) from d-d.org</A>
 <BR>Gnutella also reports an mp3 of 795.6MB
 
 EOT;
@@ -1943,8 +1944,10 @@ sometimes appear for sale on ebay.
 <BR>Released on "Doctor Who Volume 2: New Beginnings"
 </SMALL>
 <?php if ($audio) echo <<<EOT
+<BR><A HREF="audio/Delia Derbyshire - Blue Veils and Golden Sands .mp3">
+      3:33/MP3@???kbps/44100Hz(?.?MB)</A> from BBC Radiophonic Music (1971)
 <BR><A HREF="audio/Delia Derbyshire - Blue Veils and Golden Sands (edit).mp3">
-      3:25/MP3@160kbps/44100Hz(4.1MB)</A> from d-d.org
+      3:25/MP3@160kbps/44100Hz(4.1MB)</A> edit from d-d.org
 
 EOT;
 ?>
@@ -1962,10 +1965,6 @@ Royal Shakespeare Theatre, Stratford upon Avon with Paul Scofield as Macbeth.
 <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://www.guardian.co.uk/news/2001/jul/07/guardianobituaries1">Brian Hodgson</A>
 <P>
 The play opened on the 15th August 1967 and the theatre programme says "Music by: Guy Woolfenden and Unit Delta Plus Electronic Music" and "Act One is about 1 hour; Act Two is about 80 minutes."
-<BR>
-A short sample is included in the BBC News article
-"<A HREF="http://news.bbc.co.uk/2/hi/entertainment/7512072.stm">Lost Tapes of the Dr Who composer</A>"
-</P>
 <TD VALIGN=TOP WIDTH=96>
   <A HREF="images/RSC Macbeth.jpg"><IMG
    SRC="images/RSC Macbeth-mini.jpg" WIDTH=135 HEIGHT=200
@@ -2120,13 +2119,13 @@ and issued by the BBC on an album of sound effects.
 on audio cassette as BBC 855 (1993) and on CD as BBC CD855.
 </SMALL>
 <?php if ($audio) echo <<<EOT
-<BR>Heat Haze <A HREF="audio/Delia Derbyshire - Heat.mp3">
+<BR>Heat Haze <A HREF="audio/Delia Derbyshire - Heat Haze.mp3">
 MP3@96Kbps/44100Hz(683Kb)</A>
-<BR>Frozen Waste <A HREF="audio/Delia Derbyshire - frozen waste.mp3">
+<BR>Frozen Waste <A HREF="audio/Delia Derbyshire - Frozen Waste.mp3">
 MP3@160Kbps/44100Hz(1.3MB)</A>
-<BR>Icy Peak <A HREF="audio/Delia Derbyshire - Icy Peaks.mp3">
+<BR>Icy Peak <A HREF="audio/Delia Derbyshire - Icy Peak.mp3">
 MP3@96Kbps/44100Hz(548Kb)</A>
-/ <A HREF="audio/Delia Derbyshire - 59 Icy Peaks.mp3">
+/ <A HREF="audio/Delia Derbyshire - 59 Icy Peak.mp3">
 MP3@160Kbps/44100Hz(869Kb)</A>
 
 EOT;
@@ -2549,8 +2548,8 @@ EOT;
   Cover, 1969 edition
  <TR><TD ALIGN=CENTER>
  <TR><TD ALIGN=CENTER>
-  <IMG SRC="images/TheTomorrowPeople-cover.jpg" WIDTH=160 HEIGHT=160
-	ALT="The Tomorrow People album cover">
+  <A HREF="images/TheTomorrowPeople-cover.jpg"><IMG SRC="images/TheTomorrowPeople-cover-mini.jpg" WIDTH=160 HEIGHT=160
+	ALT="The Tomorrow People album cover"></A>
  <TR><TD ALIGN=CENTER>
 	Cover, 2006 edition
 </TABLE>
@@ -2598,17 +2597,6 @@ various tracks together, make a little piece.</I>"
 
     <BR><A HREF="audio/Delia Derbyshire - London Lemons (9 themes).ogg">
       Ogg@80kbps/44100Hz(527KB)</A>
-
-<?php if ($audio) echo <<<EOT
-    <BR>The wo tracks broadcast on "Scultress of Sound":
-    <BR>1. Greenwich pips<A HREF="audio/Delia Derbyshire - London Lemons 1.ogg">
-      Ogg@80kbps/44100Hz(521KB)</A>
-    / <A HREF="audio/Delia Derbyshire - London Lemons 1.mp3">
-      MP3@64kbps/44100Hz(645KB)</A>
-    <BR>2. <A HREF="audio/Delia Derbyshire - London Lemons 2.ogg">
-      Ogg@80kbps/44100Hz(521KB)</A>
-    / <A HREF="audio/Delia Derbyshire - London Lemons 2.mp3">
-      MP3@64kbps/44100Hz(645KB)</A>
 
 EOT;
 ?>
@@ -3396,6 +3384,23 @@ EOT;
 
 <H3 ALIGN=CENTER><I>1973</I></H3>
 
+<A HREF="images/Ascent-of-Man-chalice.jpg"><IMG
+    ALIGN=RIGHT SRC="images/Ascent-of-Man-chalice-mini.jpg"
+    WIDTH=200 HEIGHT=150
+    ALT="A computer graphic of a chalice from The Ascent Of Man"></A>
+<H3>
+<A NAME=MusicOfTheSpheres HREF="http://wiki.delia-derbyshire.net/wiki/Music of the Spheres">Music for "The Ascent of Man: Music of the Spheres"</A> (1973) (2:08)
+</H3>
+Delia created a piece as backing music to simple computer graphics for Bronowski's 1973 BBC TV series <I>The Ascent of Man</I> episode 5: "Music of the Spheres".
+<?php if ($audio) echo <<<EOT
+<BR><A HREF="audio/Delia Derbyshire - Music of the Spheres.ogg">Ogg@80kbps/mono/44100Hz(1.03MB)</A>
+/ <A HREF="audio/Delia Derbyshire - Music of the Spheres.mp3">MP3@128kbpsVBR/mono/44100Hz(1.29MB)</A>
+
+EOT;
+?>
+<BR CLEAR=ALL>
+
+<P>
 <!-- Pile of images on the right, text should flow down the left -->
 <TABLE ALIGN=RIGHT BORDER=0><TR><TD ALIGN=CENTER>
     <A HREF="images/LegendOfHellHouse-DVD.jpg">
