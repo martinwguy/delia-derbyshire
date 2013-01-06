@@ -11,12 +11,11 @@ SRATE=44100		# Sample rate of input audio
 # The image width is calculated to give PPSEC pixels per second (default 50)
 
 # Dimensions of the output image
-# 6 octaves starting at 55, which is A: 55 110 220 440 880 1760 3520
-# 8 octaves starting at 27.5, which is A: 27.5 55 110 220 440 880 1760 3520 7040
+# 8 octaves starting at 27.5 is A0-27.5 55 110 220 440 880 1760 3520 7040-A8
 MIN_FREQ_OUT:=55
 OCTAVES:=6
-FFTFREQ:=6.250		# The lowest resolvable frequency and height of each
-			# frequency band in the linear spectrogram.
+FFTFREQ:=6.250		# The lowest resolvable frequency and the height of
+			# each frequency band in the linear spectrogram.
 PPSEC:=100              # Pixel columns per second
 PPSEMI:=16		# Pixels per semitone
 DYN_RANGE:=100		# Amplitude of black in dB under 0
@@ -36,9 +35,7 @@ LOG_HEIGHT:=$(shell echo "l($(MAX_FREQ_OUT)/$(MIN_FREQ_OUT)) / l(2) * $(PPOCT) +
 
 
 # LIN_HEIGHT is also the FFT size, which determines the time and frequency
-# resolutions. The window function means that each FFT only listens to the
-# middle half of its sample buffer, so it should be twice the time resolution
-# of the output graph.
+# resolutions.
 LIN_HEIGHT  := $(shell echo $(SRATE) / $(FFTFREQ) | bc -l | sed 's/\..*//')
 
 #
