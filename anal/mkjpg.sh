@@ -26,7 +26,17 @@ do
 		;;
 	esac
 
-	if make -f "`dirname $0`"/Makefile mkjpg.jpg
+	# make -e: environment varibles override settings in Makefile.
+	# The config variables and their default values are:
+	# MIN_FREQ_OUT=55	# A(1)
+	# OCTAVES=6		# A(1) to A(7) (7040Hz)
+	# FFTFREQ=6.250	# The lowest resolvable frequency and the height of
+	#		# each frequency band in the linear spectrogram.
+	# PPSEC=100     # Pixel columns per second
+	# PPSEMI=16		# Pixels per semitone
+	# DYN_RANGE=100	# Amplitude of black in dB under 0
+
+	if make -e -f "`dirname $0`"/Makefile mkjpg.jpg
 	then mv mkjpg.jpg "$jpgfile"
 	else rm mkjpg.wav
 	fi
