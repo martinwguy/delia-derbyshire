@@ -2206,7 +2206,8 @@ EOT;
   <LI><A NAME=LoveWithoutSound HREF="http://wiki.delia-derbyshire.net/wiki/Love Without Sound"><B>Love Without Sound</B></A>
     (2:57 on vinyl, 2:55 on CD)
     <BR>"Co-written with Delia Derbyshire"
-    <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://web.archive.org/web/20090730193830/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">CapitolHill</A>
+    <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://web.archive.org/web/20091020031824/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">CapitolHill</A>
+http://web.archive.org/web/20091020031824/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html
 <?php if ($audio) echo <<<EOT
     <BR><A HREF="audio/ElectricStorm/The White Noise - An Electric Storm - 01 Love Without Sound.ogg">
 	3:06/Ogg@155.9kbps/44100Hz(3.5MB)</A>
@@ -2242,7 +2243,7 @@ EOT;
   <LI><A NAME=Firebird HREF="http://wiki.delia-derbyshire.net/wiki/Firebird"><B>Firebird</B></A>
     (2:43 on vinyl, 3:00 on CD)
     <BR>"Co-written with Delia Derbyshire"
-    <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://web.archive.org/web/20090730193830/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">CapitolHill</A>
+    <BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://web.archive.org/web/20091020031824/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">CapitolHill</A>
 <?php if ($audio) echo <<<EOT
     <BR><A HREF="audio/ElectricStorm/The White Noise - An Electric Storm - 04 Firebird.ogg">
 	3:02/Ogg@142.5kbps/44100Hz(3.1MB)</A>
@@ -2313,7 +2314,7 @@ EOT;
 Parts of The Black Mass are played during the invocation scene in the film
 "Dracula AD 1972".
 <P>
-More details on the web page <A HREF="http://web.archive.org/web/20090730193830/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">geocities.com/CapitolHill</A>
+More details on the web page <A HREF="http://web.archive.org/web/20091020031824/http://geocities.com/CapitolHill/Lobby/2554/whitenoise.html">geocities.com/CapitolHill</A>
 <SMALL>
 <BR>Released on vinyl 1968, Island Records, Cat: 510 948-2.
 <BR>Released on vinyl 1969, Island Records, Cat: ILPS9099.
