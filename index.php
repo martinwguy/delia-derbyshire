@@ -170,7 +170,6 @@ Delia's BBC Studio
 <B>
 <BR><I>Undated</I>
 <BR><A HREF="#Air">Air</A>
-<BR><A HREF="#Ape">Ape</A>
 <BR><A HREF="#ChromophoneBand">Chromophone Band</A>
 <BR><A HREF="#Cloud">Cloud</A>
 <BR><A HREF="#TheDelianMode">The Delian Mode</A>
@@ -207,6 +206,7 @@ Delia's BBC Studio
 <BR><I>1965</I>
 <BR><A HREF="#TheBusinessOfGoodGovernment">The Business of Good Government</A>
 <BR><I>1966</I>
+<BR><A HREF="#Ape">Ape and Essence</A>
 <BR><A HREF="#ANewViewOfPolitics">A New View of Politics</A>
 <BR><A HREF="#Ziwzih">Ziwzih Ziwzih OO-OO-OO</A>
 <BR><A HREF="#Spin">Spin</A>
@@ -346,16 +346,6 @@ A version of Bach's "Air on a G String,
 
 EOT;
 ?>
-</P>
-
-<H3>
-<A NAME=Ape HREF="http://wiki.delia-derbyshire.net/wiki/Ape">Ape</A>
-</H3>
-<P>
-There are two sides of manuscript in her papers
-<!-- DD122833 DD122859 -->
-for a piece called "Ape", which also seems to have been (re-)used at the
-<A HREF="#BrightonFestival">Brighton Festival</A> in 1967.
 </P>
 
 <H3>
@@ -1419,6 +1409,19 @@ any involvement with that.
 </P>
 
 <H3 ALIGN=CENTER><I>1966</I></H3>
+
+<H3>
+<A NAME=Ape HREF="http://wiki.delia-derbyshire.net/wiki/Ape and Essence">Ape and Essence</A>
+</H3>
+<P>
+There are two sides of manuscript in her papers
+<!-- DD122833 DD122859 -->
+for a piece called "Ape", which is probably "Ape and Essence", a TV version of
+Aldous Huxley's novel of the same name in the TV series "The Wednesday Play",
+series 1, programme 61, broadcast 18th May 1966.
+Delia seems to have reused the music for the
+<A HREF="#BrightonFestival">Brighton Festival</A> in 1967.
+</P>
 
 <H3>
 <A NAME=ANewViewOfPolitics HREF="http://wiki.delia-derbyshire.net/wiki/A New View of Politics">A New View of Politics</A> (1966) (0:40)
