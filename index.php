@@ -23,7 +23,7 @@
 An audiological chronology
 </H1>
 <P ALIGN=CENTER>
-Version 2.32<?php if ($audio) echo "a"; ?>, 5 June 2012<BR>
+Version 2.33<?php if ($audio) echo "a"; ?>, 20 January 2013<BR>
 (<A HREF="changelog.html">what's new?</A>)
 <BR>The <A HREF="http://wiki.delia-derbyshire.net">wikidelia</A> is new!
 </P>
