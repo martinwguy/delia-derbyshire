@@ -2766,8 +2766,8 @@ In 1976, a 1:05 clip from <A HREF="#Bagman">The Bagman</A> was renamed
 on audio cassette as BBC 855 (1993) and on CD as BBC CD855.
 </SMALL>
 <?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/Delia Derbyshire - Phantoms of Darkness.mp3">1:12/MP3@96Kbps/44100Hz(847Kb)</A> "Phantoms of Darkness".
-<BR><A HREF="audio/The Bagman.mp3">1:12/MP3@96Kbps/44100Hz(847Kb)</A> "Phantoms of Darkness".
+<BR><A HREF="audio/Delia Derbyshire - Phantoms of Darkness.mp3">1:05/MP3@128Kbps/44100Hz(1.00MB)</A> "Phantoms of Darkness".
+<BR><A HREF="audio/Delia Derbyshire - Phantoms of Darkness.ogg">1:05/Ogg@124Kbps/44100Hz(0.98MB)</A> "Phantoms of Darkness".
 
 EOT;
 ?>

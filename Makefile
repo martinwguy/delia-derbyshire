@@ -15,7 +15,8 @@ index.htm: index.php
 # quico:audio/D-D/
 # 4star: www/D-D
 update upload: all
-	rsync -av --delete \
+	rsync -av --bwlimit=40 --delete \
+		--exclude anal \
 		--exclude iso \
 		--exclude LIAF \
 		--exclude log \
@@ -25,7 +26,7 @@ update upload: all
 		--exclude WIKI \
 		--exclude BBC_RWS_First_25_Years.pdf \
 		--exclude papers.zip \
-		./ quico:audio/D-D/
+		./ 4star:www/delia-derbyshire/
 
 backup:
 	# Back up to fon all except generated files
