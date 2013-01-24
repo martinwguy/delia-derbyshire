@@ -24,14 +24,10 @@ update upload: all
 		--exclude test \
 		--exclude video/bbc_delia2_w_sound.mov \
 		--exclude WIKI \
-		--exclude BBC_RWS_First_25_Years.pdf \
 		--exclude papers.zip \
 		./ 4star:www/delia-derbyshire/
 
 backup:
 	# Back up to fon all except generated files
 	rsync -av --delete \
-		--exclude papers/html \
-		--exclude papers/toe \
-		--exclude papers/thumb \
 		./ fon:audio/D-D/
