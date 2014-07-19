@@ -15,23 +15,13 @@ index.htm: index.php
 # quico:audio/D-D/
 # 4star: www/D-D
 update upload: all
-	rsync -av --bwlimit=40 --delete \
-		--exclude anal \
-		--exclude iso \
-		--exclude LIAF \
+	rsync -av --delete \
 		--exclude log \
-		--exclude rec \
-		--exclude test \
-		--exclude video/bbc_delia2_w_sound.mov \
-		--exclude WIKI \
-		--exclude BBC_RWS_First_25_Years.pdf \
-		--exclude papers.zip \
-		./ 4star:www/delia-derbyshire/
+		--exclude rec/Pompeii.wav \
+		--exclude VIDEO \
+		./ delia-derbyshire.net:audio/D-D/
 
 backup:
 	# Back up to fon all except generated files
 	rsync -av --delete \
-		--exclude papers/html \
-		--exclude papers/toe \
-		--exclude papers/thumb \
 		./ fon:audio/D-D/
