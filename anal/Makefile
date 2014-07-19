@@ -45,46 +45,46 @@ MAX_FREQ_IN := $(shell expr $(SRATE) / 2)
 MAX_Y_IN    := $(shell expr $(LIN_HEIGHT) - 1)
 MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 
-print:
-	echo $(WIDTH)
-
 %.jpg: %.wav
-	@rm -f $*.jpg $*.ppm
-	#
-	# Find the image width, which depends on the length of the piece.
-	# I can't see how to get this into a variable to avoid using a file.
-	expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
-	#
-	@echo "Producing `cat width` x $(LIN_HEIGHT) spectrogram for"
-	@echo "          `cat width` x $(LOG_HEIGHT) output"
-	time sndfile-spectrogram --dyn-range=$(DYN_RANGE) --no-border $< \
+	@ rm -f $*.jpg $*.ppm $*.png
+	@#
+	@# Find the image width, which depends on the length of the piece.
+	@# I can't see how to get this into a variable to avoid using a file.
+	@ expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
+	@#
+	@ echo "Producing `cat width` x $(LIN_HEIGHT) spectrogram for"
+	@ echo "          `cat width` x $(LOG_HEIGHT) output"
+	@# On failure, sndfilespectrogram exits 0 and printe "Error blablabla" on stdout.
+	@sndfile-spectrogram --dyn-range=$(DYN_RANGE) --no-border $< \
 		`cat width` $(LIN_HEIGHT) $*.png
-	#
-	# Make a displacement map to distort the Y axis with.
-	# We calculate a 1-pixel high one then replicate this across the map.
-	#
-	time convert -size 1x$(LOG_HEIGHT) -depth 16 xc: \
+	@#
+	@# Make a displacement map to distort the Y axis with.
+	@# We calculate a 1-pixel wide one then replicate this across the map.
+	@#
+	@ echo "Making displacement map..."
+	@convert -size 1x$(LOG_HEIGHT) -depth 16 xc: \
 		-fx "freq = $(MIN_FREQ_OUT) * pow($(MAX_FREQ_OUT) / $(MIN_FREQ_OUT), ($(MAX_Y_OUT) - j) / $(MAX_Y_OUT)); \
 		     yy = $(MAX_Y_IN) - freq * $(MAX_Y_IN) / $(MAX_FREQ_IN); \
 		     yy/$(MAX_Y_IN)" \
 		-scale `cat width`x$(LOG_HEIGHT)! map.png
-	#
-	# Now apply the displacement map
-	#
-	time convert \
+	@#
+	@# Now apply the displacement map
+	@#
+	@ echo "Distorting Y axis..."
+	@convert \
 		-size "`cat width`"x$(LOG_HEIGHT) xc: \
 		$*.png map.png \
 		-virtual-pixel White \
 		-interpolate Mesh \
 		-fx "v.p{i,u[2] * $(LIN_HEIGHT)}" \
 		$*.ppm
-	rm width $*.png map.png
-	cjpeg -progressive -optimize $*.ppm > $@
-	rm $*.ppm
+	@ rm -f width $*.png map.png
+	@ cjpeg -progressive -optimize $*.ppm > $@
+	@ rm -f $*.ppm
 
 # The old code without the lookup table, for speed/quality comparisons
 %.jpeg: %.wav
-	@rm -f $*.jpg $*.ppm
+	@rm -f $*.jpeg $*.ppm
 	# the image width depends on the length of the piece
 	expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
 	time sndfile-spectrogram --dyn-range=90 --no-border $< \
