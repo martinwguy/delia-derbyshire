@@ -183,6 +183,64 @@ verseIIlyrics = \lyricmode {
   >>
 
  }
- \midi {}
  \layout {}
+}
+
+% Separate minimal version for MIDI output, to repeat the chorus
+\score {
+ {
+  \new PianoStaff
+  <<
+   % Treble staff of entire piece
+   \new Staff {
+    \tempo 4=130
+    \time 3/4
+    \key c \major
+    \clef treble
+
+    \new Voice = verseI { \verseImelody }
+
+    \context Staff <<
+     \new Voice = chorus { \chorusmelody }
+     \new Voice { \chorusmelodyb }
+    >>
+
+    \new Voice = verseII { \verseIImelody }
+
+    \context Staff <<
+     \new Voice = chorus { \chorusmelody }
+     \new Voice { \chorusmelodyb }
+    >>
+   }
+
+   % Bass staff of entire piece
+   \new Staff {
+    \time 3/4
+    \key c \major
+    \clef bass
+
+    \context Staff <<
+     \new Voice { \verseIupperbass }
+     \new Voice { \verseIlowerbass }
+    >>
+
+    \context Staff <<
+     \new Voice { \chorusupperbass }
+     \new Voice { \choruslowerbass }
+    >>
+
+    \context Staff <<
+     \new Voice { \verseIIupperbass }
+     \new Voice { \verseIIlowerbass }
+    >>
+
+    \context Staff <<
+     \new Voice { \chorusupperbass }
+     \new Voice { \choruslowerbass }
+    >>
+   }
+  >>
+
+ }
+ \midi {}
 }
