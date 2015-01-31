@@ -1,7 +1,15 @@
-.SUFFIXES: .ly .pdf .midi
+.SUFFIXES: .ly .pdf .midi .ogg
 
 .ly.pdf:
 	lilypond $<
+
+.ly.midi:
+	lilypond $<
+
+.midi.ogg:
+	timidity -Ow -o $*.wav $<
+	oggenc $*.wav
+	rm $*.wav
 
 all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	ThePatternEmerges.pdf \
