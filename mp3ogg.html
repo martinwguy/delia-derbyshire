@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+  <title>Martin's Delia Derbyshire Page: MP3 and Ogg formats</title>
+  <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+
+<h1> A note on MP3 and Ogg formats </h1>
+
+MP3 and Ogg Vorbis formats are ways of storing sound in about a tenth of the space required by the unencoded audio data, and claiming to preserve "CD-quality sound". MP3 format is about ten years old and encumbered by patent claims, while the Ogg Vorbis format was released a year or two ago and is guaranteed to remain in the public domain and free for anyone to use.  For the same file size, Ogg gives a much better fidelity of reproduction than MP3, which suffers from click and blops, and breaks up totally at high compression ratios and at low sampling rates.
+<P>
+While machines capable of playing the ubiquitous MP3 format are more common, there are free-to-use implementations of Ogg Vorbis encoders and decoders, and these are rapidly being included in portable players and included natively or as plugins in most music playing programs.
+<P>
+The other player in this game, the recent AAC format, which is the audio component of the MPEG-4 video format, comes in ten different and incompatible subversions, each of which may or may not work with different hardware players and programs, and each of which may be wrapped in one of four different "container" formats.  Yet two more (improved!) subversions are promised soon.  The standard is riddled with complex and restrictive patent and licensing issues.
+<P>
+Where I have done the compression myself from wave files
+<UL>
+ <LI>for the Ogg files I have used the program "oggenc" version 1.0.1 with the "-q 5" switch, where "-q" is a "quality" setting resulting in an average bitrate of between 95 and 158 kbit/s according to the complexity of the piece in question.
+ <LI>for MP3 format I have used the program "lame" version 3.96 with the option flags "-V 4 -q 2 -B 224" to give MPEG-1 layer III encoding ("MP3") where "-V" again specifies a "quality" setting aimed on an average bitrate of about 128kbps, "-q" improves sound quality by using more processing time during the encoding phase, and "-B" sets the absolute maximum bitrate to 224kbps so that hardware MP3 players based on the MAS 3503 chip will be able to play these files.
+</UL>
+However, there is not much point in re-encoding existing MP3 files as Oggs unless you wish to increase the compression significantly, since you would just get the distortions due to the MP3 processing plus the distortions due to Ogg.
+<P>
+For further information on Ogg Vorbis format and the "oggenc" encoder see
+<A HREF="http://xiph.org/ogg/vorbis">xiph.org</A>
+and for the "lame" MP3 encoder, see
+<A HREF="http://lame.sourceforge.net">lame.sourceforge.net</A>.
+For information on AAC and other audio formats, see
+<A HREF="http://www.audiocoding.com">www.audiocoding.com</A>.
+
+<hr>
+Martin Guy &lt;martinwguy&#64;gmail.com>, 5 June 2004.
+</body>
+</html>
