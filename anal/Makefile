@@ -45,7 +45,13 @@ MAX_FREQ_IN := $(shell expr $(SRATE) / 2)
 MAX_Y_IN    := $(shell expr $(LIN_HEIGHT) - 1)
 MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 
-%.jpg: %.wav
+# Temporary files:
+# mkjpg.png - the linear frequency axis spectrogram
+# map.png   - the distortion map used to make the log freq graph from mkjpg.png
+# $*.ppm    - the log-frequency-axis output file which we then comvert into
+#	      jpg or png as requested.
+
+%.ppm: %.wav
 	@ rm -f $*.jpg $*.ppm $*.png
 	@#
 	@# Find the image width, which depends on the length of the piece.
@@ -54,7 +60,6 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 	@#
 	@ echo "Producing `cat width` x $(LIN_HEIGHT) spectrogram for"
 	@ echo "          `cat width` x $(LOG_HEIGHT) output"
-	@# On failure, sndfilespectrogram exits 0 and printe "Error blablabla" on stdout.
 	@sndfile-spectrogram --dyn-range=$(DYN_RANGE) --no-border $< \
 		`cat width` $(LIN_HEIGHT) $*.png
 	@#
@@ -73,32 +78,20 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 	@ echo "Distorting Y axis..."
 	@convert \
 		-size "`cat width`"x$(LOG_HEIGHT) xc: \
-		$*.png map.png \
+		mkjpg.png map.png \
 		-virtual-pixel White \
 		-interpolate Mesh \
 		-fx "v.p{i,u[2] * $(LIN_HEIGHT)}" \
 		$*.ppm
-	@ rm -f width $*.png map.png
-	@ cjpeg -progressive -optimize $*.ppm > $@
+	@ rm -f width mkjpg.png map.png
+
+%.png: %.ppm
+	@ convert $< $@
 	@ rm -f $*.ppm
 
-# The old code without the lookup table, for speed/quality comparisons
-%.jpeg: %.wav
-	@rm -f $*.jpeg $*.ppm
-	# the image width depends on the length of the piece
-	expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
-	time sndfile-spectrogram --dyn-range=90 --no-border $< \
-		`cat width` $(LIN_HEIGHT) $*.png
-	time convert -size "`cat width`"x$(LOG_HEIGHT) xc: $*.png \
-		-virtual-pixel White \
-	       -interpolate Mesh \
-		-fx "freq = $(MIN_FREQ_OUT) * pow($(MAX_FREQ_OUT) / $(MIN_FREQ_OUT), ($(MAX_Y_OUT) - j) / $(MAX_Y_OUT)); \
-		     yy = $(MAX_Y_IN) - freq * $(MAX_Y_IN) / $(MAX_FREQ_IN); \
-		     v.p{i,yy}" \
-		$*.ppm
-	cjpeg -progressive -optimize $*.ppm > $@
-	rm $*.png $*.ppm
-	rm width
+%.jpg: %.ppm
+	@ cjpeg -progressive -optimize $*.ppm > $@
+	@ rm -f $*.ppm
 
 clean:
 	rm -f map.png mkjpg.jpg width
