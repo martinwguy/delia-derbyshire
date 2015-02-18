@@ -14,22 +14,31 @@
 # PPSEMI=16		# Pixels per semitone
 # DYN_RANGE=100	# Amplitude of black in dB under 0
 
+# Should we leave a png file rather than a jpg?
+suffix=jpg
+
 for a
 do
-	rm -f mkjpg.jpg
+	rm -f mkjpg.jpg mkjpg.png
 
 	case "$a" in
-	*.ogg)	jpgfile="`basename "$a" .ogg`".jpg
+	--png)	suffix=png
+		;;
+	-*)	echo "Usage: $0 [--png] file.{ogg,mp3,wav}" 1>&2
+		echo "--png: Laave a png file, not a jpg" 1>&2
+		exit 1
+		;;
+	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
 		wavfile=mkjpg.wav
 		oggdec -o mkjpg.wav "$a"
 		;;
-	*.mp3)	jpgfile="`basename "$a" .mp3`".jpg
+	*.mp3)	outfile="`basename "$a" .mp3`".$suffix
 		wavfile=mkjpg.wav
 		sox "$a" "$wavfile"
 		;;
-	*.wav)	jpgfile="`basename "$a" .wav`".jpg
+	*.wav)	outfile="`basename "$a" .wav`".$suffix
 		rm -f mkjpg.wav
-		ln "$a" mkjpg.wav
+		ln -s "$a" mkjpg.wav
 		;;
 	*)	echo "Eh? Ogg MP3 or WAV only." 1>&2
 		exit 1
@@ -38,9 +47,9 @@ do
 
 	# make -e: environment varibles override settings in Makefile.
 
-	if make -e -f "`dirname $0`"/Makefile mkjpg.jpg
-	then mv mkjpg.jpg "$jpgfile"
-	else rm -f mkjpg.jpg
+	if make -e -f "`dirname $0`"/Makefile mkjpg.$suffix
+	then mv mkjpg.$suffix "$outfile"
+	else rm -f mkjpg.$suffix
 	fi
 	rm -f mkjpg.wav
 done
