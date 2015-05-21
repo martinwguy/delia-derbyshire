@@ -16,9 +16,9 @@ index.htm: index.php
 # 4star: www/D-D
 update upload: all
 	rsync -av --delete \
+		--exclude .git* \
 		--exclude log \
-		--exclude rec/Pompeii.wav \
-		--exclude VIDEO \
+		--exclude rec/TheseHopefulMachines \
 		./ delia-derbyshire.net:audio/D-D/
 
 backup:
