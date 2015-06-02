@@ -36,6 +36,10 @@ do
 		wavfile=mkjpg.wav
 		sox "$a" "$wavfile"
 		;;
+	*.flac)	outfile="`basename "$a" .flac`".$suffix
+		rm -f mkjpg.wav
+		flac -d -o mkjpg.wav "$a"
+		;;
 	*.wav)	outfile="`basename "$a" .wav`".$suffix
 		rm -f mkjpg.wav
 		ln -s "$a" mkjpg.wav
