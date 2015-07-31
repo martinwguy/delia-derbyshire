@@ -4,10 +4,10 @@
   <<
    % No curly bracket at the start of the staves, thank you
    \set GrandStaff.systemStartDelimiter = #'SystemStartBar
-   % Set tempo for MIDI output but don't include it in the printed score
-   \tempo 4=273  % "crotchet = .22s"
 
    \new Staff <<
+    % Set tempo for MIDI output but don't include it in the printed score
+    \tempo 4=273  % "crotchet = .22s"
     \time 6/8
     \clef treble
     \relative c'''' {
