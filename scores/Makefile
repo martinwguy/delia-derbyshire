@@ -15,6 +15,7 @@ all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	ThePatternEmerges.pdf \
 	AnythingGoes.pdf \
 	Ape.pdf \
+	FreshAire.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
 
 clean:
