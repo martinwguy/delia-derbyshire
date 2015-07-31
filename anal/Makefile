@@ -48,7 +48,7 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 # Temporary files:
 # mkjpg.png - the linear frequency axis spectrogram
 # map.png   - the distortion map used to make the log freq graph from mkjpg.png
-# $*.ppm    - the log-frequency-axis output file which we then comvert into
+# $*.ppm    - the log-frequency-axis output file which we then convert into
 #	      jpg or png as requested.
 
 %.ppm: %.wav
@@ -90,6 +90,7 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 	@ rm -f $*.ppm
 
 %.jpg: %.ppm
+	@ rm -f $@
 	@ cjpeg -progressive -optimize $*.ppm > $@
 	@ rm -f $*.ppm
 
