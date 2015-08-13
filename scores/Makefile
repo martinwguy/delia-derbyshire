@@ -19,4 +19,4 @@ all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
 
 clean:
-	-rm -f *.pdf *.midi *.ogg
+	-rm -f *.ps *.pdf *.midi *.ogg
