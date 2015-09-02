@@ -12,13 +12,19 @@ index.html: index.php
 index.htm: index.php
 	wget -nv -O index.htm $(page)'?audio' || rm $@
 
+pretend:
+	make PRETEND=-n update
+
 # quico:audio/D-D/
 # 4star: www/D-D
 update upload: all
-	rsync -av --delete \
+	rsync -av $(PRETEND) --delete \
 		--exclude .git* \
 		--exclude log \
+		--exclude VIDEO \
 		--exclude rec/TheseHopefulMachines \
+		--partial --inplace \
+		--bwlimit=48 \
 		./ delia-derbyshire.net:audio/D-D/
 
 backup:

@@ -29,7 +29,7 @@ suffix=jpg
 piano=false
 
 if [ $# = 0 ]; then
-	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] files.{wav,mpg,ogg,flac} ..."
+	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] file.{wav,mpg,ogg,flac} ..."
 	echo "Parameters:"
 	echo "SRATE=44100      Give the sampling rate of the input file (it's not autodetected)"
 	echo "MIN_FREQ_OUT=55  A(1)"
