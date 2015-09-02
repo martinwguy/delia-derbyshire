@@ -1,20 +1,25 @@
 #! /bin/sh
 
-# Turn files of musical pieces into spectrograms with
-# 50 columns per second from bottom A 55Hz to top A 3520Hz.
+# Turn files of musical pieces into log-frequency-axis spectrograms.
 #
 # Usage: sh mkjpg.sh *.ogg *.mp3 *.wav
-# Dumps the spectrograms into the same directory as the audio files
 #
-# Environment variables override the default values in Makefile:
-SRATE=44100
-MIN_FREQ_OUT=55	# A(1)
-OCTAVES=6	# A(1) to A(7) (3520Hz)
-FFTFREQ=6.250	# The lowest resolvable frequency and the height of
-		# each frequency band in the linear spectrogram.
-PPSEC=100	# Pixel columns per second
-PPSEMI=16	# Pixels per semitone
-DYN_RANGE=100	# Amplitude of black in dB under 0
+# Dumps the spectrograms into the current directory with the same name
+# as the audio files, with "mp3" (or whatever) replaced by ".jpg" (or ".png")
+
+
+# Assign default values to environment variables used in Makefile
+
+: ${SRATE:=44100}
+: ${MIN_FREQ_OUT:=55}	# A(1)
+: ${OCTAVES:=6}		# A(1) to A(7) (3520Hz)
+: ${FFTFREQ:=6.250}	# The lowest resolvable frequency and the height of
+			# each frequency band in the linear spectrogram.
+: ${PPSEC:=100}		# Pixel columns per second
+: ${PPSEMI:=16}		# Pixels per semitone
+: ${DYN_RANGE:=100}	# Amplitude of black in dB under 0
+
+export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
 
 # Should we leave a png file rather than a jpg?
 suffix=jpg
@@ -22,6 +27,31 @@ suffix=jpg
 # Should we overlay the output with black and white lines
 # incorrespondence with a piano's black and white keys?
 piano=false
+
+if [ $# = 0 ]; then
+	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] file.{wav,mpg,ogg,flac} ..."
+	echo "Parameters:"
+	echo "SRATE=44100      Give the sampling rate of the input file (it's not autodetected)"
+	echo "MIN_FREQ_OUT=55  A(1)"
+	echo "OCTAVES=6	       Number of octaves between the bottom and the top frequencies"
+	echo "                 MIN_FREQ_OUT=55 and OCTAVES=6 gives A(1) to A(7) (3520Hz)."
+	echo "PPSEC=100        Pixel columns per second in the output file"
+	echo "PPSEMI=16        Pixels per semitone in the output file"
+	echo "FFTFREQ=6.250    The lowest resolvable frequency and the height of each"
+	echo "                 frequency band in the linear spectrogram."
+	echo "                 Lower values increase frequency resolution but"
+	echo "                 smear the output horizontally while"
+	echo "                 higher values improve the output's temporal definition but"
+	echo "                 decrease the distiction between the lowest frequencies."
+	echo "                 6.250 means that, at the default settings, there is one pixel"
+	echo "                 row in the linear spectrogram for each of the lowest rows"
+	echo "                 in the output."
+	echo "DYN_RANGE=100    Amplitude of black in the output, in dB below maximum volume."
+	echo "--thumb          Give a thumbnail 1/8th of default size."
+	echo "--piano          Overlay single-pixel black and white horizontal lines to mark"
+	echo "                 the position of conventional keyboard tuned to A=440Hz."
+	exit 1
+fi
 
 for a
 do
