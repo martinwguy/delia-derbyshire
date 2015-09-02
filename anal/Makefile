@@ -56,7 +56,7 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 	@#
 	@# Find the image width, which depends on the length of the piece.
 	@# I can't see how to get this into a variable to avoid using a file.
-	@ expr \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) > width
+	@ echo \( $(PPSEC) \* `soxi -s $<` + $(MAX_FREQ_IN) \) / $(SRATE) + 0.5 | bc -l | sed 's/\..*//' > width
 	@#
 	@ echo "Producing `cat width` x $(LIN_HEIGHT) spectrogram for"
 	@ echo "          `cat width` x $(LOG_HEIGHT) output"
