@@ -7,6 +7,11 @@
 
 \version "2.10"
 
+\header {
+ title = "The Pattern Emerges"
+ composer = "Delia Derbyshire"
+}
+
 % We divide the piece into three staves: the melody, the accompanying chords
 % and the bass line.
 
