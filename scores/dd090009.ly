@@ -1,4 +1,11 @@
 \version "2.12.1"
+
+\header {
+ title = "Philips"
+ subtitle = "score fragment dd090009"
+ composer = "Delia Derbyshire"
+}
+
 \score {
   \new PianoStaff
   <<

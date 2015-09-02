@@ -1,4 +1,11 @@
 \version "2.12.1"
+
+\header {
+ title = "Science All Around - Sound"
+ subtitle = "score fragment dd081955"
+ composer = "Delia Derbyshire"
+}
+
 \score {
   \new PianoStaff
   <<
