@@ -1,0 +1,95 @@
+The x axis of the spectrogram represents time progressing through the
+piece of music (2m56s or 176 seconds in the example image) and the y
+axis is frequency from 0 (at the bottom) to 22050Hz (at the top) while
+the brightness of each pixel in any vertical column of pixels represents
+the energy in the sound at that instant at each of the frequencies.
+
+In the output image, there would be no distortion horizontally but the
+bottom row of pixels should represent the lowest interesting frequency,
+about 50Hz and the top row the highest, about 3150Hz in such a way
+that the same vertical distance represents the same musical interval,
+i.e. going up by one pixel row represents a change from N Hz to N*x Hz
+instead of from N to N+x as it does in the input image.
+
+A low-res example would be, if the output were 7 pixels high, for them
+to represent 50, 100, 200, 400, 800, 1600 and 3200 Hz.
+
+----
+
+This seems to be the correct reverse mapping:
+
+y_in = (((exp(y_out / max_y_out) - 1) / (base - 1)) * (max_freq_out - min_freq_out) + min_freq_out) * max_y_in / max_freq_in
+
+for which a test run from 0 to 1023 step 93, with max_y_in = 8191 and max_y_out = 1023 targetting 50..3150Hz gives:
+
+ Out   In  Freq
+   0   19    50
+  93   82   222
+ 186  152   410
+ 279  229   616
+ 372  312   841
+ 465  404  1088
+ 558  505  1359
+ 651  615  1655
+ 744  735  1979
+ 837  867  2335
+ 930 1012  2724
+1023 1170  3150
+
+but a simpler way is to work backwards from the output y coordinate
+freq = 50 * (3150-50)^(y_out / max_y_out)
+y_in = max_y_in * (freq / max_freq_in)
+
+giving
+
+convert -size $(WIDTH)x$(LOG_HEIGHT) xc: pattern.png \
+                -virtual-pixel White \
+                -interpolate NearestNeighbor \
+                -fx "freq = $(MIN_FREQ_OUT) * pow($(MAX_FREQ_OUT) / $(MIN_FREQ_OUT), ($(MAX_Y_OUT) - j) / $(MAX_Y_OUT)); \
+                     yy = $(MAX_Y_IN) - freq * $(MAX_Y_IN) / $(MAX_FREQ_IN); \
+                     v.p{i,yy}" \
+                pattern-log.png
+
+a 1024x1024 target takes 97 seconds on this box, a dual 1.8GHz Pentium thing.
+BTW Congratulations to ImageMagick for using both cores (197% cpu) without
+having to specify any flags!
+
+The real thing, 8192x1024, takes 13m45s, which is quite acceptable
+Suggestions to speed it up or to improve the smoothing of the interpolation,
+other than -Interpolate Mesh?
+
+Choosing the FFT size
+---------------------
+We could try having a huge FFT so that each output pixel row comes from a
+different datum:
+We have a 1024-high output spectrogram where one pixel represents
+1/16th semitone,
+At the bottom end, 55Hz, the next pixel row is centred at
+55*(1.0592^(1/16)) = 55.198Hz i.e. each row is .2 Hz higher.
+A to cover 22050 at this resolution would need an FFT of 22050x5. Silly.
+
+Or we could specify the time-granularity to be the same as the x resolution,
+50 pixels per second, giving an FFT size of 1/50th or 1/25th second.
+25 suggests FFT size of 22050/25 =~ 1000
+
+The FFT window function applied to a 8192-sample moment gets most of its
+info from the middle half of the FFT.
+Let FFT size be the same as two X instants, i.e. 1/25h of a second.
+At 44100, this give FFT size = 1764
+Overlapping 4 FFT windows suggests window size of twice this, 3528, covering
+down to 22050/3528 = 6Hz and giving a gralarity of 6 Hz, so from 55 to 61
+
+
+If we take the FFT window into account and say that it is most sensitive to
+a quarter of the samples it analyses, at 50 pixels per second this suggests an
+fft size of 4/50ths of a second, 1/12.5, 44100/12.5 = 3528.
+
+
+Building sndfile-tools from source
+----------------------------------
+apt-get install -y libsndfile1-dev libfftw3-dev libjack-dev libsamplerate-dev libcairo-dev
+make install
+
+Tools for mkjpg.sh and Makefile
+-------------------------------
+apt-get install imagemagick sox vorbis-tools libjpeg-progs
