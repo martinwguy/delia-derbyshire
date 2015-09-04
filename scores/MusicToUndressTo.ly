@@ -75,7 +75,6 @@
      c4 c c c | e8 b' cis b~ b gis g fis |
      % From g, to c~c inclusive Delia pencils "8ve up?", not done here.
      f c' d ees  e g, gis d' a e' b c~c a4. |
-     #(set-time-signature 8 8 '(2 2 2 2))
      e,4 gis8 b~b c~c d | e4 gis8 b~b c~c d |
      \time 3/4 s2. | \time 5/8 s4. s4 s4. s4 |
     }
