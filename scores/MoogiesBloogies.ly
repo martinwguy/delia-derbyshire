@@ -13,7 +13,7 @@
  <<
   % Spangles and bloopy swoops
   \new Staff {
-   \set midiInstrument = #"glockenspiel"
+   \set Staff.midiInstrument = #"acoustic grand"
    \time 6/8
    \tempo 8=150
    \clef treble
@@ -38,7 +38,7 @@
 
   % Descant
   \new Staff {
-   \set midiInstrument = #"flute"
+   \set Staff.midiInstrument = #"flute"
    \time 6/8
    \tempo 8=150
    \clef treble
@@ -51,7 +51,7 @@
      r2. |
      r2. |
      \ottava #1
-     e4 c4 f8 aes | e2. | 
+     e4\p c4 f8 aes | e2. | 
      e4 c4 f8 aes | g4. r4. |
      e4 c4 f8 aes | e2 r8 ees16 aes, | 
      \time 4/4
@@ -61,7 +61,7 @@
 
   % Melody
   \new Staff {
-   \set midiInstrument = #"reed organ"
+   \set Staff.midiInstrument = #"violin"
    \time 6/8
    \tempo 8=150
    \clef treble
@@ -84,9 +84,10 @@
 
   % Bass
   \new Staff {
-   \set midiInstrument = #"oboe"
+   \set Staff.midiInstrument = #"cello"
    \time 6/8
    \clef bass
+
    \relative c {
     \new Voice {
      g8 r aes g r aes | g r aes g r aes | g r aes g r aes | g r aes g r g |
