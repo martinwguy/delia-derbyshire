@@ -15,6 +15,7 @@ all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	ThePatternEmerges.pdf \
 	AnythingGoes.pdf \
 	Ape.pdf \
+	Clothes.pdf \
 	FreshAire.pdf \
 	MoogiesBloogies.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
