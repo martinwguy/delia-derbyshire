@@ -20,6 +20,7 @@ global= {
 
 Melody = \new Voice \relative c''' {
   \ottava #1 \stemUp
+  \set Staff.midiInstrument = #"flute"
   % Really the b8 is extended to a b4 simultaneous with the c
   \partial 8. b16 c8 |
   \set Staff.currentBarNumber = #1
@@ -37,20 +38,21 @@ Melody = \new Voice \relative c''' {
   a2. b8 c | a2. b8 c | gis'2. b,8 c | ais'2. b8 c | a2. b8 c | a2. b8 c |
   %25
   \ottava #2
-  fis 1 | g 1 | aes1~ | aes1~ | aes4
+  fis 1 | g 1 | aes1~ | aes1~ | aes4 \bar "||"
 }
 
 Chords = \new Voice \relative c'' {
-  \ottava #1 \stemDown
+  \set Staff.midiInstrument = #"flute"
+  \ottava #1 \stemDown \tieDown
   \partial 8. s8. |
   %1
-  r8 <f aes>8 <e g>4 <ees ges>2 |
-  r8 <f aes>8 <e g>4 <ees ges>2 |
-  <d f>4. <f aes>8 <e g>2 | 
-  r8 <f aes>8 <e g>4 <ees ges>2 |
+  r8          <f aes>8 <e g>4 <ees ges>2~ |
+  <ees ges>8  <f aes>8 <e g>4 <ees ges>2 |
+  <d f>4. <f aes>8 <e g>2~ |
+  <e g>8  <f aes>8 <e g>4 <ees ges>2 |
   %5
-  aes8 <ges a>4 <f aes>8 <e g>4 <ees ges>4 |
-  aes8 <ges a>4 <f aes>8 <e g>2~ |
+  <aes b>8 <ges a>4 <f aes>8 <e g>4 <ees ges>4 |
+  <aes b>8 <ges a>4 <f aes>8 <e g>2~ |
   <e g>8     <f aes>8 <e g>4 <ees ges>2~ |
   <ees ges>8 <f aes>8 <e g>4 <ees ges>4 <f aes>4 |
   %9
