@@ -61,10 +61,10 @@ do
 	--png)	suffix=png
 		continue
 		;;
-	--thumb)
+	--thumb)	# 1/8th of normal size in each direction
 		thumb=true
 		PPSEMI=2
-		PPSEC=10
+		PPSEC=12.5
 		export PPSEMI PPSEC
 		continue
 		;;
