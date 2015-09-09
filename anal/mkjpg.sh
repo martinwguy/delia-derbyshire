@@ -8,7 +8,7 @@
 # as the audio files, with "mp3" (or whatever) replaced by ".jpg" (or ".png")
 
 
-# Assign default values to environment variables used in Makefile
+# Assign default values to environment variables
 
 : ${SRATE:=44100}
 : ${MIN_FREQ_OUT:=55}	# A(1)
@@ -55,8 +55,6 @@ fi
 
 for a
 do
-	rm -f mkjpg.jpg mkjpg.png
-
 	case "$a" in
 	--png)	suffix=png
 		continue
@@ -77,12 +75,12 @@ do
 		exit 1
 		;;
 	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
-		wavfile=mkjpg.wav
-		oggdec -o mkjpg.wav "$a"
+		rm -f mkjpg.wav
+		oggdec --quiet -o mkjpg.wav "$a"
 		;;
 	*.mp3)	outfile="`basename "$a" .mp3`".$suffix
-		wavfile=mkjpg.wav
-		sox "$a" "$wavfile"
+		rm -f mkjpg.wav
+		sox "$a" mkjpg.wav
 		;;
 	*.flac)	outfile="`basename "$a" .flac`".$suffix
 		rm -f mkjpg.wav
@@ -92,29 +90,103 @@ do
 		rm -f mkjpg.wav
 		ln -s "$a" mkjpg.wav
 		;;
-	*)	echo "Eh? Ogg MP3 or WAV only." 1>&2
+	*)	echo "Eh? Ogg, Flac, MP3 or WAV files only." 1>&2
 		exit 1
 		;;
 	esac
 
-	# make -e: environment varibles override settings in Makefile.
+	### Here beginneth what used to be a Makefile
 
-	if make -e -f "`dirname $0`"/Makefile mkjpg.$suffix
-	then rm -f "$outfile"
-             mv mkjpg.$suffix "$outfile"
-	else rm -f mkjpg.$suffix
-	     exit 1
-	fi
+	## Derived constants
+
+	# Pixel rows per octave
+	PPOCT=$(expr "$PPSEMI * 12")
+
+	# The frequency of the top row in the output
+	MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
+
+	# Output N octaves at PPSEMI pixels per semitone
+	# Rounding of result to integer is done crudely
+	# by adding 0.5 and dropping all decimals in bc's output
+	LOG_HEIGHT=$(echo "l($MAX_FREQ_OUT/$MIN_FREQ_OUT) / l(2) * $PPOCT + 0.5" | bc -l | sed 's/\..*//')
+
+	# LIN_HEIGHT is also the FFT size, which determines the
+	# time and frequency resolutions.
+	LIN_HEIGHT=$(echo "$SRATE / $FFTFREQ + 0.5" | bc -l | sed 's/\..*//')
+
+	MAX_FREQ_IN=$(expr $SRATE / 2)
+	MAX_Y_IN=$(expr $LIN_HEIGHT - 1)
+	MAX_Y_OUT=$(expr $LOG_HEIGHT - 1)
+
+# Temporary files:
+# mkjpg.png - the linear frequency axis spectrogram
+# map.png   - the distortion map used to make the log freq graph from mkjpg.png
+# mkjpg.ppm - the log-frequency-axis output file which we then convert into
+#	      jpg or png as requested.
+
+	rm -f mkjpg.png map.png mkjpg.ppm
+
+	### Turn a WAV into a PPM file
+
+	# Find the image width, which depends on the length of the piece.
+	width="$( echo "(`soxi -s mkjpg.wav` / $SRATE) * $PPSEC + 0.5" |
+		  bc -l | sed 's/\..*//' )"
+
+	echo "Producing $width x $LIN_HEIGHT spectrogram for"
+	echo "          $width x $LOG_HEIGHT output"
+	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border mkjpg.wav \
+		$width $LIN_HEIGHT mkjpg.png || { rm -f mkjpg.png; exit 1; }
+
 	rm -f mkjpg.wav
+
+	# Make a displacement map to distort the Y axis with.
+	# We calculate a 1-pixel wide one then replicate this across the map.
+
+	# IM 6.7.2 has a bug whereby MAX_Y_OUT<256 moves the analysis window
+	# up by one octave, presumably to a bug in -fx's division code.
+	# Broken: 6.7.2, 6.7.7
+	# Working: 6.7.8, 6.7.9, 6.8.0, 6.9.2
+	if [ $MAX_Y_OUT -lt 256 ]; then
+	    version="$(convert --version | head -1 | sed 's/^Version: ImageMagick \([^ ]*\) .*/\1/')"
+	    case "$version" in
+	    6.[123456].*|6.7.[01234567]*)
+		echo "You need a newer version of ImageMagick for output less than 256 pixels high."
+		echo "You have version $version and the first working version was 6.7.8."
+		exit 1 ;;
+	    6.7.[89]*) : ok ;;
+	    6.*) : ok ;;
+ 	    esac
+	fi
+
+	convert -size 1x$LOG_HEIGHT -depth 16 xc: \
+		-fx "freq = $MIN_FREQ_OUT * pow($MAX_FREQ_OUT / $MIN_FREQ_OUT, ($MAX_Y_OUT - j) / $MAX_Y_OUT);
+		     yy = $MAX_Y_IN - freq * $MAX_Y_IN / $MAX_FREQ_IN;
+		     yy/$MAX_Y_IN" \
+		-scale "$width"x$LOG_HEIGHT! \
+		map.png || { rm -f mkjpg.png map.png; exit 1; }
+
+	# Now apply the displacement map
+	echo "Distorting Y axis..."
+	convert \
+		-size "$width"x$LOG_HEIGHT xc: \
+		mkjpg.png map.png \
+		-virtual-pixel White \
+		-interpolate Mesh \
+		-fx "v.p{i,u[2] * $LIN_HEIGHT}" \
+		mkjpg.ppm || { rm -f mkjpg.png map.png mkjpg.ppm; exit 1; }
+
+	rm -f mkjpg.png map.png
+
+	### Here endeth what used to be a Makefile
 
 	# Engrave piano keys white and black as single pixel lines over the
 	# output image.  We assume that the output frequency ranges starts
 	# at an A.
 	$piano && {
+	    echo "Applying piano lines..."
 	    maxy="$(expr "$PPSEMI" \* "$OCTAVES" \* 12 - 1)"
-	    maxx="$(expr "$(identify -format %w "$outfile")" - 1)"
-echo "maxx = $maxx, maxy = $maxy"
-	    echo -n convert \""$outfile\"" -strokewidth 1 > piano-cmd
+	    maxx="$(expr "$(identify -format %w mkjpg.ppm)" - 1)"
+	    echo -n convert mkjpg.ppm -strokewidth 1 > piano-cmd
 	    for octave in $(seq 0 "$(expr "$OCTAVES" - 1)")
 	    do
 		for note in $(seq 0 11)
@@ -132,8 +204,18 @@ echo "maxx = $maxx, maxy = $maxy"
 		    echo -n " -stroke $colour -strokewidth $strokewidth -draw \"line 0,$y $maxx,$y\"" >> piano-cmd
 		done
 	    done
-	    echo " \"$outfile\"" >> piano-cmd
+	    echo " mkjpg.ppm" >> piano-cmd
 	    sh piano-cmd
 	    rm -f piano-cmd
 	}
+
+	# Convert final image to desired format and filename
+	echo "Converting to final format..."
+	case "$outfile" in
+	*.png)	convert mkjpg.ppm "$outfile" ;;
+	*.jpg)	cjpeg -progressive -optimize mkjpg.ppm > "$outfile" ;;
+	*)	echo "Unknown image suffix in final conversion" 1>&2
+		exit 1 ;;
+	esac
+	rm -f mkjpg.ppm
 done
