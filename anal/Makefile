@@ -95,4 +95,4 @@ MAX_Y_OUT   := $(shell expr $(LOG_HEIGHT) - 1)
 	@ rm -f $*.ppm
 
 clean:
-	rm -f map.png mkjpg.jpg width mkjpg.png mkjpg.wav
+	rm -f map.png mkjpg.jpg width mkjpg.png mkjpg.wav piano-cmd

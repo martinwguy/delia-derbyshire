@@ -134,5 +134,6 @@ echo "maxx = $maxx, maxy = $maxy"
 	    done
 	    echo " \"$outfile\"" >> piano-cmd
 	    sh piano-cmd
+	    rm -f piano-cmd
 	}
 done
