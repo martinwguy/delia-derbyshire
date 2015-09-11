@@ -61,7 +61,7 @@ Chords = \new Voice \relative c'' {
   <des e>8 <g bes> <e g> <g bes> <e g>16 <d f> <des e>8 <e g>4 |
   <des e>8 <g bes> <e g> <g bes> <e g>16 <d f> <des e>8 <e g>4 |
   <c ees>8 <ges' a> <ees ges> <ges a> <ees ges>16 <des e> <c ees>8 <ees ges>4 |
-  <c ees>8 <ges' a> <ees ges> <ges a> \times 2/3 { <ees ges>16 <des e>8 } <c ees>8 <ees ges>4 | %?
+  <c ees>8 <ges' a> <ees ges> <ges a> <ees ges>16 <des e> <c ees>8 <ees ges>4 | %?
   %15
   <b d>8 <f' aes> <d f> <f aes> <d f>16 <c ees> <b d>8 <d f>4 |
   <bes des>8 <e g> <des e> <e g> <des e>16 <b d> <bes des>8 <des e>4 |
