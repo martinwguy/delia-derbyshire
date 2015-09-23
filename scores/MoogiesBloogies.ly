@@ -10,85 +10,94 @@
 
 \score {
  <<
-  % Spangles and bloopy swoops
-  \new Staff \with { midiInstrument = #"acoustic grand" } {
+  % Upward rushes
+  \new Staff \with {
+    midiInstrument = #"acoustic grand"
+    instrumentName = #"Arpeggio"
+  } {
    \time 6/8
    \tempo 8=150
    \clef treble
+
+   % Delia writes backward-7 crochet rests and so do we.
+   \override Staff.Rest #'style = #'classical
 
    \relative c'' {
     \new Voice {
      \stemUp
-  % Spangles
-     r16 \times 8/7 { g64     d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,64  d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,,32 d' g d' g d' g } r16 r4. |
-     r2. |
-  % Bloopy swoops
-     r16 g,,, c g' c g' c8 r4 | r2. |
-     r16 g,,  c g' c g' c8 r4 | r2. |
-     r16 g,,  c g' c g' c8 r4 | r2. |
+     r16 \times 8/7 { g64_"Brilliant" d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,64          d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,,32         d' g d' g d' g } r16 r4. |
+     R2. \bar "|:"
+     r16 g,,,^"Mellow" c g' c g' c8 r4 | R2. |
+     r16 g,,          c g' c g' c8 r4 | R2. |
+     r16 g,,          c g' c g' c8 r4 | R2. |
      \time 4/4
-     r1
-    }
-   }
-  }
+     R1*2 |
+     \time 11/16
+     r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. \bar ":|"
+  }}}
 
   % Descant
-  \new Staff  \with { midiInstrument = #"flute" } {
+  \new Staff \with {
+   midiInstrument = #"flute"
+   instrumentName = #"Descant"
+  } {
    \time 6/8
    \tempo 8=150
    \clef treble
+   \override Staff.Rest #'style = #'classical
 
    \relative c''' {
     \new Voice {
      \stemUp
-     r2. |
-     r2. |
-     r2. |
-     r2. |
+     R2.*4 |
      \ottava #1
      e4\p c4 f8 aes | e2. | 
      e4 c4 f8 aes | g4. r4. |
-     e4 c4 f8 aes | e2 r8 ees16 aes, | 
+     e4 c4 f8 aes | e2 r8 
+       
+       \set Voice.fontSize = #-4
+                          ees16 aes,~_\markup { \center-align \italic "pre-echo" } | 
+       \unset Voice.fontSize
      \time 4/4
 
-     \times 2/3 { r16_"This is wrong" d g, d' g, d' ees g, ees' aes, ees' d }
-     \times 2/3 { r16 d g, d' g, d' ees g, ees' aes, ees' d }
-     \times 2/3 { r16 d g, d' g, d' ees g, ees' aes, ees' d }
-     \times 2/3 { r16 d g, d' g, d' ees g, ees' aes, ees' d }
-    }
-   }
-  }
-  % Voice
-  \new Staff \with { midiInstrument = #"violin" } {
-   \time 6/8
-   \tempo 8=150
-   \clef treble
+     <<
+      {
+       % Pre-echo must come first so that the aes ties work
+       \stemUp \tupletUp \dynamicUp
+       \set Voice.fontSize = #-4
+       \times 2/3 { aes16\p d8  g,    s8   ees'8 s   aes,16~ }
+       \times 2/3 { aes16   d8  g,    s8   ees'8 s   aes,16~ } |
+       \times 2/3 { aes16   d8  g,    s8   ees'8 s   aes,8 }
+       \times 2/3 {         d8  g,    s8   ees'8 s      s16  }
+       \unset Voice.fontSize
+      }
+      \relative c''' \new Voice {
+       % Melody
+       \stemDown \tupletDown
+       \times 2/3 { r8\f      aes8[ d8 g,8]  r8  ees'8      }
+       \times 2/3 { r8       aes,8[ d8 g,8]  r8  ees'8      } |
+       \times 2/3 { r8       aes,8[ d8 g,8]  r8  ees'8      }
+       \times 2/3 { r8       aes,8[ d8 g,8]  r8     r8      }
+      }
+     >>
 
-   \relative c'' {
-    \new Voice {
-     \stemUp
-     r2. |
-     r2. |
-     r2. |
-     r2. |
-     r2. | r2. |
-     r2. | r2. |
-     r2. | r2. |
-     \time 4/4
-     r1 | r1 |
+     %\times 2/3 { r16 d aes g d'8 g,16 ees'8. ees16 aes, }
+     %\times 2/3 { r16 d aes g d'8 g,16 ees'8. ees16 aes, } |
+     %\times 2/3 { r16 d aes g d'8 g,16 ees'8. ees16 aes, }
+     %\times 2/3 { r16 d aes g d'8 g,16 ees'8. r8 } |
+
+     \ottava #0
      \time 11/16
-     { r4 r4.. } |
-     { r16 r r r r r r r r r r } |
-     { r16 r r r r r r r r r r } |
-     { r16 r r r r r r r r r r } |
-    }
-   }
-  }
+     r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. |
+  }}}
 
   % Melody
-  \new Staff \with { midiInstrument = #"violin" } {
+  \new Staff \with {
+   midiInstrument = #"flute"
+   instrumentName = #"Melody"
+  } {
    \time 6/8
    \tempo 8=150
    \clef treble
@@ -96,26 +105,24 @@
    \relative c'' {
     \new Voice {
      \stemUp
-     r2. |
-     r2. |
-     r2. |
-     r2. |
-     r16 g  a b c r r8 aes' des, | g c, r c 8r r |
+     R2.*4 |
+     r16 g\f  a b c r r8 aes' des, | g c, r c 8r r |
      r16 g  a b c r r8 aes' des, | b'2. |
      r16 g, a b c r r8 aes' des, | g c, r c 8r r |
      \time 4/4
-     r1 | r1 |
+     R1*2 |
      \time 11/16
      { r16 g[ a b c] r r16. c16 r16. r16 } |
      { r16 g[ a b c] r r16. c16 r16. r16 } |
      { r16 g[ a b c] r r16. c16 r16. r16 } |
      { r16 g[ a b c] r r16. c16 r16. r16 } |
-    }
-   }
-  }
+  }}}
 
   % Bass
-  \new Staff \with { midiInstrument = #"cello" } {
+  \new Staff \with {
+   midiInstrument = #"cello"
+   instrumentName = #"Bass"
+  } {
    \time 6/8
    \clef bass
 
@@ -129,12 +136,9 @@
      \time 11/16
      c8 r c r8. g8 | c8 r c r8. g8 |
      c8 r c r8. g8 | c8 r c r8. g8 |
-    }
-   }
-  }
+  }}}
  >>
 
- % Delia doesn't indent the first line of scores, so neither do we
- \layout { indent = #0 }
+ \layout { }
  \midi { }
 }
