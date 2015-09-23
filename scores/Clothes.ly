@@ -1,6 +1,5 @@
 % Score for Delia Derbyshire's unknown piece "Clothes" dated 22.12.68
-% reconstructed from a manuscript in her papers
-% For further info see http://wikidelia.net/wiki/Clothes
+% Lilypond by Martin Guy <delia.derbyshire.net@gmail.com>, August 2015.
 
 \version "2.16.2"
 
@@ -8,6 +7,7 @@
  title = "Clothes"
  subtitle = "22.12.68"
  composer = "Delia Derbyshire"
+ tagline = "Reconstructed from a manuscript in her papers. See http://wikidelia.net/wiki/Clothes"
 }
 
 \score {
