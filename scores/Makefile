@@ -8,7 +8,7 @@
 
 .midi.ogg:
 	timidity -Ow -o $*.wav $<
-	oggenc $*.wav
+	oggenc --quiet $*.wav
 	rm $*.wav
 
 all: LePontMirabeau.pdf MusicToUndressTo.pdf \
@@ -18,6 +18,7 @@ all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	Clothes.pdf \
 	FreshAire.pdf \
 	MoogiesBloogies.pdf \
+	ScienceAndHealth.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
 
 clean:
