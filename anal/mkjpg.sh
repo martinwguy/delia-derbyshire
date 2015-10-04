@@ -28,6 +28,10 @@ suffix=jpg
 # incorrespondence with a piano's black and white keys?
 piano=false
 
+# To get a grayscaled spectrogram instead of a colored one, set
+# grayscale=--gray-scale
+grayscale=
+
 if [ $# = 0 ]; then
 	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] file.{wav,mpg,ogg,flac} ..."
 	echo "Parameters:"
@@ -46,10 +50,13 @@ if [ $# = 0 ]; then
 	echo "                 6.250 means that, at the default settings, there is one pixel"
 	echo "                 row in the linear spectrogram for each of the lowest rows"
 	echo "                 in the output."
-	echo "DYN_RANGE=100    Amplitude of black in the output, in dB below maximum volume."
-	echo "--thumb          Give a thumbnail 1/8th of default size."
+	echo "DYN_RANGE=100    Amplitude of black in the output, in dB below maximum volume,"
+	echo "                 Smaller values brighten the darker areas of the graph."
+	echo "--gray           Make a grayscale spectrogram instead of a color-mapped one."
 	echo "--piano          Overlay single-pixel black and white horizontal lines to mark"
 	echo "                 the position of conventional keyboard tuned to A=440Hz."
+	echo "--png            Output a PNG file instead of a JPEG."
+	echo "--thumb          Give a thumbnail version, 1/8th of default size."
 	exit 1
 fi
 
@@ -68,6 +75,10 @@ do
 		;;
 	--piano)
 		piano=true
+		continue
+		;;
+	--gray|--grey)
+		grayscale=--gray-scale
 		continue
 		;;
 	-*)	echo "Usage: $0 [--png] file.{ogg,mp3,wav}" 1>&2
@@ -131,10 +142,12 @@ do
 	# Find the image width, which depends on the length of the piece.
 	width="$( echo "(`soxi -s mkjpg.wav` / $SRATE) * $PPSEC + 0.5" |
 		  bc -l | sed 's/\..*//' )"
+	test "$width" || exit 1
 
 	echo "Producing $width x $LIN_HEIGHT spectrogram for"
 	echo "          $width x $LOG_HEIGHT output"
-	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border mkjpg.wav \
+	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
+		mkjpg.wav \
 		$width $LIN_HEIGHT mkjpg.png || { rm -f mkjpg.png; exit 1; }
 
 	rm -f mkjpg.wav
