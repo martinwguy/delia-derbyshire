@@ -10,48 +10,23 @@
 
 \score {
  <<
-  % Upward rushes
-  \new Staff \with {
-    midiInstrument = #"acoustic grand"
-    instrumentName = #"Arpeggio"
-  } {
-   \time 6/8
-   \tempo 8=150
-   \clef treble
-
-   % Delia writes backward-7 crochet rests and so do we.
-   \override Staff.Rest #'style = #'classical
-
-   \relative c'' {
-    \new Voice {
-     \stemUp
-     r16 \times 8/7 { g64_"Brilliant" d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,64          d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,,32         d' g d' g d' g } r16 r4. |
-     R2. \bar "|:"
-     r16 g,,,^"Mellow" c g' c g' c8 r4 | R2. |
-     r16 g,,          c g' c g' c8 r4 | R2. |
-     r16 g,,          c g' c g' c8 r4 | R2. |
-     \time 4/4
-     R1*2 |
-     \time 11/16
-     r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. \bar ":|"
-  }}}
-
   % Descant
   \new Staff \with {
    midiInstrument = #"flute"
-   instrumentName = #"Descant"
+   % instrumentName = #"Descant"
   } {
    \time 6/8
    \tempo 8=150
    \clef treble
    \override Staff.Rest #'style = #'classical
+   \set Score.markFormatter = #format-mark-box-alphabet
 
    \relative c''' {
     \new Voice {
      \stemUp
+     \mark \default
      R2.*4 |
+     \mark \default
      \ottava #1
      e4\p c4 f8 aes | e2. | 
      e4 c4 f8 aes | g4. r4. |
@@ -61,13 +36,14 @@
                           ees16 aes,~_\markup { \center-align \italic "pre-echo" } | 
        \unset Voice.fontSize
      \time 4/4
-
      <<
       {
        % Pre-echo must come first so that the aes ties work
        \stemUp \tupletUp \dynamicUp
+       \mark \default
        \set Voice.fontSize = #-4
-       \times 2/3 { aes16\p d8  g,    s8   ees'8 s   aes,16~ }
+       \times 2/3 { aes16\p
+                            d8  g,    s8   ees'8 s   aes,16~ }
        \times 2/3 { aes16   d8  g,    s8   ees'8 s   aes,16~ } |
        \times 2/3 { aes16   d8  g,    s8   ees'8 s   aes,8 }
        \times 2/3 {         d8  g,    s8   ees'8 s      s16  }
@@ -90,13 +66,14 @@
 
      \ottava #0
      \time 11/16
+     \mark \default
      r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. |
   }}}
 
   % Melody
   \new Staff \with {
    midiInstrument = #"flute"
-   instrumentName = #"Melody"
+   % instrumentName = #"Melody"
   } {
    \time 6/8
    \tempo 8=150
@@ -106,9 +83,9 @@
     \new Voice {
      \stemUp
      R2.*4 |
-     r16 g\f  a b c r r8 aes' des, | g c, r c 8r r |
-     r16 g  a b c r r8 aes' des, | b'2. |
-     r16 g, a b c r r8 aes' des, | g c, r c 8r r |
+     r16\f g a b c r r8 aes' des, | g c, r c 8r r |
+     r16 g   a b c r r8 aes' des, | b'2. |
+     r16 g,  a b c r r8 aes' des, | g c, r c 8r r |
      \time 4/4
      R1*2 |
      \time 11/16
@@ -118,10 +95,40 @@
      { r16 g[ a b c] r r16. c16 r16. r16 } |
   }}}
 
+  % Upward rushes
+  % Upward rushes
+  \new PianoStaff \with {
+    midiInstrument = #"acoustic grand"
+  } << \new Voice {
+   \time 6/8
+   \tempo 8=150
+   \clef treble
+
+   % Delia writes backward-7 crochet rests and so do we.
+   \override Staff.Rest #'style = #'classical
+   %\override Staff.instrumentName = #"Arpeggios"
+
+   \relative c'' {
+    \new Voice {
+     \stemUp
+     r16 \times 8/7 { g64_"Brilliant" d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,64          d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,,32         d' g d' g d' g } r16 r4. |
+     R2. \bar "|:"
+     r16 g,,,_"Mellow" c g' c g' c8 r4 | R2. |
+     r16 g,,          c g' c g' c8 r4 | R2. |
+     r16 g,,          c g' c g' c8 r4 | R2. |
+     \time 4/4
+     R1*2 |
+     \time 11/16
+     r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. \bar ":|"
+  }}}
+
+
   % Bass
-  \new Staff \with {
-   midiInstrument = #"cello"
-   instrumentName = #"Bass"
+  \new Voice \with {
+   %Staff.midiInstrument = #"acoustic grand"
+   %Staff.instrumentName = #"Bass"
   } {
    \time 6/8
    \clef bass
@@ -137,6 +144,7 @@
      c8 r c r8. g8 | c8 r c r8. g8 |
      c8 r c r8. g8 | c8 r c r8. g8 |
   }}}
+  >>
  >>
 
  \layout { }
