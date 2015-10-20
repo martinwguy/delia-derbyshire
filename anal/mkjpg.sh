@@ -60,6 +60,8 @@ if [ $# = 0 ]; then
 	exit 1
 fi
 
+wav=mkjpg$$.wav
+
 for a
 do
 	case "$a" in
@@ -86,20 +88,20 @@ do
 		exit 1
 		;;
 	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
-		rm -f mkjpg.wav
-		oggdec --quiet -o mkjpg.wav "$a"
+		rm -f $wav
+		oggdec --quiet -o $wav "$a"
 		;;
 	*.mp3)	outfile="`basename "$a" .mp3`".$suffix
-		rm -f mkjpg.wav
-		sox "$a" mkjpg.wav
+		rm -f $wav
+		sox "$a" $wav
 		;;
 	*.flac)	outfile="`basename "$a" .flac`".$suffix
-		rm -f mkjpg.wav
-		flac -d -o mkjpg.wav "$a"
+		rm -f $wav
+		flac -d -o $wav "$a"
 		;;
 	*.wav)	outfile="`basename "$a" .wav`".$suffix
-		rm -f mkjpg.wav
-		ln -s "$a" mkjpg.wav
+		rm -f $wav
+		ln -s "$a" $wav
 		;;
 	*)	echo "Eh? Ogg, Flac, MP3 or WAV files only." 1>&2
 		exit 1
@@ -110,8 +112,10 @@ do
 
 	## Derived constants
 
-	# Pixel rows per octave
-	PPOCT=$(expr "$PPSEMI * 12")
+	if [ ! "$PPOCT" ]; then
+		# Pixel rows per octave. They can set PPOCT or PPSEMI.
+		PPOCT=$(expr "$PPSEMI * 12")
+	fi
 
 	# The frequency of the top row in the output
 	MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
@@ -129,28 +133,31 @@ do
 	MAX_Y_IN=$(expr $LIN_HEIGHT - 1)
 	MAX_Y_OUT=$(expr $LOG_HEIGHT - 1)
 
-# Temporary files:
-# mkjpg.png - the linear frequency axis spectrogram
-# map.png   - the distortion map used to make the log freq graph from mkjpg.png
-# mkjpg.ppm - the log-frequency-axis output file which we then convert into
-#	      jpg or png as requested.
+	# Temporary files:
+	# $png - the linear frequency axis spectrogram
+	# $map - the distortion map used to make the log freq graph from $png
+	# $ppm - the log-frequency-axis output file which we then convert into
+	#	 jpg or png as requested.
+	png=/tmp/mkjpg$$.png
+	map=/tmp/mkjpg$$-map.png
+	ppm=/tmp/mkjpg$$.ppm
 
-	rm -f mkjpg.png map.png mkjpg.ppm
+	rm -f $png $map $ppm
 
 	### Turn a WAV into a PPM file
 
 	# Find the image width, which depends on the length of the piece.
-	width="$( echo "(`soxi -s mkjpg.wav` / $SRATE) * $PPSEC + 0.5" |
+	width="$( echo "(`soxi -s $wav` / $SRATE) * $PPSEC + 0.5" |
 		  bc -l | sed 's/\..*//' )"
 	test "$width" || exit 1
 
 	echo "Producing $width x $LIN_HEIGHT spectrogram for"
 	echo "          $width x $LOG_HEIGHT output"
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
-		mkjpg.wav \
-		$width $LIN_HEIGHT mkjpg.png || { rm -f mkjpg.png; exit 1; }
+		$wav \
+		$width $LIN_HEIGHT $png || { rm -f $png; exit 1; }
 
-	rm -f mkjpg.wav
+	rm -f $wav
 
 	# Make a displacement map to distort the Y axis with.
 	# We calculate a 1-pixel wide one then replicate this across the map.
@@ -176,19 +183,19 @@ do
 		     yy = $MAX_Y_IN - freq * $MAX_Y_IN / $MAX_FREQ_IN;
 		     yy/$MAX_Y_IN" \
 		-scale "$width"x$LOG_HEIGHT! \
-		map.png || { rm -f mkjpg.png map.png; exit 1; }
+		$map || { rm -f $png $map; exit 1; }
 
 	# Now apply the displacement map
 	echo "Distorting Y axis..."
 	convert \
 		-size "$width"x$LOG_HEIGHT xc: \
-		mkjpg.png map.png \
+		$png $map \
 		-virtual-pixel White \
 		-interpolate Mesh \
 		-fx "v.p{i,u[2] * $LIN_HEIGHT}" \
-		mkjpg.ppm || { rm -f mkjpg.png map.png mkjpg.ppm; exit 1; }
+		$ppm || { rm -f $png $map $ppm; exit 1; }
 
-	rm -f mkjpg.png map.png
+	rm -f $png $map
 
 	### Here endeth what used to be a Makefile
 
@@ -198,8 +205,8 @@ do
 	$piano && {
 	    echo "Applying piano lines..."
 	    maxy="$(expr "$PPSEMI" \* "$OCTAVES" \* 12 - 1)"
-	    maxx="$(expr "$(identify -format %w mkjpg.ppm)" - 1)"
-	    echo -n convert mkjpg.ppm -strokewidth 1 > piano-cmd
+	    maxx="$(expr "$(identify -format %w $ppm)" - 1)"
+	    echo -n convert $ppm -strokewidth 1 > piano-cmd
 	    for octave in $(seq 0 "$(expr "$OCTAVES" - 1)")
 	    do
 		for note in $(seq 0 11)
@@ -217,7 +224,7 @@ do
 		    echo -n " -stroke $colour -strokewidth $strokewidth -draw \"line 0,$y $maxx,$y\"" >> piano-cmd
 		done
 	    done
-	    echo " mkjpg.ppm" >> piano-cmd
+	    echo " $ppm" >> piano-cmd
 	    sh piano-cmd
 	    rm -f piano-cmd
 	}
@@ -225,10 +232,17 @@ do
 	# Convert final image to desired format and filename
 	echo "Converting to final format..."
 	case "$outfile" in
-	*.png)	convert mkjpg.ppm "$outfile" ;;
-	*.jpg)	cjpeg -progressive -optimize mkjpg.ppm > "$outfile" ;;
+	*.png)	
+		rm -f "$outfile"
+		convert $ppm "$outfile"
+		;;
+	*.jpg)
+		rm -f "$outfile"
+		cjpeg -progressive -optimize $ppm > "$outfile"
+		;;
 	*)	echo "Unknown image suffix in final conversion" 1>&2
-		exit 1 ;;
+		exit 1
+		;;
 	esac
-	rm -f mkjpg.ppm
+	rm -f $ppm
 done
