@@ -69,6 +69,9 @@
      \time 11/16
      \mark \default
      r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. |
+     % [E]
+     \time 6/8
+     R2.*2
   }}}
 
   % Melody
@@ -80,13 +83,16 @@
    \tempo 8=150
    \clef treble
 
+   % Delia writes backward-7 crochet rests and so do we.
+   \override Staff.Rest #'style = #'classical
+
    \relative c'' {
     \new Voice {
      \stemUp
      R2.*4 |
-     r16\f g a b c r r8 aes' des, | g c, r c 8r r |
+     r16\f g a b c r r8 aes' des, | g c, r c r r |
      r16 g   a b c r r8 aes' des, | b'2. |
-     r16 g,  a b c r r8 aes' des, | g c, r c 8r r |
+     r16 g,  a b c r r8 aes' des, | g c, r c r r |
      \time 4/4
      R1*2 |
      \time 11/16
@@ -94,14 +100,17 @@
      { r16 g[ a b c] r r16. c16 r16. r16 } |
      { r16 g[ a b c] r r16. c16 r16. r16 } |
      { r16 g[ a b c] r r16. c16 r16. r16 } |
+     % [E]
+     \time 6/8
+     { r16^"Last time only" g[ a b c] r r8 r4 } |
+     R2.
   }}}
 
-  % Upward rushes
-  % Upward rushes
   \new PianoStaff \with {
    midiInstrument = #"acoustic grand"
    instrumentName = #"Piano"
   } << \new Voice {
+   % Upward rushes
    \time 6/8
    \tempo 8=150
    \clef treble
@@ -123,6 +132,11 @@
      R1*2 |
      \time 11/16
      r4 r4.. | r4 r4.. | r4 r4.. | r4 r4.. \bar ":|"
+     % [E]
+     \mark \default
+     \time 6/8
+     r16 g,, c g' c g' c g,, c g' c g' |
+       c g,, c g' c g' c g,, c g' c g' |
   }}}
 
 
@@ -141,6 +155,9 @@
      \time 11/16
      c8 r c r8. g8 | c8 r c r8. g8 |
      c8 r c r8. g8 | c8 r c r8. g8 |
+     % [E]
+     \time 6/8
+     c r r r r g \bar "|:" c r g c r g \bar ":|"
   }}}
   >>
  >>
@@ -149,8 +166,8 @@
  \midi { }
 }
 
-% Sequence: A B C D - B C D - A B C D - B E - 12 bars of E - B C D - B C - 2 bars of E (fade)
+% Sequence: A B C D - B C D - A B C D - B E - 8 bars of E - B C D - B C - 4 bars of E (fade)
 
 \markup {
- Sequence: \box "A" \box "B" \box "C" \box "D" - \box "B" \box "C" \box "D" - \box "A" \box "B" \box "C" \box "D" - \box "B" \box "E" - 12 bars of \box "E" - \box "B" \box "C" \box "D" - \box "B" \box "C" - 2 bars of \box "E" (fade)
+ Sequence: \box "A" \box "B" \box "C" \box "D" - \box "B" \box "C" \box "D" - \box "A" \box "B" \box "C" \box "D" - \box "B" - 8 bars of \box "E" - \box "B" \box "C" \box "D" - \box "B" \box "C" - 2 bars of \box "E" (fade)
 }
