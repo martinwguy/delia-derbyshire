@@ -5,6 +5,7 @@
 
 \header {
  title = "Moogies Bloogies"
+ tagline = "Scored in LilyPond for piano, flute and piccolo by Martin Guy, September 2015."
  composer = "Delia Derbyshire"
 }
 
@@ -13,7 +14,7 @@
   % Descant
   \new Staff \with {
    midiInstrument = #"flute"
-   % instrumentName = #"Descant"
+   instrumentName = #"Piccolo"
   } {
    \time 6/8
    \tempo 8=150
@@ -73,7 +74,7 @@
   % Melody
   \new Staff \with {
    midiInstrument = #"flute"
-   % instrumentName = #"Melody"
+   instrumentName = #"Flute"
   } {
    \time 6/8
    \tempo 8=150
@@ -98,7 +99,8 @@
   % Upward rushes
   % Upward rushes
   \new PianoStaff \with {
-    midiInstrument = #"acoustic grand"
+   midiInstrument = #"acoustic grand"
+   instrumentName = #"Piano"
   } << \new Voice {
    \time 6/8
    \tempo 8=150
@@ -106,18 +108,17 @@
 
    % Delia writes backward-7 crochet rests and so do we.
    \override Staff.Rest #'style = #'classical
-   %\override Staff.instrumentName = #"Arpeggios"
 
    \relative c'' {
     \new Voice {
      \stemUp
-     r16 \times 8/7 { g64_"Brilliant" d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,64          d' g d' g d' g } r16 r2  |
-     r16 \times 8/7 { g,,,,32         d' g d' g d' g } r16 r4. |
+     r16 \times 8/7 { g64\f   d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,64  d' g d' g d' g } r16 r2  |
+     r16 \times 8/7 { g,,,,32 d' g d' g d' g } r16 r4. |
      R2. \bar "|:"
-     r16 g,,,_"Mellow" c g' c g' c8 r4 | R2. |
-     r16 g,,          c g' c g' c8 r4 | R2. |
-     r16 g,,          c g' c g' c8 r4 | R2. |
+     r16 g,,,\p c g' c g' c8 r4 | R2. |
+     r16 g,,    c g' c g' c8 r4 | R2. |
+     r16 g,,    c g' c g' c8 r4 | R2. |
      \time 4/4
      R1*2 |
      \time 11/16
@@ -126,10 +127,7 @@
 
 
   % Bass
-  \new Voice \with {
-   %Staff.midiInstrument = #"acoustic grand"
-   %Staff.instrumentName = #"Bass"
-  } {
+  \new Voice {
    \time 6/8
    \clef bass
 
@@ -149,4 +147,10 @@
 
  \layout { }
  \midi { }
+}
+
+% Sequence: A B C D - B C D - A B C D - B E - 12 bars of E - B C D - B C - 2 bars of E (fade)
+
+\markup {
+ Sequence: \box "A" \box "B" \box "C" \box "D" - \box "B" \box "C" \box "D" - \box "A" \box "B" \box "C" \box "D" - \box "B" \box "E" - 12 bars of \box "E" - \box "B" \box "C" \box "D" - \box "B" \box "C" - 2 bars of \box "E" (fade)
 }
