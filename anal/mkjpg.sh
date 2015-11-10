@@ -9,14 +9,15 @@
 
 
 # Assign default values to environment variables
+# giving 8x12x9=864 pixels high
 
 : ${SRATE:=44100}
-: ${MIN_FREQ_OUT:=55}	# A(1)
-: ${OCTAVES:=6}		# A(1) to A(7) (3520Hz)
+: ${MIN_FREQ_OUT:=27.5}	# A(0)
+: ${OCTAVES:=9}		# A(0) to A(9) (14080Hz)
 : ${FFTFREQ:=6.250}	# The lowest resolvable frequency and the height of
 			# each frequency band in the linear spectrogram.
-: ${PPSEC:=100}		# Pixel columns per second
-: ${PPSEMI:=16}		# Pixels per semitone
+: ${PPSEC:=50}		# Pixel columns per second
+: ${PPSEMI:=8}		# Pixels per semitone
 : ${DYN_RANGE:=100}	# Amplitude of black in dB under 0
 
 export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
@@ -36,20 +37,16 @@ if [ $# = 0 ]; then
 	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] file.{wav,mpg,ogg,flac} ..."
 	echo "Parameters:"
 	echo "SRATE=44100      Give the sampling rate of the input file (it's not autodetected)"
-	echo "MIN_FREQ_OUT=55  A(1)"
-	echo "OCTAVES=6	       Number of octaves between the bottom and the top frequencies"
-	echo "                 MIN_FREQ_OUT=55 and OCTAVES=6 gives A(1) to A(7) (3520Hz)."
-	echo "PPSEC=100        Pixel columns per second in the output file"
-	echo "PPSEMI=16        Pixels per semitone in the output file"
-	echo "FFTFREQ=6.250    The lowest resolvable frequency and the height of each"
-	echo "                 frequency band in the linear spectrogram."
-	echo "                 Lower values increase frequency resolution but"
-	echo "                 smear the output horizontally while"
+	echo "MIN_FREQ_OUT=27.5 The frequency at the bottom of the graph." 
+	echo "OCTAVES=9	       Number of octaves between the bottom and the top of the graph"
+	echo "                 MIN_FREQ_OUT=27.5 and OCTAVES=9 give A(0) to A(9) (14080Hz)."
+	echo "PPSEC=50         Pixel columns per second in the output file"
+	echo "PPSEMI=8         Pixels per semitone in the output file"
+	echo "FFTFREQ=6.250    The lowest resolvable frequency and the height of each band"
+	echo "                 in the linear spectrogram. Lower values increase frequency"
+	echo "                 resolution but smear the output horizontally while"
 	echo "                 higher values improve the output's temporal definition but"
-	echo "                 decrease the distiction between the lowest frequencies."
-	echo "                 6.250 means that, at the default settings, there is one pixel"
-	echo "                 row in the linear spectrogram for each of the lowest rows"
-	echo "                 in the output."
+	echo "                 decrease the distinction between the lowest frequencies."
 	echo "DYN_RANGE=100    Amplitude of black in the output, in dB below maximum volume,"
 	echo "                 Smaller values brighten the darker areas of the graph."
 	echo "--gray           Make a grayscale spectrogram instead of a color-mapped one."
