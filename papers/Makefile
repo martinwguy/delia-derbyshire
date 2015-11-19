@@ -5,6 +5,3 @@ all: mkthumb.sh mkhtml.sh mkindex.sh header.html footer.html
 	sh mkhtml.sh
 	# Must run mkthumb before mkindex as it measures the thumbnails
 	sh mkindex.sh
-
-upload update: all
-	rsync -av --delete ./ quico:audio/D-D/papers/
