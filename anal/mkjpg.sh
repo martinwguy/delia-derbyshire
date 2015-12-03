@@ -34,11 +34,11 @@ piano=false
 grayscale=
 
 if [ $# = 0 ]; then
-	echo "Usage: [PARAMETERS] ./mkjpg.sh [--thumb] [--piano] file.{wav,mpg,ogg,flac} ..."
+	echo "Usage: [PARAMETERS] ./mkjpg.sh [--options] file.{wav,mpg,ogg,flac} ..."
 	echo "Parameters:"
 	echo "SRATE=44100      Give the sampling rate of the input file (it's not autodetected)"
 	echo "MIN_FREQ_OUT=27.5 The frequency at the bottom of the graph." 
-	echo "OCTAVES=9	       Number of octaves between the bottom and the top of the graph"
+	echo "OCTAVES=9        Number of octaves between the bottom and the top of the graph"
 	echo "                 MIN_FREQ_OUT=27.5 and OCTAVES=9 give A(0) to A(9) (14080Hz)."
 	echo "PPSEC=50         Pixel columns per second in the output file"
 	echo "PPSEMI=8         Pixels per semitone in the output file"
@@ -62,6 +62,9 @@ wav=mkjpg$$.wav
 for a
 do
 	case "$a" in
+	*=*)	eval "$a"
+		continue
+		;;
 	--png)	suffix=png
 		continue
 		;;
