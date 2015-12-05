@@ -18,6 +18,7 @@
 			# each frequency band in the linear spectrogram.
 : ${PPSEC:=50}		# Pixel columns per second
 : ${PPSEMI:=8}		# Pixels per semitone
+# ${PPOCT:=$PPSEMI*12}	# Pixels per octave. If set, overrides PPSEMI.
 : ${DYN_RANGE:=100}	# Amplitude of black in dB under 0
 
 export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
@@ -112,15 +113,19 @@ do
 
 	## Derived constants
 
+	# Pixel rows per octave. They can set PPOCT or PPSEMI.
+	# If PPOCT is set, it overrides PPSEMI, if not, it is
+	# calculated from PPSEMI. Only PPOCT is used below.
 	if [ ! "$PPOCT" ]; then
-		# Pixel rows per octave. They can set PPOCT or PPSEMI.
 		PPOCT=$(expr "$PPSEMI * 12")
+	else
+		PPSEMI=
 	fi
 
 	# The frequency of the top row in the output
 	MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
 
-	# Output N octaves at PPSEMI pixels per semitone
+	# Output N octaves at PPOCT pixels per octave.
 	# Rounding of result to integer is done crudely
 	# by adding 0.5 and dropping all decimals in bc's output
 	LOG_HEIGHT=$(echo "l($MAX_FREQ_OUT/$MIN_FREQ_OUT) / l(2) * $PPOCT + 0.5" | bc -l | sed 's/\..*//')
@@ -141,8 +146,9 @@ do
 	png=/tmp/mkjpg$$.png
 	map=/tmp/mkjpg$$-map.png
 	ppm=/tmp/mkjpg$$.ppm
+	pianocmd=/tmp/piano-cmd$$
 
-	rm -f $png $map $ppm
+	trap "rm -f $wav $png $map $ppm $pianocmd" INT QUIT
 
 	### Turn a WAV into a PPM file
 
@@ -204,14 +210,16 @@ do
 	# at an A.
 	$piano && {
 	    echo "Applying piano lines..."
-	    maxy="$(expr "$PPSEMI" \* "$OCTAVES" \* 12 - 1)"
+	    maxy="$(expr "$PPOCT" \* "$OCTAVES" - 1)"
 	    maxx="$(expr "$(identify -format %w $ppm)" - 1)"
-	    echo -n convert $ppm -strokewidth 1 > piano-cmd
+	    echo -n convert $ppm -strokewidth 1 > $pianocmd
 	    for octave in $(seq 0 "$(expr "$OCTAVES" - 1)")
 	    do
 		for note in $(seq 0 11)
 		do
-		    y="$(expr $maxy - "$PPSEMI" \* \( 12 \* $octave + $note \) )"
+		    #y="$(expr $maxy - "$PPOCT" \*  $octave + $note \) )"
+		    y="$(echo "$maxy - $PPOCT * ($octave + $note / 12) + .5" | \
+			bc -l | sed 's/\..*//' )"
 		    case $note in
 		    0|2|3|5|7|8|10) colour=white ;;
 		    *) colour=black ;;
@@ -221,12 +229,12 @@ do
 		    0-10|1-2|1-5|1-8|2-0) strokewidth=3 ;;
 		    2-7|2-10|3-2|3-5|3-8) strokewidth=3 ;;
 		    esac
-		    echo -n " -stroke $colour -strokewidth $strokewidth -draw \"line 0,$y $maxx,$y\"" >> piano-cmd
+		    echo -n " -stroke $colour -strokewidth $strokewidth -draw \"line 0,$y $maxx,$y\"" >> $pianocmd
 		done
 	    done
-	    echo " $ppm" >> piano-cmd
-	    sh piano-cmd
-	    rm -f piano-cmd
+	    echo " $ppm" >> $pianocmd
+	    . $pianocmd
+	    rm -f $pianocmd
 	}
 
 	# Convert final image to desired format and filename
