@@ -637,7 +637,7 @@ pained expression).
 </P>
 
 <H3>
-<A NAME=FYinT>/</A>
+<A NAME=FYinT></A>
 <A NAME=FrancisYounghusbandInTibet HREF="http://wiki.delia-derbyshire.net/wiki/Francis Younghusband in Tibet">Francis Younghusband in Tibet</A> (April-May 1963)
 </H3>
 <P>
@@ -1180,8 +1180,6 @@ EOT;
 <?php if ($audio) echo <<<EOT
 <BR><A HREF="audio/Delia Derbyshire &amp; Barry Bermange - The Dreams - 4. Sea.mp3">
 MP3@96kbps/44100Hz(6.6MB)</A> from Gnutella
-<BR><A HREF="audio/Delia Derbyshire &amp; Barry Bermange - Dreams - 04 Sea.mp3">
-MP3@128kbps/44100Hz(9.0MB)</A> from d-d.org
 
 EOT;
 ?>
