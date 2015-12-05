@@ -19,13 +19,16 @@ pretend:
 # 4star: www/D-D
 update upload: all
 	rsync -av $(PRETEND) --delete \
-		--exclude .git* \
+		--exclude .git\* \
+		--exclude anal/\*.jpg \
 		--exclude log \
 		--exclude VIDEO \
+		--exclude \*.flac --exclude \*.wav \
 		--exclude rec/TheseHopefulMachines \
 		--partial --inplace \
 		--bwlimit=48 \
 		./ delia-derbyshire.net:audio/D-D/
+
 
 backup:
 	# Back up to fon all except generated files
