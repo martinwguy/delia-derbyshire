@@ -100,13 +100,18 @@ do
 		;;
 	*.flac)	outfile="`basename "$a" .flac`".$suffix
 		rm -f $wav
-		flac -d -o $wav "$a"
+		flac -s -d -o $wav "$a"
+		;;
+	*.m4a)	outfile="`basename "$a" .m4a`".$suffix
+		rm -f $wav
+		MPLAYER_VERBOSE=0 mplayer -quiet --no-consolecontrols \
+			-ao pcm:file=$wav "$a" > /dev/null
 		;;
 	*.wav)	outfile="`basename "$a" .wav`".$suffix
 		rm -f $wav
 		ln -s "$a" $wav
 		;;
-	*)	echo "Eh? Ogg, Flac, MP3 or WAV files only." 1>&2
+	*)	echo "Eh? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
 		exit 1
 		;;
 	esac
@@ -159,8 +164,8 @@ do
 		  bc -l | sed 's/\..*//' )"
 	test "$width" || exit 1
 
-	echo "Producing $width x $LIN_HEIGHT spectrogram for"
-	echo "          $width x $LOG_HEIGHT output"
+	# echo "Producing $width x $LIN_HEIGHT spectrogram for"
+	# echo "          $width x $LOG_HEIGHT output"
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
 		$width $LIN_HEIGHT $png || { rm -f $png; exit 1; }
@@ -194,7 +199,7 @@ do
 		$map || { rm -f $png $map; exit 1; }
 
 	# Now apply the displacement map
-	echo "Distorting Y axis..."
+	# echo "Distorting Y axis..."
 	convert \
 		-size "$width"x$LOG_HEIGHT xc: \
 		$png $map \
@@ -240,7 +245,7 @@ do
 	}
 
 	# Convert final image to desired format and filename
-	echo "Converting to final format..."
+	#echo "Converting to final format..."
 	case "$outfile" in
 	*.png)	
 		rm -f "$outfile"
