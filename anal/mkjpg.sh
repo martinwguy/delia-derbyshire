@@ -6,6 +6,9 @@
 #
 # Dumps the spectrograms into the current directory with the same name
 # as the audio files, with "mp3" (or whatever) replaced by ".jpg" (or ".png")
+#
+#	Martin Guy <martinwguy@gmail.com>, August 2012 - January 2016
+#	for http://wikidelia.net
 
 
 # Assign default values to environment variables
