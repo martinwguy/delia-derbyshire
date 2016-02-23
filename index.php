@@ -39,7 +39,7 @@ An audiological chronology
 <P ALIGN=CENTER>
 Version 2.34<?php if ($audio) echo "a"; ?>, ?? October 2013<BR>
 (<A HREF="changelog.html">what's new?</A>)
-<BR>The <A HREF="http://wiki.delia-derbyshire.net">wikidelia</A> is new!
+<BR>The <A HREF="http://wikidelia.net">wikidelia</A> is new!
 </P>
 
 <TABLE WIDTH="100%" BORDER=0>
