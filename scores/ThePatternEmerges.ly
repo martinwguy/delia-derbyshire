@@ -8,6 +8,7 @@
 \header {
  title = "The Pattern Emerges"
  composer = "Delia Derbyshire"
+ tagline = "Scored and typeset by Martin Guy <martinwguy@gmail.com> in July 2012 using LilyPond"
 }
 
 % We divide the piece into three staves: the melody, the accompanying chords
