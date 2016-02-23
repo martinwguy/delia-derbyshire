@@ -20,11 +20,13 @@ pretend:
 update upload: all
 	rsync -av $(PRETEND) --delete \
 		--exclude .git\* \
-		--exclude anal/\*.jpg \
+		--exclude anal/\*.jpg anal/\*.png anal/\*.wav \
 		--exclude log \
+		--exclude scores/doc \
 		--exclude VIDEO \
 		--exclude \*.flac --exclude \*.wav \
 		--exclude rec/TheseHopefulMachines \
+		--exclude rec/\*.mp3 \
 		--partial --inplace \
 		--bwlimit=48 \
 		./ delia-derbyshire.net:audio/D-D/
