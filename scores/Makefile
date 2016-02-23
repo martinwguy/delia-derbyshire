@@ -18,6 +18,7 @@ all: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	Clothes.pdf \
 	FreshAire.pdf \
 	MoogiesBloogies.pdf \
+	PseudoFolk.pdf \
 	ScienceAndHealth.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
 
