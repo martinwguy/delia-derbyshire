@@ -37,6 +37,9 @@ piano=false
 # grayscale=--gray-scale
 grayscale=
 
+# Whistle while we work?
+verbose=false
+
 if [ $# = 0 ]; then
 	echo "Usage: ./mkjpg.sh [PARAMETERS] [--options] file.{wav,mp3,ogg,flac} ..."
 	echo "Parameters:"
@@ -60,6 +63,7 @@ if [ $# = 0 ]; then
 	echo "                 the position of conventional keyboard tuned to A=440Hz."
 	echo "--png            Output a PNG file instead of a JPEG."
 	echo "--thumb          Give a thumbnail version, 1/8th of default size."
+	echo "-v               Verbose mode."
 	exit 1
 fi
 
@@ -89,8 +93,11 @@ do
 		grayscale=--gray-scale
 		continue
 		;;
-	-*)	echo "Usage: $0 [--png] file.{ogg,mp3,wav}" 1>&2
-		echo "--png: Leave a png file, not a jpg" 1>&2
+	--verbose|-v)
+		verbose=true
+		continue
+		;;
+	-*)	exec $0
 		exit 1
 		;;
 	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
@@ -167,8 +174,10 @@ do
 		  bc -l | sed 's/\..*//' )"
 	test "$width" || exit 1
 
-	# echo "Producing $width x $LIN_HEIGHT spectrogram for"
-	# echo "          $width x $LOG_HEIGHT output"
+	$verbose && {
+		echo "Producing $width x $LIN_HEIGHT spectrogram for"
+		echo "          $width x $LOG_HEIGHT output"
+	}
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
 		$width $LIN_HEIGHT $png || { rm -f $png; exit 1; }
