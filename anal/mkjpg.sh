@@ -17,7 +17,7 @@
 : ${SRATE:=44100}
 : ${MIN_FREQ_OUT:=27.5}	# A(0)
 : ${OCTAVES:=9}		# A(0) to A(9) (14080Hz)
-: ${FFTFREQ:=6.250}	# The lowest resolvable frequency and the height of
+: ${FFTFREQ:=3.125}	# The lowest resolvable frequency and the height of
 			# each frequency band in the linear spectrogram.
 : ${PPSEC:=50}		# Pixel columns per second
 : ${PPSEMI:=8}		# Pixels per semitone
@@ -51,7 +51,7 @@ if [ $# = 0 ]; then
 	echo "                 MIN_FREQ_OUT=27.5 and OCTAVES=9 give A(0) to A(9) (14080Hz)."
 	echo "PPSEC=50         Pixel columns per second in the output file"
 	echo "PPSEMI=8         Pixels per semitone in the output file"
-	echo "FFTFREQ=6.250    The lowest resolvable frequency and the height of each band"
+	echo "FFTFREQ=3.125    The lowest resolvable frequency and the height of each band"
 	echo "                 in the linear spectrogram. Lower values increase frequency"
 	echo "                 resolution but smear the output horizontally while"
 	echo "                 higher values improve the output's temporal definition but"
@@ -147,9 +147,10 @@ do
 	# by adding 0.5 and dropping all decimals in bc's output
 	LOG_HEIGHT=$(echo "l($MAX_FREQ_OUT/$MIN_FREQ_OUT) / l(2) * $PPOCT + 0.5" | bc -l | sed 's/\..*//')
 
-	# LIN_HEIGHT is also the FFT size, which determines the
-	# time and frequency resolutions.
-	LIN_HEIGHT=$(echo "$SRATE / $FFTFREQ + 0.5" | bc -l | sed 's/\..*//')
+	# LIN_HEIGHT is the height of the graphic, which is half the FFT size
+	# hence half the lowest resolvable frequency/spacing of frequency bands.
+	# which determines the time and frequency resolutions.
+	LIN_HEIGHT=$(echo "$SRATE / $FFTFREQ / 2 + 0.5" | bc -l | sed 's/\..*//')
 
 	MAX_FREQ_IN=$(expr $SRATE / 2)
 	MAX_Y_IN=$(expr $LIN_HEIGHT - 1)
