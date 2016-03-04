@@ -106,7 +106,7 @@ do
 		;;
 	*.mp3)	outfile="`basename "$a" .mp3`".$suffix
 		rm -f $wav
-		sox "$a" $wav
+		lame --quiet --decode "$a" $wav
 		;;
 	*.flac)	outfile="`basename "$a" .flac`".$suffix
 		rm -f $wav
