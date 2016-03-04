@@ -134,7 +134,7 @@ do
 	# If PPOCT is set, it overrides PPSEMI, if not, it is
 	# calculated from PPSEMI. Only PPOCT is used below.
 	if [ ! "$PPOCT" ]; then
-		PPOCT=$(expr "$PPSEMI * 12")
+		PPOCT=$(expr "$PPSEMI" \* 12)
 	else
 		PPSEMI=
 	fi
