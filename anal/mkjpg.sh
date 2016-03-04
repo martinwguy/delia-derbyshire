@@ -159,14 +159,13 @@ do
 	# Temporary files:
 	# $png - the linear frequency axis spectrogram
 	# $map - the distortion map used to make the log freq graph from $png
-	# $ppm - the log-frequency-axis output file which we then convert into
+	# $png - the log-frequency-axis output file which we then convert into
 	#	 jpg or png as requested.
 	png=/tmp/mkjpg$$.png
 	map=/tmp/mkjpg$$-map.png
-	ppm=/tmp/mkjpg$$.ppm
 	pianocmd=/tmp/piano-cmd$$
 
-	trap "rm -f $wav $png $map $ppm $pianocmd" INT QUIT
+	trap "rm -f $wav $png $map $pianocmd" INT QUIT
 
 	### Turn a WAV into a PPM file
 
@@ -179,10 +178,20 @@ do
 		echo "Producing $width x $LIN_HEIGHT spectrogram for"
 		echo "          $width x $LOG_HEIGHT output"
 	}
+
+    if sndfile-spectrogram | grep -q log-freq ; then
+	# Use built-in log frequency axis if sndfile-spectrogram has it
+	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
+		--log-freq --min-freq=$MIN_FREQ_OUT --max-freq=$MAX_FREQ_OUT \
+		--fft-freq="$FFTFREQ" \
+		$wav \
+		$width $LOG_HEIGHT $png || { rm -f $png; exit 1; }
+	rm -f $wav
+    else
+	# If not, do a linear spectrogram and distort it
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
 		$width $LIN_HEIGHT $png || { rm -f $png; exit 1; }
-
 	rm -f $wav
 
 	# Make a displacement map to distort the Y axis with.
@@ -219,9 +228,8 @@ do
 		-virtual-pixel White \
 		-interpolate Mesh \
 		-fx "v.p{i,u[2] * $LIN_HEIGHT}" \
-		$ppm || { rm -f $png $map $ppm; exit 1; }
-
-	rm -f $png $map
+		$png || { rm -f $png $map; exit 1; }
+    fi
 
 	### Here endeth what used to be a Makefile
 
@@ -231,8 +239,8 @@ do
 	$piano && {
 	    echo "Applying piano lines..."
 	    maxy="$(expr "$PPOCT" \* "$OCTAVES" - 1)"
-	    maxx="$(expr "$(identify -format %w $ppm)" - 1)"
-	    echo -n convert $ppm -strokewidth 1 > $pianocmd
+	    maxx="$(expr "$(identify -format %w $png)" - 1)"
+	    echo -n convert $png -strokewidth 1 > $pianocmd
 	    for octave in $(seq 0 "$(expr "$OCTAVES" - 1)")
 	    do
 		for note in $(seq 0 11)
@@ -252,7 +260,7 @@ do
 		    echo -n " -stroke $colour -strokewidth $strokewidth -draw \"line 0,$y $maxx,$y\"" >> $pianocmd
 		done
 	    done
-	    echo " $ppm" >> $pianocmd
+	    echo " $png" >> $pianocmd
 	    . $pianocmd
 	    rm -f $pianocmd
 	}
@@ -262,15 +270,14 @@ do
 	case "$outfile" in
 	*.png)	
 		rm -f "$outfile"
-		convert $ppm "$outfile"
+		mv $png "$outfile"
 		;;
 	*.jpg)
 		rm -f "$outfile"
-		cjpeg -progressive -optimize $ppm > "$outfile"
+		convert $png "$outfile"
 		;;
 	*)	echo "Unknown image suffix in final conversion" 1>&2
 		exit 1
 		;;
 	esac
-	rm -f $ppm
 done
