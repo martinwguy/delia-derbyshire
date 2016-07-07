@@ -114,7 +114,7 @@ do
 		;;
 	*.m4a)	outfile="`basename "$a" .m4a`".$suffix
 		rm -f $wav
-		MPLAYER_VERBOSE=0 mplayer -quiet --no-consolecontrols \
+		MPLAYER_VERBOSE=0 mplayer -quiet -noconsolecontrols \
 			-ao pcm:file=$wav "$a" > /dev/null
 		;;
 	*.wav)	outfile="`basename "$a" .wav`".$suffix
@@ -185,13 +185,13 @@ do
 		--log-freq --min-freq=$MIN_FREQ_OUT --max-freq=$MAX_FREQ_OUT \
 		--fft-freq="$FFTFREQ" \
 		$wav \
-		$width $LOG_HEIGHT $png || { rm -f $png; exit 1; }
+		$width $LOG_HEIGHT $png || { rm -f $wav $png; exit 1; }
 	rm -f $wav
     else
 	# If not, do a linear spectrogram and distort it
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
-		$width $LIN_HEIGHT $png || { rm -f $png; exit 1; }
+		$width $LIN_HEIGHT $png || { rm -f $wav $png; exit 1; }
 	rm -f $wav
 
 	# Make a displacement map to distort the Y axis with.
@@ -274,6 +274,7 @@ do
 		;;
 	*.jpg)
 		rm -f "$outfile"
+		pngtopnm $png | cjpeg -quality 85 -dct float -optimize -progressive > "$outfile" || \
 		convert $png "$outfile"
 		;;
 	*)	echo "Unknown image suffix in final conversion" 1>&2
