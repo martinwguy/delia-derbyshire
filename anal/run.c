@@ -133,13 +133,6 @@ main(int argc, char **argv)
 
     init_scale(scaledata, scaleheight, dbmin, dbmax);
 
-    /* See if every color in the graph is represented in the scale */
-    {   int x, y;
-	for (x=0; x<graphwidth; x++)
-	    for (y=0; y<graphheight; y++)
-		color2amp(&graphdata[y][x*3], x, y);
-    }
-
     /* We have graphwidth columns of input, each representing a fraction of
      * a second of audio. We do an inverse FFT with a window length twice
      * the size of this fraction then add it to the audio output using a
@@ -472,8 +465,10 @@ color2amp(png_byte *px, int x, int y)
 	}
     }
     if (best_entry != -1) {
-        fprintf(stderr, "%s: Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u).\n",
-    	    progname, px[0], px[1], px[2], x, y,
+	/* Complain if it differs by more than three hue values */
+	if (sqrt(best_distance) > 3.0)
+        fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u).\n",
+	    px[0], px[1], px[2], x, y,
 	    scale[best_entry].colors[0],
 	    scale[best_entry].colors[1],
 	    scale[best_entry].colors[2]);
