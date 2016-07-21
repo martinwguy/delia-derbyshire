@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>	/* for memset() */
+#include <ctype.h>	/* for isdigit() */
 #include <png.h>
 #include <fftw3.h>
 #include <sndfile.h>
@@ -52,6 +53,12 @@ static void oom();	/* Out of memory handler */
 /* Local data */
 static char *progname;
 
+#ifdef PARTIALS
+/* Debugging flag --partials outputs audio for each pixel column
+ * into separate audio files */
+static int partials = 0;
+#endif
+
 void
 main(int argc, char **argv)
 {
@@ -63,6 +70,21 @@ main(int argc, char **argv)
     long graphwidth, graphheight, scaleheight;
 
     progname = argv[0];
+
+    while (argc > 1 && argv[1][0] == '-') {
+	/* Stop if we're at the negative numeric arguments */
+        if (isdigit(argv[1][1])) break;
+#ifdef PARTIALS
+	if (strcmp(argv[1], "--partials") == 0)
+	    partials = 1;
+	else
+#endif
+	{
+	    fprintf(stderr, "Unknown flag '%s'.\n", argv[1]);
+	    exit(1);
+        }
+	argv++; argc--;
+    }
 
     if (argc != 8) {
 	fprintf(stderr, "Usage: %s dbmin dbmax fmin fmax duration graph.png scale.png\n", progname);
@@ -140,9 +162,6 @@ main(int argc, char **argv)
     double column_interval = duration / (double)graphwidth;
     int fft_size = lrint(column_interval * samplerate * 2);
 
-fprintf(stderr, "column interval = %g seconds\n", column_interval);
-fprintf(stderr, "FFT size = %d\n", fft_size);
-
     /* Allocate the audio in memory, all initialised to zero. */
     unsigned long audiosamples = ceil(duration * samplerate + fft_size/2.0);
     float *audio = calloc(audiosamples, sizeof(float)); /* Fills with 0s */
@@ -180,16 +199,19 @@ fprintf(stderr, "FFT size = %d\n", fft_size);
 	    /* What frequency does this row represent?
 	     * At y=0, the frequency is fmax. At y=graphheight-1, freq=fmin.
 	     */
-	    double freq = fmax - (fmax-fmin) * ((double)y / (graphheight-1));
+	    double freq = fmax - (fmax-fmin) * ((double)y / (graphheight-1));;
 	    /* The iFFT input from [0] to [(n/2)+1] represents 0Hz to nyquist,
-	     * both of the endpoints being real. */
+	     * both of the endpoints being purely real. */
 	    int fftindex = lrint(freq * (fft_size/2+1) / (samplerate/2));
+	    /* What frequency does that really give us? */
+	    double fftfreq = (double)fftindex * (samplerate/2) / (fft_size/2+1);
 	    /* Phase is chosen in such a way that the sine wave output from a
 	     * single bin is in phase with its output in the following bin.
 	     * Phase for a bin at f Hz at time t seconds is t*f* 2 PI radians.
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
-	    double phase = time * freq * 2.0 * M_PI;
+	    double phase = time * fftfreq * 2.0 * M_PI;
+
 	    in[fftindex][0] += amp * cos(phase); /* real */
 	    in[fftindex][1] += amp * sin(phase); /* imaginary */
         }
@@ -199,10 +221,31 @@ fprintf(stderr, "FFT size = %d\n", fft_size);
 	/* Now out[0..fft_size-1] represent the audio for one frame.
 	 * Add this to the audio through the window
 	 */
-	/* Where do we start wrting in the output array? */
-	float *audio_start = &(audio[lrint(time * samplerate)]);
-	for (y=0; y<fft_size-1; y++)
-		audio_start[y] += out[y] * hann_window[y];
+	/* Where do we start writing in the output array? */
+	{
+	    float *audio_start = &(audio[lrint(time * samplerate)]);
+	    for (y=0; y<fft_size-1; y++)
+		/* A 0dB single point gives output from -2 to +2.
+		 * I have no idea why; it should be from -1 to +1.
+		 * We compensate by dividing it by 2!
+		 */
+		audio_start[y] += out[y] * hann_window[y] / 2;
+	}
+#ifdef PARTIALS
+	if (partials) {
+	    static unsigned partial_number;
+	if (partial_number < 10) {
+	    char filename[16];
+	    float *partial = calloc(audiosamples, sizeof(float));
+	    float *audio_start = &(partial[lrint(time * samplerate)]);
+	    for (y=0; y<fft_size-1; y++)
+		audio_start[y] += out[y] * hann_window[y] / 2;
+	    sprintf(filename, "partial-%03u.wav", partial_number++);
+	    write_audio(partial, audiosamples, samplerate, filename);
+	    free(partial);
+	}
+	}
+#endif
     }
 
     write_audio(audio, audiosamples, samplerate, "audio.wav");
@@ -468,7 +511,7 @@ write_audio(float *audio, sf_count_t audiosamples, int samplerate, char *filenam
     sfinfo.frames = audiosamples;
     sfinfo.samplerate = samplerate;
     sfinfo.channels = 1;
-    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
     sndfile = sf_open(filename, SFM_WRITE, &sfinfo);
     if (!sndfile) {
 	fprintf(stderr, "%s: Failed to create audio file %s: %s\n",
