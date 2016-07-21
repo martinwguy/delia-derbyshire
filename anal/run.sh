@@ -28,8 +28,11 @@ do
     # Measure the total size of the graphic in pixels.
     # width includes the width of the legend area on the left while the
     # height of the image is the same as the height of the graph data.
-    width=`identify "$filename" | sed 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\1/'`
-    height=`identify "$filename" | sed 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\2/'`
+    width=`identify "$filename" | sed -n 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\1/p'`
+    test "$width" || exit 1
+echo "[$width]"
+    height=`identify "$filename" | sed -n 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\2/p'`
+    test "$height" || exit 1
 
     # Extract frequency scale
     convert "$filename" -crop 1x`expr $height - 39 - 20`+32+39 scale$$.png
