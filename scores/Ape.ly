@@ -1,6 +1,6 @@
-% Notation for score from Delia Derbyshire's papers "Music To Undress To",
-% http://delia-derbyshire.net/papers/html/dd155635.html
-
+% Reconstruction of one of Delia Derbyshire's themes for "Ape and Essence"
+% from manuscript score in her papers.
+% See http://wikidelia.net/wiki/Ape and Essence
 \version "2.12.3"
 
 \header {
