@@ -11,15 +11,21 @@
 
 set -e		# Exit if anything fails unexpectedly
 
+# Offset of spectrogram graphic in image file (= width of left panel)
+groffset=91
+
 (
     #echo -n "-56 -7 11 6808 30 240 "
     #echo "Fig IV.3 CDD-1-3-5 0'32\"-4'32\" Lowell.png"
 
-    echo -n "-67 -9 46 3515 20 90 "
+    echo -n "-67 -9 46 3515 20 100 "
     echo "Fig III.7 CDD-1-7-68 1'21\"-2'51\" Pot Au Feu early version.png"
 
     #echo -n "-73 -13 16 6809 30 60 "
     #echo "test-image.png"
+
+    #echo -n "-73 -0 16 6809 30 10 "
+    #echo "test.png"
 
 ) | while read dbmin dbmax fmin fmax fmaxat duration filename
 do
@@ -35,7 +41,7 @@ do
     convert "$filename" -crop 1x`expr $height - 39 - 20`+32+39 scale$$.png
 
     # Extract raw spectrogram
-    convert "$filename" -crop `expr $width - 91`x$height+91+0 graph$$.png
+    convert "$filename" -crop `expr $width - $groffset`x$height+${groffset}+0 graph$$.png
 
     # Figure out the frequency represented by the top row of pixels.
     # In the Percival spectrograms, the frequency represented by the bottom row
