@@ -19,6 +19,7 @@ pdf: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	Ape.pdf \
 	ApeHuntGroupA.pdf \
 	Arctic.pdf \
+	BusyMicrobes.pdf \
 	Clothes.pdf \
 	FreshAire.pdf \
 	MoogiesBloogies.pdf \
@@ -32,6 +33,7 @@ ogg: LePontMirabeau.ogg MusicToUndressTo.ogg \
 	Ape.ogg \
 	ApeHuntGroupA.ogg \
 	Arctic.ogg \
+	BusyMicrobes.ogg \
 	Clothes.ogg \
 	FreshAire.ogg \
 	MoogiesBloogies.ogg \
