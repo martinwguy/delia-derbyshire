@@ -20,7 +20,7 @@
  *		Time on the x-axis, frequency on the y-axis.
  *	scale.png		Color scale
  *		A one-pixel-wide vertical stripe giving the colors for the
- *		range of db values. THe top pixel represents dbmax, the bottom
+ *		range of db values. The top pixel represents dbmax, the bottom
  *		one dbmin and the values in between are assumed to be linearly
  *		spaced. It is OK for several adjacent pixels in the scale to be
  *		of the same tint: the program will assign the middle value of
@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>	/* for memset() */
+#include <ctype.h>	/* for isdigit() */
 #include <png.h>
 #include <fftw3.h>
 #include <sndfile.h>
@@ -46,11 +47,17 @@ static void
 static double color2amp(png_byte *px, int x, int y);
 static void calc_hann_window (double * data, int datalen);
 static void write_audio(float *audio, sf_count_t audiosamples,
-			int samplerate, char *filename);
+			int samplerate, char *filename, int normalize);
 static void oom();	/* Out of memory handler */
 
 /* Local data */
 static char *progname;
+
+#ifdef PARTIALS
+/* Debugging flag --partials outputs audio for each pixel column
+ * into separate audio files */
+static int partials = 0;
+#endif
 
 void
 main(int argc, char **argv)
@@ -63,6 +70,21 @@ main(int argc, char **argv)
     long graphwidth, graphheight, scaleheight;
 
     progname = argv[0];
+
+    while (argc > 1 && argv[1][0] == '-') {
+	/* Stop if we're at the negative numeric arguments */
+        if (isdigit(argv[1][1])) break;
+#ifdef PARTIALS
+	if (strcmp(argv[1], "--partials") == 0)
+	    partials = 1;
+	else
+#endif
+	{
+	    fprintf(stderr, "Unknown flag '%s'.\n", argv[1]);
+	    exit(1);
+        }
+	argv++; argc--;
+    }
 
     if (argc != 8) {
 	fprintf(stderr, "Usage: %s dbmin dbmax fmin fmax duration graph.png scale.png\n", progname);
@@ -172,16 +194,23 @@ main(int argc, char **argv)
 	    /* What frequency does this row represent?
 	     * At y=0, the frequency is fmax. At y=graphheight-1, freq=fmin.
 	     */
-	    double freq = fmax - (fmax-fmin) * ((double)y / (graphheight-1));
+	    double freq = fmax - (fmax-fmin) * ((double)y / (graphheight-1));;
 	    /* The iFFT input from [0] to [(n/2)+1] represents 0Hz to nyquist,
-	     * both of the endpoints being real. */
+	     * both of the endpoints being purely real. */
 	    int fftindex = lrint(freq * (fft_size/2+1) / (samplerate/2));
+	    /* What frequency does that bin really represent? */
+	    double fftfreq = (double)fftindex * (samplerate/2) / (fft_size/2+1);
 	    /* Phase is chosen in such a way that the sine wave output from a
-	     * single bin is in phase with its output in the following bin.
-	     * Phase for a bin at f Hz at time t seconds is t*f* 2 PI radians.
+	     * single bin is in phase with its output from the same bin in the
+	     * all the other frames.
+	     * Phase for a bin at fHz at time t seconds is t * f * 2 PI radians.
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
-	    double phase = time * freq * 2.0 * M_PI;
+	    double phase = time * fftfreq * 2.0 * M_PI;
+	    phase=0; /* Phase correction makes every other partial overflow */
+
+	    in[fftindex][0] += amp * sin(phase); /* real */
+	    in[fftindex][1] += amp * cos(phase); /* imaginary */
         }
 
 	fftw_execute(p);
@@ -190,12 +219,33 @@ main(int argc, char **argv)
 	 * Add this to the audio through the window
 	 */
 	/* Where do we start writing in the output array? */
-	float *audio_start = &(audio[lrint(time * samplerate)]);
-	for (y=0; y<fft_size-1; y++)
-		audio_start[y] += out[y] * hann_window[y];
+	{
+	    float *audio_start = &(audio[lrint(time * samplerate)]);
+	    for (y=0; y<fft_size-1; y++)
+		/* A 0dB single point gives output from -2 to +2.
+		 * I have no idea why; it should be from -1 to +1.
+		 * We compensate by dividing it by 2!
+		 */
+		audio_start[y] += out[y] * hann_window[y] / 2;
+	}
+#ifdef PARTIALS
+	if (partials) {
+	    static unsigned partial_number;
+	if (partial_number < 10) {
+	    char filename[16];
+	    float *partial = calloc(audiosamples, sizeof(float));
+	    float *audio_start = &(partial[lrint(time * samplerate)]);
+	    for (y=0; y<fft_size-1; y++)
+		audio_start[y] += out[y] * hann_window[y] / 2;
+	    sprintf(filename, "partial-%03u.wav", partial_number++);
+	    write_audio(partial, audiosamples, samplerate, filename, 0);
+	    free(partial);
+	}
+	}
+#endif
     }
 
-    write_audio(audio, audiosamples, samplerate, "audio.wav");
+    write_audio(audio, audiosamples, samplerate, "audio.wav", 1);
 
     exit(0);
 }
@@ -351,16 +401,6 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
      */
     scale[0].db = dbmax;
     scale[0].amp = db2amp(dbmax);
-
-#if 0
-    for (entry=0; entry < scaleitems; entry++) {
-        fprintf(stderr, "(%u,%u,%u)=%g\n",
-		scale[entry].colors[0],
-		scale[entry].colors[1],
-		scale[entry].colors[2],
-		scale[entry].db);
-    }
-#endif
 }
 
 /* Map a color to its corresponding amplitude value.
@@ -428,8 +468,10 @@ color2amp(png_byte *px, int x, int y)
 	}
     }
     if (best_entry != -1) {
-        fprintf(stderr, "%s: Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u).\n",
-    	    progname, px[0], px[1], px[2], x, y,
+	/* Complain if it differs by more than three hue values */
+	if (sqrt(best_distance) > 3.0)
+        fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u).\n",
+	    px[0], px[1], px[2], x, y,
 	    scale[best_entry].colors[0],
 	    scale[best_entry].colors[1],
 	    scale[best_entry].colors[2]);
@@ -461,7 +503,8 @@ calc_hann_window (double * data, int datalen)
 }
 
 static void
-write_audio(float *audio, sf_count_t audiosamples, int samplerate, char *filename)
+write_audio(float *audio, sf_count_t audiosamples, int samplerate,
+	    char *filename, int normalize)
 {
     SF_INFO sfinfo;
     SNDFILE *sndfile;
@@ -469,13 +512,26 @@ write_audio(float *audio, sf_count_t audiosamples, int samplerate, char *filenam
     sfinfo.frames = audiosamples;
     sfinfo.samplerate = samplerate;
     sfinfo.channels = 1;
-    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
     sndfile = sf_open(filename, SFM_WRITE, &sfinfo);
     if (!sndfile) {
 	fprintf(stderr, "%s: Failed to create audio file %s: %s\n",
 		progname, filename, sf_strerror(NULL));
 	exit(1);
     }
+
+    /* Fix volume so that maximum amplitude is +- 1.0 */
+    if (normalize) {
+	float maxamp = 0.0;
+	sf_count_t x;
+	for (x=0; x < audiosamples; x++)
+	    if (fabsf(audio[x]) > maxamp)
+		maxamp = fabsf(audio[x]);
+	if (maxamp > 0.0)
+	    for (x=0; x < audiosamples; x++)
+	        audio[x] /= maxamp;
+    }
+
     if (sf_write_float(sndfile, audio, audiosamples) != audiosamples) {
 	fprintf(stderr, "%s: Error writing audio file: %s\n",
 		progname, sf_strerror(NULL));
