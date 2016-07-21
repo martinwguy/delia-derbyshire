@@ -47,7 +47,7 @@ static void
 static double color2amp(png_byte *px, int x, int y);
 static void calc_hann_window (double * data, int datalen);
 static void write_audio(float *audio, sf_count_t audiosamples,
-			int samplerate, char *filename);
+			int samplerate, char *filename, int normalize);
 static void oom();	/* Out of memory handler */
 
 /* Local data */
@@ -236,14 +236,14 @@ main(int argc, char **argv)
 	    for (y=0; y<fft_size-1; y++)
 		audio_start[y] += out[y] * hann_window[y] / 2;
 	    sprintf(filename, "partial-%03u.wav", partial_number++);
-	    write_audio(partial, audiosamples, samplerate, filename);
+	    write_audio(partial, audiosamples, samplerate, filename, 0);
 	    free(partial);
 	}
 	}
 #endif
     }
 
-    write_audio(audio, audiosamples, samplerate, "audio.wav");
+    write_audio(audio, audiosamples, samplerate, "audio.wav", 1);
 
     exit(0);
 }
@@ -500,7 +500,8 @@ calc_hann_window (double * data, int datalen)
 }
 
 static void
-write_audio(float *audio, sf_count_t audiosamples, int samplerate, char *filename)
+write_audio(float *audio, sf_count_t audiosamples, int samplerate,
+	    char *filename, int normalize)
 {
     SF_INFO sfinfo;
     SNDFILE *sndfile;
@@ -515,6 +516,19 @@ write_audio(float *audio, sf_count_t audiosamples, int samplerate, char *filenam
 		progname, filename, sf_strerror(NULL));
 	exit(1);
     }
+
+    /* Fix volume so that maximum amplitude is +- 1.0 */
+    if (normalize) {
+	float maxamp = 0.0;
+	sf_count_t x;
+	for (x=0; x < audiosamples; x++)
+	    if (fabsf(audio[x]) > maxamp)
+		maxamp = fabsf(audio[x]);
+	if (maxamp > 0.0)
+	    for (x=0; x < audiosamples; x++)
+	        audio[x] /= maxamp;
+    }
+
     if (sf_write_float(sndfile, audio, audiosamples) != audiosamples) {
 	fprintf(stderr, "%s: Error writing audio file: %s\n",
 		progname, sf_strerror(NULL));
