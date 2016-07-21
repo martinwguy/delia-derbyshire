@@ -189,7 +189,7 @@ main(int argc, char **argv)
 	/* Now out[0..fft_size-1] represent the audio for one frame.
 	 * Add this to the audio through the window
 	 */
-	/* Where do we start wrting in the output array? */
+	/* Where do we start writing in the output array? */
 	float *audio_start = &(audio[lrint(time * samplerate)]);
 	for (y=0; y<fft_size-1; y++)
 		audio_start[y] += out[y] * hann_window[y];
@@ -233,7 +233,7 @@ read_png(char *filename, png_structp *pngp, png_infop *infop, char *type)
     /* Extra stuff from https://gist.github.com/niw/5963798
      * to convert other image types to RGB */
     if (png_get_bit_depth(png, info) == 16) {
-	fprintf(stderr, "%s: Warning: truncating 16-bit %s to 8-bit depth.\n", progname, type);
+	fprintf(stderr, "%s: Truncating 16-bit %s to 8-bit depth.\n", progname, type);
 #if PNG_LIBPNG_VER >= 10504
 	png_set_scale_16(png);
 #else
@@ -396,7 +396,7 @@ color2amp(png_byte *px, int x, int y)
 			            (scale[0].colors[0] - scale[1].colors[0]);
 	double db = scale[0].db + extra_red * db_per_unit_of_red;
 
-        fprintf(stderr, "%s: Warning: Color (%u,%u,%u) at (%d,%d) is off the scale. Using %g dB.\n",
+        fprintf(stderr, "%s: Color (%u,%u,%u) at (%d,%d) is off the scale. Using %g dB.\n",
 	        progname, px[0], px[1], px[2], x, y, db);
 
         /* Add it to the mapping table */
