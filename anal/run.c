@@ -20,7 +20,7 @@
  *		Time on the x-axis, frequency on the y-axis.
  *	scale.png		Color scale
  *		A one-pixel-wide vertical stripe giving the colors for the
- *		range of db values. THe top pixel represents dbmax, the bottom
+ *		range of db values. The top pixel represents dbmax, the bottom
  *		one dbmin and the values in between are assumed to be linearly
  *		spaced. It is OK for several adjacent pixels in the scale to be
  *		of the same tint: the program will assign the middle value of
@@ -203,17 +203,19 @@ main(int argc, char **argv)
 	    /* The iFFT input from [0] to [(n/2)+1] represents 0Hz to nyquist,
 	     * both of the endpoints being purely real. */
 	    int fftindex = lrint(freq * (fft_size/2+1) / (samplerate/2));
-	    /* What frequency does that really give us? */
+	    /* What frequency does that bin really represent? */
 	    double fftfreq = (double)fftindex * (samplerate/2) / (fft_size/2+1);
 	    /* Phase is chosen in such a way that the sine wave output from a
-	     * single bin is in phase with its output in the following bin.
-	     * Phase for a bin at f Hz at time t seconds is t*f* 2 PI radians.
+	     * single bin is in phase with its output from the same bin in the
+	     * all the other frames.
+	     * Phase for a bin at fHz at time t seconds is t * f * 2 PI radians.
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
 	    double phase = time * fftfreq * 2.0 * M_PI;
+	    phase=0; /* Phase correction makes every other partial overflow */
 
-	    in[fftindex][0] += amp * cos(phase); /* real */
-	    in[fftindex][1] += amp * sin(phase); /* imaginary */
+	    in[fftindex][0] += amp * sin(phase); /* real */
+	    in[fftindex][1] += amp * cos(phase); /* imaginary */
         }
 
 	fftw_execute(p);
