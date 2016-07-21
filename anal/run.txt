@@ -1,0 +1,94 @@
+Convert spectrograms into best approximation of original audio.
+
+takes:
+	image filename
+	two points indicating start and end of colour scale
+	two values in -dB for the endpoints of the colours scale
+		(or take range and normalise maximum to 0dB?)
+	minx maxx miny and maxy of the spectrogram area
+	length of the clip in seconds
+	minimum Y frequency and hertz-per-pixel-step
+then
+	extract the colour scale and make some kind of reverse mapper to db
+	reverse FFT each pixel column (with what window size?)
+	reconstruct audio by fading between FFT outputs
+
+e.g. Lowell from James Percival's thesis
+Using coordinate system of (0,0) at top left
+	colour scale runs from -7 to -56dB at (29-41(say 32), 39-602)
+	    and bands of 3 or 4 pixels have the same colour.
+	graph is from (91,0) to (1013,622): entire image minus leftmost 91 pix)
+	frequency scale is from 11Hz at y=622(=maxy) to 6808 at y=30.
+	    (6808-11)/(622-30) = 11.48141891891891891891 Hz per pixel
+	    ~= 44100/3841
+	    Top of graph represents 6808+(11.48*30) = 7152.4
+	    Each Hz value in the scale applies to the pixel row of the white
+	    line under the digits. Here it starts at bin 1 omitting 0Hz.
+	time is 0'32"-4'32" = 4x60 secs = 240 seconds in (1014-91=923) pixels
+	    = 240/923=.2600216684 seconds per pixel (3.846 pix per sec)
+
+e.g. Pot Au Feu early version
+	colour scale runs from -9 to -67dB
+	graph is from (91,0) to (1036,642): entire image minus leftmost 91 pix)
+	frequency scale is marked from 46 at y=642 to 3515 at y=20
+	    (3515-46)/(642-20) = 5.57717041800643086816 Hz/pixel
+	    Top of graph represents 3515+(5.577*20) = 3626.54 Hz
+	    BUT 46 is not a multiple of 5.577
+		*8=44.61736334405144694528
+		*9=50.19453376205787781344
+	    so they do not necessarily start at the first bucket above 0Hz
+	    nor is the first row necessarily a multiple of the difference
+	    between bucket frequencies.
+	    So we have to use a greater FFT size and either
+	    interpolate between the buckets present in the input or
+	    just fill in the frequencies in the FFT input that are
+	    closest to the axis values of the input buckets (or the ones
+	    either side of the exact mapped frequency.
+	time is 2'51"-1'21"=1:30, 90 seconds in 1037-91=946 columns
+	    90/(1037-91) = .09513742071881606765 seconds per pixel column
+			 PPSEC = 10.511111111111111111 
+
+Then for each pixel column, reverse map each pixel colour and un-dB it to obtain
+the real values of an FFT taken every .26 seconds.
+
+Reconstruct audio:
+- set IFFT window size to twice .26002 seconds and fade between adjacent outputs
+    using Hann window (which is cos^2 so the sum of adjacent windows == 1).
+    e.g. Lowell column hop =
+- Calculate phase values for each bin of each FFT such that a sine wave at
+    the same frequency in two adjacent FFTs coincide in phase, then
+    recreate real/imag from magnitude ready for inverse FFT. *Then* fade
+    between outputs using a window function. The audio output resulting from
+    the same bin in successive IFFTs should then sum in-phase.
+    Phase value for a bin at f Hz at time t secs = t * f * 2_PI radians
+
+The graph's time resolution is determined by the number of pixel columns per
+second. For forward FFTs, we take an arbitrary-width window of samples from an
+arbritrary section of the audio. If columns-per-second is less than the window
+size, some samples do not count at all towards the output, so to give all
+audio samples equal weigh towards the output, the FFT size should be twice
+the distance in time between output pixel columns, or FFT_FREQ=PPSEC/2.
+
+In the Lowell example,
+IFFT window_length = 2 * column_interval = 2*.26002 = .52004 seconds.
+At 44100 sampling rate, this makes the FFT size 22934 samples.
+There are 623 spectro values from 11Hz to 7152.4Hz, one per 11Hz, while IFFT
+values represent 0 to 22050Hz in 22934 samples, about one per Hz, giving one
+input data point value every 11 FFT data points.
+
+In the Pot Au Feu early version example,
+IFFT window_length = 2 * column_interval = 2*.09513742 = .19027484 seconds.
+At 44100 sampling rate, this makes the FFT size 8391.12 samples.
+There are 643 spectro values from 46Hz to 3626.54Hz, one per 5.577Hz while IFFT
+values represent 0 to 22050Hz in 8391 samples, about one per 2.63Hz, giving
+roughly one input data point every other FFT data point.
+
+Assume IFFT data points are sparser than our IFFT size, at least at 44100.
+
+PROGRAM STRUCTURE
+=================
+Shell script crops out the db scale and the raw spectrogram and does
+calculation of parameters for C routine.
+C routine takes the raw spectrogram and raw frequency scale map as images
+plus coordinates of start/end/length/minmax values in db and freq scales etc.
+and writes a wav.
