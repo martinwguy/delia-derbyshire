@@ -29,13 +29,16 @@ export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
 # Should we leave a png file rather than a jpg?
 suffix=jpg
 
+# To get a grayscaled spectrogram instead of a colored one, set
+# grayscale=--gray-scale
+grayscale=
+
 # Should we overlay the output with black and white lines
 # incorrespondence with a piano's black and white keys?
 piano=false
 
-# To get a grayscaled spectrogram instead of a colored one, set
-# grayscale=--gray-scale
-grayscale=
+# Should we use "sox spectrogram" instead of sndfile-spectrogram?
+use_sox=false
 
 # Whistle while we work?
 verbose=false
@@ -62,6 +65,7 @@ if [ $# = 0 ]; then
 	echo "--piano          Overlay single-pixel black and white horizontal lines to mark"
 	echo "                 the position of conventional keyboard tuned to A=440Hz."
 	echo "--png            Output a PNG file instead of a JPEG."
+	echo "--sox            Use "sox spectrogram" instead of sndfile-spectrogram."
 	echo "--thumb          Give a thumbnail version, 1/8th of default size."
 	echo "-v               Verbose mode."
 	exit 1
@@ -75,7 +79,18 @@ do
 	*=*)	eval "$a"
 		continue
 		;;
+	--gray|--grey)
+		grayscale=--gray-scale
+		continue
+		;;
+	--piano)
+		piano=true
+		continue
+		;;
 	--png)	suffix=png
+		continue
+		;;
+	--sox)	use_sox=true
 		continue
 		;;
 	--thumb)	# 1/8th of normal size in each direction
@@ -83,14 +98,6 @@ do
 		PPSEMI=2
 		PPSEC=12.5
 		export PPSEMI PPSEC
-		continue
-		;;
-	--piano)
-		piano=true
-		continue
-		;;
-	--gray|--grey)
-		grayscale=--gray-scale
 		continue
 		;;
 	--verbose|-v)
@@ -179,7 +186,7 @@ do
 		echo "          $width x $LOG_HEIGHT output"
 	}
 
-    if sndfile-spectrogram | grep -q log-freq ; then
+    if [ $use_sox = false ] && sndfile-spectrogram | grep -q log-freq ; then
 	# Use built-in log frequency axis if sndfile-spectrogram has it
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		--log-freq --min-freq=$MIN_FREQ_OUT --max-freq=$MAX_FREQ_OUT \
@@ -189,9 +196,15 @@ do
 	rm -f $wav
     else
 	# If not, do a linear spectrogram and distort it
-	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
+	if $use_sox; then
+	    test "$grayscale" && grayscale=-m
+	    sox $wav -n spectrogram -x $width -y $LIN_HEIGHT -z $DYN_RANGE \
+		-n -r $grayscale -o $png
+	else
+	    sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
-		$width $LIN_HEIGHT $png || { rm -f $wav $png; exit 1; }
+		$width $LIN_HEIGHT $png
+	fi || { rm -f $wav $png; exit 1; }
 	rm -f $wav
 
 	# Make a displacement map to distort the Y axis with.
@@ -276,6 +289,7 @@ do
 		rm -f "$outfile"
 		pngtopnm $png | cjpeg -quality 85 -dct float -optimize -progressive > "$outfile" || \
 		convert $png "$outfile"
+		rm $png
 		;;
 	*)	echo "Unknown image suffix in final conversion" 1>&2
 		exit 1
