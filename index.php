@@ -301,7 +301,7 @@ Delia's BBC Studio
 <BR><A HREF="#Macbeth1971">Greenwich Macbeth</A>
 <BR><A HREF="#IEE100">I.E.E.100</A>
 <BR><A HREF="#DanceFromNoah">Dance From Noah</A>
-<BR><A HREF="#TutenkhamunsEgypt">Tutenkhamun's Egypt</A>
+<BR><A HREF="#TutankhamunsEgypt">Tutankhamun's Egypt</A>
 <BR><A HREF="#OFatWhiteWoman">O Fat White Woman</A>
 <BR><I>1972</I>
 <BR><A HREF="#Electrosonic">Electrosonic</A> album:
@@ -1885,7 +1885,7 @@ broadcast 7 December 1967</A>.
 </SMALL>
 <?php if ($audio) echo <<<EOT
 <BR><A HREF="audio/Delia Derbyshire - Towards Tomorrow.mp3">
-	1:11/MP3@192kbps/44100Hz(1.64MB)</A> from Gnutella
+	1:06/MP3@192kbps/44100Hz(1.64MB)</A> from Gnutella in 2004
 
 EOT;
 ?>
@@ -2968,10 +2968,10 @@ EOT;
 <TABLE WIDTH="100%" BORDER=0><TR>
 <TD VALIGN=TOP>
 <H3>
-<A NAME=TutenkhamunsEgypt HREF="http://wiki.delia-derbyshire.net/wiki/Tutenkhamun's Egypt">Tutenkhamun's Egypt</A> (1971) (2:16)
+<A NAME=TutenkhamunsEgypt></A><A NAME=TutankhamunsEgypt HREF="http://wiki.delia-derbyshire.net/wiki/Tutankhamun's Egypt">Tutankhamun's Egypt</A> (1971) (2:16)
 </H3>
 <P>
-Music for the series "Tutenkhamun's Egypt" written by Cyril Aldred,
+Music for the series "Tutankhamun's Egypt" written by Cyril Aldred,
 <A HREF="http://catalogue.bbc.co.uk/catalogue/infax/programme/LGF9028L">first
 broadcast 2 April 1972</A>.
 <BR>
@@ -2987,7 +2987,7 @@ memorably in Blue Veils &amp; Golden Sands."
 <BR>Released on "The Music of Africa", BBC Record REC130M (1971)
 </SMALL>
 <?php if ($audio) echo <<<EOT
-    <BR><A HREF="audio/Delia Derbyshire - Tutenkhamun's Egypt.mp3">
+    <BR><A HREF="audio/Delia Derbyshire - Tutankhamun's Egypt.mp3">
       2:16/MP2L3@32kbps/22050Hz(540KB)</A> from d-d.org
 
 EOT;
