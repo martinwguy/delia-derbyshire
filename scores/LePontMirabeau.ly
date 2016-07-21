@@ -4,7 +4,7 @@
 % For info on this language and the program to convert it to PDF and MIDI files
 %   see http://lilypond.org
 % For further info on this piece of music
-%   see http://wiki.delia-derbyshire.net/index.php?title=Le_Pont_Mirabeau
+%   see http://wikidelia.net/wiki/Le_Pont_Mirabeau
 
 \version "2.14.2"
 
