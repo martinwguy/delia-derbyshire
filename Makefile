@@ -20,9 +20,13 @@ pretend:
 update upload: all
 	rsync -av $(PRETEND) --delete \
 		--exclude .git\* \
-		--exclude anal/\*.jpg anal/\*.png anal/\*.wav \
+		--exclude anal/sndfile-tools \
+		--exclude anal/sox \
+		--exclude anal/constant-q-cpp \
+		--exclude anal/vamp\* \
 		--exclude log \
 		--exclude scores/doc \
+		--exclude spectrograms/audio \
 		--exclude VIDEO \
 		--exclude \*.flac --exclude \*.wav \
 		--exclude rec/TheseHopefulMachines \
@@ -30,7 +34,6 @@ update upload: all
 		--partial --inplace \
 		--bwlimit=48 \
 		./ delia-derbyshire.net:audio/D-D/
-
 
 backup:
 	# Back up to fon all except generated files
