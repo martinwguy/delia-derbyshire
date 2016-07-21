@@ -30,7 +30,6 @@ do
     # height of the image is the same as the height of the graph data.
     width=`identify "$filename" | sed -n 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\1/p'`
     test "$width" || exit 1
-echo "[$width]"
     height=`identify "$filename" | sed -n 's/.* \([1-9][0-9]*\)x\([1-9][0-9]*\) .*/\2/p'`
     test "$height" || exit 1
 

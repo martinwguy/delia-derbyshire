@@ -100,6 +100,7 @@ main(int argc, char **argv)
     graphdata = read_png(graphfilename, &graphpng, &graphinfo, "spectrogram");
     scaledata = read_png(scalefilename, &scalepng, &scaleinfo, "color scale");
 
+    /* Measure the images */
     graphwidth = png_get_image_width(graphpng, graphinfo);
     graphheight = png_get_image_height(graphpng, graphinfo);
     if (png_get_image_width(scalepng, scaleinfo) != 1) {
@@ -109,14 +110,8 @@ main(int argc, char **argv)
     }
     scaleheight = png_get_image_height(scalepng, scaleinfo);
 
+    /* Make our color-to-loudness reverse mapping table */
     init_scale(scaledata, scaleheight, dbmin, dbmax);
-
-    /* See if every color in the graph is represented in the scale */
-    {   int x, y;
-	for (x=0; x<graphwidth; x++)
-	    for (y=0; y<graphheight; y++)
-		color2amp(&graphdata[y][x*3], x, y);
-    }
 
     /* We have graphwidth columns of input, each representing a fraction of
      * a second of audio. We do an inverse FFT with a window length twice
@@ -139,9 +134,6 @@ main(int argc, char **argv)
     int samplerate = 44100;
     double column_interval = duration / (double)graphwidth;
     int fft_size = lrint(column_interval * samplerate * 2);
-
-fprintf(stderr, "column interval = %g seconds\n", column_interval);
-fprintf(stderr, "FFT size = %d\n", fft_size);
 
     /* Allocate the audio in memory, all initialised to zero. */
     unsigned long audiosamples = ceil(duration * samplerate + fft_size/2.0);
@@ -190,30 +182,9 @@ fprintf(stderr, "FFT size = %d\n", fft_size);
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
 	    double phase = time * freq * 2.0 * M_PI;
-#if 0
-printf("amp,phase = %g,%g\n", amp, phase);
-	    in[fftindex][0] += amp * cos(phase); /* real */
-	    in[fftindex][1] += amp * sin(phase); /* imaginary */
-#endif
         }
 
-#if 0
-printf("FFT INPUT\n");
-for (y=0; y<=fft_size/2+1; y++) {
-    printf("(%g,%g) ", in[y][0], in[y][1]);
-}
-putchar('\n');
-#endif
-
 	fftw_execute(p);
-
-#if 0
-printf("\nFFT OUTPUT\n");
-for (y=0; y<=fft_size-1; y++) {
-    printf("%g ", out[y]);
-}
-putchar('\n');
-#endif
 
 	/* Now out[0..fft_size-1] represent the audio for one frame.
 	 * Add this to the audio through the window
@@ -259,7 +230,8 @@ read_png(char *filename, png_structp *pngp, png_infop *infop, char *type)
     png_init_io(png, fp);
     png_read_info(png, info);
 
-    /* Extra stuff from https://gist.github.com/niw/5963798 */
+    /* Extra stuff from https://gist.github.com/niw/5963798
+     * to convert other image types to RGB */
     if (png_get_bit_depth(png, info) == 16) {
 	fprintf(stderr, "%s: Warning: truncating 16-bit %s to 8-bit depth.\n", progname, type);
 #if PNG_LIBPNG_VER >= 10504
