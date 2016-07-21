@@ -190,30 +190,11 @@ fprintf(stderr, "FFT size = %d\n", fft_size);
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
 	    double phase = time * freq * 2.0 * M_PI;
-#if 0
-printf("amp,phase = %g,%g\n", amp, phase);
 	    in[fftindex][0] += amp * cos(phase); /* real */
 	    in[fftindex][1] += amp * sin(phase); /* imaginary */
-#endif
         }
 
-#if 0
-printf("FFT INPUT\n");
-for (y=0; y<=fft_size/2+1; y++) {
-    printf("(%g,%g) ", in[y][0], in[y][1]);
-}
-putchar('\n');
-#endif
-
 	fftw_execute(p);
-
-#if 0
-printf("\nFFT OUTPUT\n");
-for (y=0; y<=fft_size-1; y++) {
-    printf("%g ", out[y]);
-}
-putchar('\n');
-#endif
 
 	/* Now out[0..fft_size-1] represent the audio for one frame.
 	 * Add this to the audio through the window
@@ -379,16 +360,6 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
      */
     scale[0].db = dbmax;
     scale[0].amp = db2amp(dbmax);
-
-#if 0
-    for (entry=0; entry < scaleitems; entry++) {
-        fprintf(stderr, "(%u,%u,%u)=%g\n",
-		scale[entry].colors[0],
-		scale[entry].colors[1],
-		scale[entry].colors[2],
-		scale[entry].db);
-    }
-#endif
 }
 
 /* Map a color to its corresponding amplitude value.
