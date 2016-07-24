@@ -181,6 +181,14 @@ main(int argc, char **argv)
 
     int x,y;	/* Indices into graph */
 
+    /* Add a random phase offset to each bin to avoid all the partials
+     * coinciding and producing a nasty peak. */
+    srandom(time(NULL));
+    double *rphase = calloc(graphheight, sizeof(double));
+    if (!rphase) oom();
+    for (y=0; y<graphheight; y++)
+	rphase[y] = (double)random() * 2.0 * M_PI / (double)RAND_MAX;
+
     for (x=0; x<graphwidth; x++) {
 	/* The start of this pixel column represents audio starting after
 	 * how many seconds? */
@@ -204,10 +212,17 @@ main(int argc, char **argv)
 	     * single bin is in phase with its output from the same bin in the
 	     * all the other frames.
 	     * Phase for a bin at fHz at time t seconds is t * f * 2 PI radians.
+	     * Without the random phase offset, constant for each bin, many
+	     * partials coincide in phase and produce a harsh cos-like peaks
+	     *       /\                                 ,
+	     *      /  \                               /|
+	     * /\  /    \  /\ or a sin-like peaks /\  / |  /\
+	     *   \/      \/                         \/  | /  \/
+	     *                                          |/
+             *                                          '
 	     */
             double amp = color2amp(&graphdata[y][x*3], x, y);
-	    double phase = time * fftfreq * 2.0 * M_PI;
-	    phase=0; /* Phase correction makes every other partial overflow */
+	    double phase = time * fftfreq * 2.0 * M_PI + rphase[y];
 
 	    in[fftindex][0] += amp * sin(phase); /* real */
 	    in[fftindex][1] += amp * cos(phase); /* imaginary */
