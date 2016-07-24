@@ -1,0 +1,106 @@
+diff --git a/src/spectrogram.c b/src/spectrogram.c
+index 8bde5cb..82525e5 100644
+--- a/src/spectrogram.c
++++ b/src/spectrogram.c
+@@ -147,25 +147,53 @@ get_colour_map_value (float value, double spec_floor_db, unsigned char colour [3
+ } /* get_colour_map_value */
+ 
+ 
++/*
++** Read the sample data for a analysis frame from the sound file, turning
++** multi-channel audio into mono by mixing the channels equally.
++**
++** The parameters say which window, out of the N we will process, we are
++** reading the audio for; this is mapped to the centre of the window being
++** positioned at the first sample of the file or the last one, with any
++** samples beyond the edges of the audio file being filled with silence.
++**
++** In an attempt to reduce interference-pattern artifacts, we reduce the
++** 1-sample-period time jitter caused by rounding exact windor position to
++** a sample interval, by interpolating between adjacent samples.
++** There is no evidence that this makes any visible improvement.
++**
++*/
+ static void
+ read_mono_audio (SNDFILE * file, sf_count_t filelen, double * data, int datalen, int indx, int total)
+ {
+-	sf_count_t start ;
++	double start;		 /* Start of window, in units of 1/samplerate */
++	sf_count_t index;        /* "start" rounded left to sample index */
++	double point_what;       /* Fractional part of "start", 0.0 to 0.999* */
+ 
+ 	memset (data, 0, datalen * sizeof (data [0])) ;
+ 
+-	start = (indx * filelen) / total - datalen / 2 ;
++	start = (indx * filelen * 1.0) / total - datalen / 2.0 ;
++
++	index = (sf_count_t) floor (start);
++	point_what = start - floor (start);
+ 
+-	if (start >= 0)
+-		sf_seek (file, start, SEEK_SET) ;
++	if (index >= 0)
++		sf_seek (file, index, SEEK_SET) ;
+ 	else
+-	{	start = -start ;
++	{	int missing = -index ;
+ 		sf_seek (file, 0, SEEK_SET) ;
+-		data += start ;
+-		datalen -= start ;
++		data += missing ;
++		datalen -= missing ;
+ 		} ;
+ 
+-	sfx_mix_mono_read_double (file, data, datalen) ;
++	if (point_what == 0.0)
++		sfx_mix_mono_read_double (file, data, datalen) ;
++	else
++	{	int i;
++		sfx_mix_mono_read_double (file, data, datalen + 1) ;
++		for (i=0; i<datalen; i++)
++			data[i] = data[i] * (1.0 - point_what) +
++			          data[i + 1] * point_what;
++		} ;
+ 
+ 	return ;
+ } /* read_mono_audio */
+diff --git a/src/spectrum.c b/src/spectrum.c
+index d936943..f3d5a81 100644
+--- a/src/spectrum.c
++++ b/src/spectrum.c
+@@ -18,15 +18,30 @@ spectrum *
+ create_spectrum (int speclen, enum WINDOW_FUNCTION window_function)
+ {	spectrum *spec ;
+ 
+-	spec = calloc (1, sizeof (spectrum) + ((2 + 2 + 2 + 1) * speclen + 1) * sizeof (double)) ;
++	spec = calloc (1, sizeof (spectrum));
++	if (spec == NULL)
++	{	printf ("%s : Not enough memory.\n", __func__) ;
++		exit (1) ;
++		} ;
+ 
+ 	spec->wfunc = window_function ;
+ 	spec->speclen = speclen ;
+ 
+-	spec->time_domain = spec->data ;
+-	spec->window = spec->time_domain + 2 * speclen ;
+-	spec->freq_domain = spec->window + 2 * speclen ;
+-	spec->mag_spec = spec->freq_domain + 2 * speclen ;	/* mag_spec has values from [0..speclen] inclusive */
++	/* mag_spec has values from [0..speclen] inclusive for 0Hz to Nyquist.
++	** time_domain has an extra element to be able to interpolate between
++	** samples for better time precision, hoping to eliminate artifacts.
++	*/
++	spec->time_domain = calloc (2 * speclen + 1, sizeof(double));
++	spec->window      = calloc (2 * speclen, sizeof(double));
++	spec->freq_domain = calloc (2 * speclen, sizeof(double));
++	spec->mag_spec    = calloc (speclen + 1, sizeof(double));
++	if (spec->time_domain == NULL ||
++	    spec->window      == NULL ||
++	    spec->freq_domain == NULL ||
++	    spec->mag_spec    == NULL)
++	{	printf ("%s : Not enough memory.\n", __func__) ;
++		exit (1) ;
++		} ;
+ 
+ 	spec->plan = fftw_plan_r2r_1d (2 * speclen, spec->time_domain, spec->freq_domain, FFTW_R2HC, FFTW_MEASURE | FFTW_PRESERVE_INPUT) ;
+ 	if (spec->plan == NULL)

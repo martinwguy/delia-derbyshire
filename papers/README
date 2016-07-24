@@ -1,0 +1,8 @@
+The files here create the web version of the photosnaps of Delia's papers.
+
+They need the original photos in maxi/dd??????.jpg and you should just be
+able to say
+
+	make
+
+to get the web files (thumb.html, toe.html, thumb/* toe/* html/*)

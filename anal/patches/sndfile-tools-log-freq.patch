@@ -1,0 +1,69 @@
+diff --git a/src/spectrogram.c b/src/spectrogram.c
+index 7e294f2..c50f63e 100644
+--- a/src/spectrogram.c
++++ b/src/spectrogram.c
+@@ -496,9 +496,15 @@ render_heat_border (cairo_surface_t * surface, double magfloor, const RECT *r)
+ ** allowing the caller to interpolate onto the input array.
+ */
+ static double
+-magindex_to_specindex(int speclen, int maglen, int magindex, double min_freq, double max_freq, int samplerate)
++magindex_to_specindex(int speclen, int maglen, int magindex, double min_freq, double max_freq, int samplerate, bool log_freq)
+ {
+-	double freq = min_freq + (max_freq - min_freq) * magindex / (maglen - 1) ;
++	double freq; /* The frequency that this output value represents */
++
++	if (!log_freq)
++		freq = min_freq + (max_freq - min_freq) * magindex / (maglen - 1) ;
++	else
++		freq = min_freq * pow (max_freq / min_freq, (double) magindex / (maglen - 1)) ;
++
+ 	return (freq * speclen / (samplerate / 2)) ;
+ }
+ 
+@@ -527,9 +533,11 @@ interp_spec (float * mag, int maglen, const double *spec, int speclen, const REN
+ 	for (k = 0 ; k < maglen ; k++)
+ 	{	/* Average the pixels in the range it comes from */
+ 		double this = magindex_to_specindex(speclen, maglen, k,
+-			        render->min_freq, render->max_freq, samplerate) ;
++			        render->min_freq, render->max_freq, samplerate,
++				render->log_freq) ;
+ 		double next = magindex_to_specindex(speclen, maglen, k+1,
+-			        render->min_freq, render->max_freq, samplerate) ;
++			        render->min_freq, render->max_freq, samplerate,
++				render->log_freq) ;
+ 
+ 		/* Range check: can happen if --max-freq > samplerate / 2 */
+ 		if (this > speclen)
+@@ -756,11 +764,6 @@ render_sndfile (RENDER * render)
+ 	SNDFILE *infile ;
+ 	SF_INFO info ;
+ 
+-	if (render->log_freq)
+-	{	printf ("Error : --log-freq option not working yet.\n\n") ;
+-		exit (1) ;
+-		} ;
+-
+ 	memset (&info, 0, sizeof (info)) ;
+ 
+ 	infile = sf_open (render->sndfilepath, SFM_READ, &info) ;
+@@ -769,7 +772,10 @@ render_sndfile (RENDER * render)
+ 		exit (1) ;
+ 		} ;
+ 
+-	if (render->max_freq == 0.0) render->max_freq = (double) info.samplerate / 2 ;
++	if (render->max_freq == 0.0)
++		render->max_freq = (double) info.samplerate / 2 ;
++	if (render->min_freq == 0.0 && render->log_freq)
++		render->min_freq = 20.0;
+ 
+ 	/* Do this sanity check here, as soon as max_freq has its default value */
+ 	if (render->min_freq >= render->max_freq)
+@@ -806,7 +812,7 @@ usage_exit (const char * argv0, int error)
+ 		"        --no-border            : Drop the border, scales, heat map and title\n"
+ 		"        --min-freq=<number>    : Set the minimum frequency in the output\n"
+ 		"        --max-freq=<number>    : Set the maximum frequency in the output\n"
+-		/*-"        --log-freq             : Use a logarithmic frquency scale\n" -*/
++		"        --log-freq             : Use a logarithmic frquency scale\n"
+ 		"        --gray-scale           : Output gray pixels instead of a heat map\n"
+ 		"        --kaiser               : Use a Kaiser window function (the default)\n"
+ 		"        --rectangular          : Use a rectangular window function\n"
