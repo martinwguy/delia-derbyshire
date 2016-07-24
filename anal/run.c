@@ -63,7 +63,7 @@ void
 main(int argc, char **argv)
 {
     double dbmin, dbmax, fmin, fmax, duration;
-    char *graphfilename, *scalefilename;
+    char *graphfilename, *scalefilename, *audiofilename;
     png_structp graphpng, scalepng;
     png_infop graphinfo, scaleinfo;
     png_bytep *graphdata, *scaledata;
@@ -86,8 +86,8 @@ main(int argc, char **argv)
 	argv++; argc--;
     }
 
-    if (argc != 8) {
-	fprintf(stderr, "Usage: %s dbmin dbmax fmin fmax duration graph.png scale.png\n", progname);
+    if (argc != 9) {
+	fprintf(stderr, "Usage: %s dbmin dbmax fmin fmax duration graph.png scale.png audio.wav\n", progname);
 	exit(1);
     }
 
@@ -98,6 +98,7 @@ main(int argc, char **argv)
     duration=atof(argv[5]);
     graphfilename=argv[6];
     scalefilename=argv[7];
+    audiofilename=argv[8];
 
     /* Non-numeric strings convert as 0.0; check this where possible
      * and do some half-hearted sanity checks. */
@@ -260,7 +261,7 @@ main(int argc, char **argv)
 #endif
     }
 
-    write_audio(audio, audiosamples, samplerate, "audio.wav", 1);
+    write_audio(audio, audiosamples, samplerate, audiofilename, 1);
 
     exit(0);
 }
