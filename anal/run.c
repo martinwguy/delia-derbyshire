@@ -16,7 +16,7 @@
  *	duration		Length of the audio in seconds.
  *		The length of the audio in seconds.
  *	graph.png		The raw spectrogram
- * 		Just the data points without legends, scales or borders.
+ *		Just the data points without legends, scales or borders.
  *		Time on the x-axis, frequency on the y-axis.
  *	scale.png		Color scale
  *		A one-pixel-wide vertical stripe giving the colors for the
@@ -356,7 +356,9 @@ typedef struct scale {
 #define db2amp(db) pow(10.0, (db)/20.0)
 
 static scale_t *scale;	/* Array of colour/db pairs */
-static int scaleitems;	/* Number of used items in scale[] */
+static int scaleitems;	/* Number of elements that are in use in scale[] */
+static int lastscaleitem; /* Last items that came from the color scale itself */
+static int scalesize;	/* Number of elements allocated to scale[] */
 
 /*
  * Convert the one-pixel-high color scale image to our internal representation,
@@ -368,7 +370,7 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
     int y;	/* Loop counter to scan the image of the color map */
     int entry;	/* Loop counter to scan the existing entries */
 
-    scale = calloc(scaleheight, sizeof(struct scale));
+    scale = calloc(scalesize=scaleheight, sizeof(struct scale));
     if (!scale) oom();
     scaleitems = 0;
 
@@ -417,6 +419,10 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
      */
     scale[0].db = dbmax;
     scale[0].amp = db2amp(dbmax);
+
+    /* Remember how many came from the scale itself as we invent more later
+     * when we find colors not in the scale */
+    lastscaleitem = scaleitems - 1;
 }
 
 /* Map a color to its corresponding amplitude value.
@@ -427,43 +433,121 @@ color2amp(png_byte *px, int x, int y)
 {
     int entry;
     uint32_t color = *(uint32_t *)px;
+    double db, amp;	/* Estimated value for this color */
 
     ((png_byte *)(&color))[3] = 0;	/* Zap the alpha value */
 
+    /* Look for an exact match in the color scale. */
     for (entry=0; entry<scaleitems; entry++)
 	if (scale[entry].color == color)
 	    return scale[entry].amp;
 
     /* Colour is not in the scale.  Either it's black, or above the top
-     * of the range of colors or between other colours.
-     * For black, just return 0. For values above the maximum,
-     * do linear interpolation from the top two values.
-     * For values in between, find the closest value and use that.
+     * of the range of colors, off the bottom or between other colours.
+     * For black, just return 0 amplitude (-inf dB).
+     * For values above the maximum do linear interpolation from the top two
+     * entries according to the red value which seems to increase isotonically.
+     * For values off the bottom, we do nothing yet.
+     * For values in between,
+     * - first, try to find two adjacent values in the existing colour table
+     *   whereby the red value lies between the red values, the green between
+     *   the green etc. and interpolate between the two dB values.
+     * - if there are none, just find the closest colour value and use that.
      */
+
+    /* Black? Zero amplitude. */
     if (px[0] == 0 && px[1] == 0 && px[2] == 0)
-	return(0);	/* Black. Zero amplitude. */
+	return(0);
 
+    /* If the red value is off the top of the scale, interpolate on the
+     * the top two values in the scale. */
     if (px[0] > scale[0].colors[0]) {
-        /* The color is off the top of the scale. Interpolate on the red
-	 * component, which is the only one that rises consistently
-	 * in the scale. */
 	double extra_red=px[0] - scale[0].colors[0];
-	double db_per_unit_of_red = (scale[0].db - scale[1].db) /
+	double db_per_unit_red = (scale[0].db - scale[1].db) /
 			            (scale[0].colors[0] - scale[1].colors[0]);
-	double db = scale[0].db + extra_red * db_per_unit_of_red;
+	db = scale[0].db + extra_red * db_per_unit_red;
 
-        fprintf(stderr, "%s: Color (%u,%u,%u) at (%d,%d) is off the scale. Using %g dB.\n",
-	        progname, px[0], px[1], px[2], x, y, db);
+	/* Sanity check */
+	if (scale[0].colors[0] == scale[1].colors[0]) {
+            fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) off top of the scale but can't interpolate.\n",
+	            px[0], px[1], px[2], x, y);
+	    return scale[0].amp;
+	}
 
-        /* Add it to the mapping table */
-	scale[scaleitems].color = *(uint32_t *)px;
-	scale[scaleitems].colors[3] = 0; /* zap alpha */
-	scale[scaleitems].db = db;
-	scale[scaleitems].amp = db2amp(db);
-	scale[scaleitems].count = 1;
-	scaleitems++;
+	goto store_and_return;
+    }
 
-	return scale[scaleitems].amp;
+    /* If value is off the bottom of the scale, interpolate on the
+     * the bottom two values in the scale. i If the initial test succeeds,
+     * at least one of the three colors will be < the minimum because the
+     * case of all three being equal was covered above. */
+    if (px[0] <= scale[lastscaleitem].colors[0] &&
+	px[1] <= scale[lastscaleitem].colors[1] &&
+	px[2] <= scale[lastscaleitem].colors[2]) {
+
+	/* Find a color in which there is a gradient at the bottom of the scale
+	 * and a difference in that color. */
+	for (int color=0; color<=2; color++) {
+	    if (scale[lastscaleitem-1].colors[color] >
+		scale[lastscaleitem].colors[color] &&
+	        px[color] < scale[lastscaleitem].colors[color]) {
+	        double missing=scale[lastscaleitem].colors[color] - px[color];
+	        double db_per_unit =
+		    (scale[lastscaleitem-1].db - scale[lastscaleitem].db) /
+		    (scale[0].colors[color] - scale[1].colors[color]);
+	        db = scale[lastscaleitem].db + missing * db_per_unit;
+
+		goto store_and_return;
+	    }
+	}
+
+	/* Give up. Give it the end-of-scale value */
+        fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) off bottom of scale but can't interpolate.\n",
+	        px[0], px[1], px[2], x, y);
+	db = scale[lastscaleitem].db;
+	goto store_and_return;
+    }
+
+/* Conventional weightings when converting from color to grayscale.
+ * This may not be the most appropriate for our purposes! */
+#define R_WEIGHT (0.299)
+#define G_WEIGHT (0.587)
+#define B_WEIGHT (0.114)
+
+    /* See if it falls between two other colours */
+    for (entry=0; entry<lastscaleitem; entry++) {
+	png_byte r = px[0], g = px[1], b = px[2];
+	png_byte r0 = scale[entry].colors[0], r1 = scale[entry+1].colors[0];
+	png_byte g0 = scale[entry].colors[1], g1 = scale[entry+1].colors[1];
+	png_byte b0 = scale[entry].colors[2], b1 = scale[entry+1].colors[2];
+	double db0 = scale[entry].db, db1 = scale[entry+1].db;
+
+	/* Are all three channel's values between [entry] and [entry+1]? */
+	if ((r0 <= r && r <= r1 || r0 >= r && r >= r1) &&
+            (g0 <= g && g <= g1 || g0 >= g && g >= g1) &&
+            (b0 <= b && b <= b1 || b0 >= b && b >= b1)) {
+	    /* Channels that have no range are useless for interpolation.
+	     * For the others, make a weighted average of the interpolated
+	     * values that they suggest.
+	     */
+	    db = 0.0;		/* Sum of weighted interpolations */
+	    double weights = 0.0;	/* Sum of weights that were used */
+
+	    if (r0 != r1) {
+		db += (db0 + (db1-db0) * (r - r0) / (r1 - r0)) * R_WEIGHT;
+		weights += R_WEIGHT;
+	    }
+	    if (g0 != g1) {
+		db += (db0 + (db1-db0) * (g - g0) / (g1 - g0)) * G_WEIGHT;
+		weights += G_WEIGHT;
+	    }
+	    if (b0 != b1) {
+		db += (db0 + (db1-db0) * (b - b0) / (b1 - b0)) * B_WEIGHT;
+		weights += B_WEIGHT;
+	    }
+	    db /= weights;
+	    goto store_and_return;
+        }
     }
 
     /* Find the closest entry */
@@ -475,9 +559,9 @@ color2amp(png_byte *px, int x, int y)
     for (entry=0; entry<scaleitems; entry++) {
 	/* Maybe should weight these */
 	double distance =
-	    sqr(scale[entry].colors[0]-px[0]) +
-	    sqr(scale[entry].colors[1]-px[1]) +
-	    sqr(scale[entry].colors[2]-px[2]);
+	    abs(scale[entry].colors[0]-px[0]) +
+	    abs(scale[entry].colors[1]-px[1]) +
+	    abs(scale[entry].colors[2]-px[2]);
 	if (distance < best_distance) {
 	    best_entry = entry;
 	    best_distance = distance;
@@ -485,18 +569,40 @@ color2amp(png_byte *px, int x, int y)
     }
     if (best_entry != -1) {
 	/* Complain if it differs by more than three hue values */
-	if (sqrt(best_distance) > 3.0)
-        fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u).\n",
+	if (best_distance > 3.0)
+        fprintf(stderr, "Color (%u,%u,%u) at (%d,%d) approximated to (%u,%u,%u), distance=%g.\n",
 	    px[0], px[1], px[2], x, y,
 	    scale[best_entry].colors[0],
 	    scale[best_entry].colors[1],
-	    scale[best_entry].colors[2]);
-	return scale[best_entry].amp;
+	    scale[best_entry].colors[2],
+	    best_distance);
+
+	db = scale[best_entry].db;
+	goto store_and_return;
     }
 
     fprintf(stderr, "%s: Color (%u,%u,%u) at (%d,%d) not found in scale.\n",
 	progname, px[0], px[1], px[2], x, y);
     exit(1);
+
+store_and_return:
+
+    amp = db2amp(db);
+
+    /* Add it to the mapping table */
+    if (scaleitems >= scalesize) {
+	scalesize *= 2;
+	scale = realloc(scale, scalesize * sizeof(struct scale));
+	if (!scale) oom();
+    }
+    scale[scaleitems].color = *(uint32_t *)px;
+    scale[scaleitems].colors[3] = 0; /* zap alpha */
+    scale[scaleitems].db = db;
+    scale[scaleitems].amp = amp;
+    scale[scaleitems].count = 1;
+    scaleitems++;
+
+    return amp;
 }
 
 /* Stolen from sndfile-tools */
