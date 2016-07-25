@@ -5,8 +5,9 @@ This folder contains the source code for the programs I've written to
 analyse Delia's music. These programs are my own original work.
 
 mkjpg.sh	Produces the log-frequency-axis spectrograms used in
-		wikidelia.net.
-		I had had this idea in 1990 but only got there in August 2012.
+		wikidelia.net
+		I had this idea in 1990 but only managed to implement it
+		in August 2012.
 		See http://wikidelia.net/wiki/Spectrograms
 
 run.sh/run.c	Converts the spectrograms in James Percival's thesis back
