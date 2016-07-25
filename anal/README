@@ -6,14 +6,14 @@ analyse Delia's music. These programs are my own original work.
 
 mkjpg.sh	Produces the log-frequency-axis spectrograms used in
 		wikidelia.net.
-		I had wanted to do this since 1990 and got there in 201X.
-		Log-f spectrograms are rare but not unknown.
+		I had had this idea in 1990 but only got there in August 2012.
 		See http://wikidelia.net/wiki/Spectrograms
 
 run.sh/run.c	Converts the spectrograms in James Percival's thesis back
-		into audio. Sound quality varies graetly according to the
+		into audio. Sound quality varies according to the
 		resolution of the spectrogram in question.
-		I have never heard of anyone attempting to do this.
+		I have never heard of anyone else ever attempting to do this;
+		surely I can't be the first!
 		See:
 		http://wikidelia.net/wiki/Pot_Au_Feu_early_version
 		http://wikidelia.net/wiki/Random_Together_1
