@@ -1,0 +1,23 @@
+Sound analysis tools created for Delia Derbyshire's music
+---------------------------------------------------------
+
+This folder contains the source code for the programs I've written to
+analyse Delia's music. These programs are my own original work.
+
+mkjpg.sh	Produces the log-frequency-axis spectrograms used in
+		wikidelia.net.
+		I had wanted to do this since 1990 and got there in 201X.
+		Log-f spectrograms are rare but not unknown.
+		See http://wikidelia.net/wiki/Spectrograms
+
+run.sh/run.c	Converts the spectrograms in James Percival's thesis back
+		into audio. Sound quality varies graetly according to the
+		resolution of the spectrogram in question.
+		I have never heard of anyone attempting to do this.
+		See:
+		http://wikidelia.net/wiki/Pot_Au_Feu_early_version
+		http://wikidelia.net/wiki/Random_Together_1
+		http://wikidelia.net/wiki/Robert_Lowell
+		http://wikidelia.net/wiki/Singing_Waters
+
+	Martin Guy <martinwguy@gmail.com>, August 2012 and July 2016.
