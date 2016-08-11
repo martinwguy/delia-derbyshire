@@ -27,6 +27,15 @@
  *		the same-color band to pixels of that color.
  *	output.wav		Output file name
  *		Audio output is written into the named file.
+ *
+ *	Options:
+ *	--floor db		Set noise floor to -db decibels.
+ *		Any pixel in the input that is below this value is taken as 0.
+#ifdef PARTIALS
+ *	--partials		Write audio of each frame to files
+ *		A debugging aid that write the first ten audio fragments
+ *		to separate files, before they are merged to form the output.
+#endif
  */
 #include <stdlib.h>
 #include <stdint.h>	/* for uint32_t */
@@ -59,6 +68,8 @@ static char *progname;
 static int partials = 0;
 #endif
 
+static double noise_floor = -INFINITY;
+
 void
 main(int argc, char **argv)
 {
@@ -79,6 +90,14 @@ main(int argc, char **argv)
 	    partials = 1;
 	else
 #endif
+	if (strcmp(argv[1], "--floor") == 0) {
+	    noise_floor = -atof(argv[2]);
+	    if (noise_floor == 0.0) {
+		fputs("--floor what?\n", stderr);
+		exit(1);
+	    }
+	    argv++, argc--;	/* gobble numeric parameter too */
+	} else
 	{
 	    fprintf(stderr, "Unknown flag '%s'.\n", argv[1]);
 	    exit(1);
@@ -87,7 +106,7 @@ main(int argc, char **argv)
     }
 
     if (argc != 9) {
-	fprintf(stderr, "Usage: %s dbmin dbmax fmin fmax duration graph.png scale.png audio.wav\n", progname);
+	fprintf(stderr, "Usage: %s [options] dbmin dbmax fmin fmax duration graph.png scale.png audio.wav\n", progname);
 	exit(1);
     }
 
@@ -353,7 +372,7 @@ typedef struct scale {
     unsigned count;	/* How many values were added to "db" for this color? */
 } scale_t;
 
-#define db2amp(db) pow(10.0, (db)/20.0)
+#define db2amp(db) ((db)<noise_floor ? 0.0 : pow(10.0, (db)/20.0))
 
 static scale_t *scale;	/* Array of colour/db pairs */
 static int scaleitems;	/* Number of elements that are in use in scale[] */
