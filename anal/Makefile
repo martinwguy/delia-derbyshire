@@ -6,9 +6,7 @@ run: run.c
 	$(CC) $(CFLAGS) -o $@ $< -lpng -lfftw3 -lsndfile -lm
 
 clean:
-	rm -f graph*.png scale*.png partial-*.wav
-
-clean: rm run.{aux,dvi,log}
+	rm -f graph*.png scale*.png partial-*.wav run.{aux,dvi,log}
 
 .SUFFIXES: .pdf .tex
 
