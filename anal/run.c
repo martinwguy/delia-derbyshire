@@ -3,7 +3,7 @@
  *
  *	Copyright (c) 2016 Martin Guy <martinwguy@gmail.com>
  *
- *	Usage: run dbmin dbmax fmin fmax duration graph.png scale.png
+ *	Usage: run dbmin dbmax fmin fmax duration graph.png scale.png output.wav
  *	All numbers are floating point values.
  *	dbmin dbmax		Range of dB values in the color scale.
  *		dbmin is the amplitude represented by the bottom pixel of the
@@ -25,8 +25,8 @@
  *		spaced. It is OK for several adjacent pixels in the scale to be
  *		of the same tint: the program will assign the middle value of
  *		the same-color band to pixels of that color.
- *
- *	Output is written into file audio.wav
+ *	output.wav		Output file name
+ *		Audio output is written into the named file.
  */
 #include <stdlib.h>
 #include <stdint.h>	/* for uint32_t */
