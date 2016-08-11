@@ -31,6 +31,9 @@
  *	Options:
  *	--floor db		Set noise floor to -db decibels.
  *		Any pixel in the input that is below this value is taken as 0.
+ *	--fps N			Interpolate to N frames per second
+ *		Reduce choppiness of low frame rate spectrograms by
+ *		interpolating between FFT frames before doing the transform.
 #ifdef PARTIALS
  *	--partials		Write audio of each frame to files
  *		A debugging aid that write the first ten audio fragments
@@ -70,6 +73,11 @@ static int partials = 0;
 
 static double noise_floor = -INFINITY;
 
+/* Frame rate to interpolate the input frames to.
+ * 0.0 means no interpolation (so same as pixel column rate).
+ */
+static double fps = 0.0;
+
 void
 main(int argc, char **argv)
 {
@@ -91,9 +99,20 @@ main(int argc, char **argv)
 	else
 #endif
 	if (strcmp(argv[1], "--floor") == 0) {
-	    noise_floor = -atof(argv[2]);
+	    noise_floor = atof(argv[2]);
 	    if (noise_floor == 0.0) {
 		fputs("--floor what?\n", stderr);
+		exit(1);
+	    }
+	    /* Accept positive or negative db value; only -ve make sense */
+	    if (noise_floor > 0.0) noise_floor = -noise_floor;
+
+	    argv++, argc--;	/* gobble numeric parameter too */
+	} else
+	if (strcmp(argv[1], "--fps") == 0) {
+	    fps = -atof(argv[2]);
+	    if (fps <= 0.0) {
+		fputs("--fps what?\n", stderr);
 		exit(1);
 	    }
 	    argv++, argc--;	/* gobble numeric parameter too */
@@ -219,24 +238,28 @@ main(int argc, char **argv)
 	memset(in, 0, sizeof(fftw_complex) * fft_size);
 
 	for (y=0; y<graphheight; y++) {
+
 	    /* What frequency does this row represent?
 	     * At y=0, the frequency is fmax. At y=graphheight-1, freq=fmin.
 	     */
 	    double freq = fmax - (fmax-fmin) * ((double)y / (graphheight-1));;
+
 	    /* The iFFT input from [0] to [(n/2)+1] represents 0Hz to nyquist,
 	     * both of the endpoints being purely real. */
 	    int fftindex = lrint(freq * (fft_size/2+1) / (samplerate/2));
+
 	    /* What frequency does that bin really represent? */
 	    double fftfreq = (double)fftindex * (samplerate/2) / (fft_size/2+1);
+
 	    /* Phase is chosen in such a way that the sine wave output from a
 	     * single bin is in phase with its output from the same bin in the
 	     * all the other frames.
 	     * Phase for a bin at fHz at time t seconds is t * f * 2 PI radians.
 	     * Without the random phase offset, constant for each bin, many
-	     * partials coincide in phase and produce a harsh cos-like peaks
+	     * partials coincide in phase and produce harsh cos-like peaks
 	     *       /\                                 ,
 	     *      /  \                               /|
-	     * /\  /    \  /\ or a sin-like peaks /\  / |  /\
+	     * /\  /    \  /\  or sin-like peaks  /\  / |  /\
 	     *   \/      \/                         \/  | /  \/
 	     *                                          |/
              *                                          '
