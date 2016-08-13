@@ -57,6 +57,7 @@ static png_bytep *
 static void
     init_scale(png_bytep *data, long height, double dbmin, double dbmax);
 static double color2amp(png_byte *px, int x, int y);
+static double interpolate(double y1, double y2, double mu);
 static void calc_hann_window (double * data, int datalen);
 static void write_audio(float *audio, sf_count_t audiosamples,
 			int samplerate, char *filename, int normalize);
@@ -87,6 +88,8 @@ main(int argc, char **argv)
     png_infop graphinfo, scaleinfo;
     png_bytep *graphdata, *scaledata;
     long graphwidth, graphheight, scaleheight;
+    float **amplitudes;	/* amplitude equivalents of graphdata[][] */
+    int x,y;	/* Indices into graph */
 
     progname = argv[0];
 
@@ -110,7 +113,7 @@ main(int argc, char **argv)
 	    argv++, argc--;	/* gobble numeric parameter too */
 	} else
 	if (strcmp(argv[1], "--fps") == 0) {
-	    fps = -atof(argv[2]);
+	    fps = atof(argv[2]);
 	    if (fps <= 0.0) {
 		fputs("--fps what?\n", stderr);
 		exit(1);
@@ -174,6 +177,53 @@ main(int argc, char **argv)
     /* Make our color-to-loudness reverse mapping table */
     init_scale(scaledata, scaleheight, dbmin, dbmax);
 
+    /* Convert the colour values to amplitude values */
+    amplitudes = calloc(graphheight, sizeof(*amplitudes));
+    if (!amplitudes) oom();
+    for (y=0; y<graphheight; y++) {
+	amplitudes[y] = calloc(graphwidth, sizeof(*amplitudes[y]));
+	if (!amplitudes[y]) oom();
+	for (x=0; x<graphwidth; x++)
+            amplitudes[y][x] = color2amp(&graphdata[y][x*3], x, y);
+    }
+    /* Can now free the PNG images and their data */
+
+    /* Resample the amplitude graph to give more columns if requested.
+     * Each input column represents a fraction of a second of audio, for
+     * a total of "duration" seconds. We consider the "time" of a sample bin
+     * to be at the centre of the column's width, hence the +0.5 and -0.5.
+     * From the time at the centre of the output column we need to find the
+     * pair of input column centres that enclose it (oldx and oldx+1),
+     * and how far between them it falls as a proportion 0.0 <= mu < 1.0.
+     */
+
+
+    if (fps != 0.0) {
+	double oldfps = graphwidth / duration;
+	double newfps = fps;
+	int newwidth = round(duration * newfps);
+	float *newamplitudeline = calloc(newwidth, sizeof(float));
+
+	for (y = 0; y < graphheight; y++) {
+	    float *newamplitude = calloc(newwidth, sizeof(float));
+	    int newx;  /* Which item of newamplitudes[] we are calculating */
+	    for (newx = 0; newx < newwidth; newx++) {
+		/* time from start represented by centre of output column */
+		double time = (newx + 0.5) / newfps;
+		double x = time * oldfps - 0.5;
+		int oldx = floor(x);
+		double y1, y2;
+
+		y1 = amplitudes[y][oldx < 0 ? 0 : oldx];
+		y2 = amplitudes[y][oldx+1 > graphwidth-1 ? graphwidth-1 : oldx+1];
+		newamplitude[newx] = interpolate(y1, y2, x - oldx);
+	    }
+	    free(amplitudes[y]);
+	    amplitudes[y] = newamplitude;
+	}
+	graphwidth = newwidth;
+    }
+
     /* We have graphwidth columns of input, each representing a fraction of
      * a second of audio. We do an inverse FFT with a window length twice
      * the size of this fraction then add it to the audio output using a
@@ -217,8 +267,6 @@ main(int argc, char **argv)
     /* Now convert each column of the graph into data suitable as input
      * to a reverse DFT, do the DFT, then add the result to the audio
      * through the Hann window. */
-
-    int x,y;	/* Indices into graph */
 
     /* Add a random phase offset to each bin to avoid all the partials
      * coinciding and producing a nasty peak. */
@@ -264,7 +312,7 @@ main(int argc, char **argv)
 	     *                                          |/
              *                                          '
 	     */
-            double amp = color2amp(&graphdata[y][x*3], x, y);
+            double amp = amplitudes[y][x];
 	    double phase = time * fftfreq * 2.0 * M_PI + rphase[y];
 
 	    in[fftindex][0] += amp * sin(phase); /* real */
@@ -289,16 +337,16 @@ main(int argc, char **argv)
 #ifdef PARTIALS
 	if (partials) {
 	    static unsigned partial_number;
-	if (partial_number < 10) {
-	    char filename[16];
-	    float *partial = calloc(audiosamples, sizeof(float));
-	    float *audio_start = &(partial[lrint(time * samplerate)]);
-	    for (y=0; y<fft_size-1; y++)
-		audio_start[y] += out[y] * hann_window[y] / 2;
-	    sprintf(filename, "partial-%03u.wav", partial_number++);
-	    write_audio(partial, audiosamples, samplerate, filename, 0);
-	    free(partial);
-	}
+	    if (partial_number < 10) {
+		char filename[16];
+		float *partial = calloc(audiosamples, sizeof(float));
+		float *audio_start = &(partial[lrint(time * samplerate)]);
+		for (y=0; y<fft_size-1; y++)
+		    audio_start[y] += out[y] * hann_window[y] / 2;
+		sprintf(filename, "partial-%03u.wav", partial_number++);
+		write_audio(partial, audiosamples, samplerate, filename, 0);
+		free(partial);
+	    }
 	}
 #endif
     }
@@ -596,8 +644,6 @@ color2amp(png_byte *px, int x, int y)
     int best_entry = -1;  /* None chosen yet */
     double best_distance = INFINITY;
 
-#define sqr(x) ((x) * (x))
-
     for (entry=0; entry<scaleitems; entry++) {
 	/* Maybe should weight these */
 	double distance =
@@ -646,6 +692,23 @@ store_and_return:
 
     return amp;
 }
+
+
+static double
+interpolate(double y1, double y2, double mu)
+{
+    /* Linear interpolation */
+    // return y1 * (1 - mu) + y2 * mu;
+
+    /* Cosine interpolation does not exhibit the cubic splines' overshoot
+     * and depends only on the two bounding points.
+     * but multiplying the signal by a constant-frequency cosine
+     * may be like putting it through a ring modulator.
+     */
+    double mu2 = (1 - cos(mu * M_PI)) / 2;
+    return y1 * (1 - mu2) + y2 * mu2;
+}
+
 
 /* Stolen from sndfile-tools */
 static void

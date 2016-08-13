@@ -17,10 +17,24 @@ groffset=91
 # Set noise floor to -N decibels. Leave unset to use full range.
 floor=
 
+# Set frames per second to interpolate to
+fps=
+
+# Process option flags
+while [ $# -gt 1 ]; do
+    case "$1" in
+    --floor) floor="$2"; shift;;
+    --fps) fps="$2"; shift;;
+    --partials) partialsflag=--partials;;
+    *)	break ;;
+    esac
+    shift
+done
+
 [ "$floor" ] && floorflag="--floor $floor"
+[ "$fps" ] && fpsflag="--fps $fps"
 
 (
-false && {
     echo -n "-73 -13 5 651 28 91 2.25 "
     echo "Fig 0.1 Music of the Brisbane School 2.25s"
 
@@ -44,16 +58,15 @@ false && {
 
     echo -n "-73 -13 16 6809 30 91 60 "
     echo "Fig IV.2 Putative synthesis using DD334 calculated partials"
-}
+
     echo -n "-56 -7 11 6808 30 91 240 "
     echo "Fig IV.3 CDD-1-3-5 0'32\"-4'32\" Lowell"
-false && {
+
     echo -n "-71 -12 11 6972 19 91 150 "
     echo "Fig IV.4 CDD-1-6-3 15'54\"-18'26\" Random Together I"
 
-    #echo -n "-73 -0 16 6809 30 91 10 "
+    #echo -n "-73 -0 16 6809 30 91 240 "
     #echo "test"
-}
 ) | while read dbmin dbmax fmin fmax fmaxat groffset duration filestem
 do
     echo $filestem
@@ -90,7 +103,8 @@ do
     # and the top pixel is $fmaxat pixels above the highest marked frequency
     ftop=`echo "$fmax + $fmaxat * $hz_per_pixel_row" | bc -l`
 
-    ./run $floorflag $dbmin $dbmax $fmin $ftop $duration graph$$.png scale$$.png "$audiofile"
+    ./run $floorflag $fpsflag $partialsflag \
+	$dbmin $dbmax $fmin $ftop $duration graph$$.png scale$$.png "$audiofile"
 
     rm -f graph$$.png scale$$.png
 done
