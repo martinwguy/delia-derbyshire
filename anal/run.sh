@@ -11,6 +11,7 @@
 #
 # Usage: sh run.sh [options] [filename.png]
 # Options:
+# --fill	Set all FFT input values by interpolating from input points
 # --floor N	Noise floor; truncate all amplitudes below -N dB to zero.
 # --fps N	interpolate between pixel columns to give N columns per second
 # --partials	Tell "run" to dump the first 10 audio frames
@@ -29,6 +30,7 @@ fps=
 # Process option flags
 while [ $# -gt 1 ]; do
     case "$1" in
+    --fill) fillflag="--fill";;
     --floor) floor="$2"; shift;;
     --fps) fps="$2"; shift;;
     --partials) partialsflag=--partials;;
@@ -71,8 +73,8 @@ done
     echo -n "-71 -12 11 6972 19 91 150 "
     echo "Fig IV.4 CDD-1-6-3 15'54\"-18'26\" Random Together I"
 
-    #echo -n "-73 -0 16 6809 30 91 240 "
-    #echo "test"
+    echo -n "-73 -0 16 6809 30 91 240 "
+    echo "test"
 ) | while read dbmin dbmax fmin fmax fmaxat groffset duration filestem
 do
     # A single png file as parameter limits processing to that file.
@@ -112,7 +114,7 @@ do
     # and the top pixel is $fmaxat pixels above the highest marked frequency
     ftop=`echo "$fmax + $fmaxat * $hz_per_pixel_row" | bc -l`
 
-    ./run $floorflag $fpsflag $partialsflag \
+    ./run $fillflag $floorflag $fpsflag $partialsflag \
 	$dbmin $dbmax $fmin $ftop $duration graph$$.png scale$$.png "$audiofile"
 
     rm -f graph$$.png scale$$.png

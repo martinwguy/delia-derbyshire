@@ -34,6 +34,11 @@
  *	--fps N			Interpolate to N frames per second
  *		Reduce choppiness of low frame rate spectrograms by
  *		interpolating between FFT frames before doing the transform.
+ *	--fill
+ *		Write all FFT points by interpolating between input values
+ *		(the default is to write each input once to the nearest
+ *		FFT input point)
+ *
 #ifdef PARTIALS
  *	--partials		Write audio of each frame to files
  *		A debugging aid that write the first ten audio fragments
@@ -79,6 +84,10 @@ static double noise_floor = -INFINITY;
  */
 static double fps = 0.0;
 
+/* Interpolate input values in each column to fill the FFT input array,
+ * instead of sparsely populating it? */
+static int fill = 0;
+
 void
 main(int argc, char **argv)
 {
@@ -96,11 +105,10 @@ main(int argc, char **argv)
     while (argc > 1 && argv[1][0] == '-') {
 	/* Stop if we're at the negative numeric arguments */
         if (isdigit(argv[1][1])) break;
-#ifdef PARTIALS
-	if (strcmp(argv[1], "--partials") == 0)
-	    partials = 1;
+
+	if (strcmp(argv[1], "--fill") == 0)
+	    fill = 1;
 	else
-#endif
 	if (strcmp(argv[1], "--floor") == 0) {
 	    noise_floor = atof(argv[2]);
 	    if (noise_floor == 0.0) {
@@ -120,6 +128,11 @@ main(int argc, char **argv)
 	    }
 	    argv++, argc--;	/* gobble numeric parameter too */
 	} else
+#ifdef PARTIALS
+	if (strcmp(argv[1], "--partials") == 0)
+	    partials = 1;
+	else
+#endif
 	{
 	    fprintf(stderr, "Unknown flag '%s'.\n", argv[1]);
 	    exit(1);
@@ -269,10 +282,18 @@ main(int argc, char **argv)
     /* Add a random phase offset to each bin to avoid all the partials
      * coinciding and producing a nasty peak. */
     srandom(time(NULL));
-    double *rphase = calloc(graphheight, sizeof(double));
-    if (!rphase) oom();
-    for (y=0; y<graphheight; y++)
-	rphase[y] = (double)random() * 2.0 * M_PI / (double)RAND_MAX;
+    double *rphase;
+    if (!fill) {
+        rphase = calloc(graphheight, sizeof(double));
+        if (!rphase) oom();
+        for (y=0; y<graphheight; y++)
+	    rphase[y] = (double)random() * 2.0 * M_PI / (double)RAND_MAX;
+    } else {
+        rphase = calloc(fft_size/2, sizeof(double));
+        if (!rphase) oom();
+        for (y=0; y<fft_size/2; y++)
+	    rphase[y] = (double)random() * 2.0 * M_PI / (double)RAND_MAX;
+    }
 
     for (x=0; x<graphwidth; x++) {
 	/* The start of this pixel column represents audio starting after
@@ -283,6 +304,7 @@ main(int argc, char **argv)
 	 * for every column. */
 	memset(in, 0, sizeof(fftw_complex) * fft_size);
 
+	if (!fill)
 	for (y=0; y<graphheight; y++) {
 
 	    /* What frequency does this row represent?
@@ -316,6 +338,30 @@ main(int argc, char **argv)
 	    in[fftindex][0] += amp * sin(phase); /* real */
 	    in[fftindex][1] += amp * cos(phase); /* imaginary */
         }
+	else {
+	    /* Fill in all FFT points by interpolating between the input points
+	     */
+	    double fft_points_per_bucket = ((double)(fft_size/2+1) / (samplerate/2)) /
+	                                   ((double)(graphheight-1) / (fmax - fmin));
+	    int minfftindex = floor(fmin * (fft_size/2+1) / (samplerate/2));
+	    int maxfftindex = ceil (fmax * (fft_size/2+1) / (samplerate/2));
+	    int fftindex;
+	    for (fftindex = minfftindex; fftindex <= maxfftindex; fftindex++) {
+		double freq = fftindex * (samplerate/2) / (fft_size/2+1);
+		/* Corresponding index into input column, by inverting
+		 * the "freq = ... y ..." formula in the above code */
+		double y = ((fmax-freq) / (fmax-fmin)) * (graphheight - 1);
+		double y1 = trunc(y) < 0.0 ? 0.0 :
+		            amplitudes[(int)trunc(y)][x];
+		double y2 = trunc(y)+1 > graphheight-1 ? 0.0 :
+		            amplitudes[(int)trunc(y)+1][x];
+		double mu = y - trunc(y);
+		double amp = interpolate(y1, y2, mu);
+	        double phase = time * freq * 2.0 * M_PI + rphase[fftindex];
+		in[fftindex][0] += amp * sin(phase); /* real */
+		in[fftindex][1] += amp * cos(phase); /* imaginary */
+	    }
+	}
 
 	fftw_execute(p);
 
