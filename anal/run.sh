@@ -8,6 +8,12 @@
 # https://dl.dropboxusercontent.com/u/41104723/71040190-MUSC40110-DeliaDerbyshire.pdf
 # http://wikidelia.net/wiki/Delia_Derbyshire's_Creative_Process
 # and extract the spectrograms with "pdfimages *.pdf image"
+#
+# Usage: sh run.sh [options] [filename.png]
+# Options:
+# --floor N	Noise floor; truncate all amplitudes below -N dB to zero.
+# --fps N	interpolate between pixel columns to give N columns per second
+# --partials	Tell "run" to dump the first 10 audio frames
 
 set -e		# Exit if anything fails unexpectedly
 
@@ -69,6 +75,9 @@ done
     #echo "test"
 ) | while read dbmin dbmax fmin fmax fmaxat groffset duration filestem
 do
+    # A single png file as parameter limits processing to that file.
+    [ "$1" -a "$1" != "$filestem".png ] && continue
+
     echo $filestem
     imagefile="$filestem".png
     audiofile="$filestem".wav

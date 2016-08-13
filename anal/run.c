@@ -196,8 +196,6 @@ main(int argc, char **argv)
      * pair of input column centres that enclose it (oldx and oldx+1),
      * and how far between them it falls as a proportion 0.0 <= mu < 1.0.
      */
-
-
     if (fps != 0.0) {
 	double oldfps = graphwidth / duration;
 	double newfps = fps;
