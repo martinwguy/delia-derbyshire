@@ -13,8 +13,7 @@ then
 	reverse FFT each pixel column (with what window size?)
 	reconstruct audio by fading between FFT outputs
 
-e.g. Lowell from James Percival's thesis
-Using coordinate system of (0,0) at top left
+e.g. Lowell, using a coordinate system with (0,0) at top left
 	colour scale runs from -7 to -56dB at (29-41(say 32), 39-602)
 	    and bands of 3 or 4 pixels have the same colour.
 	graph is from (91,0) to (1013,622): entire image minus leftmost 91 pix)

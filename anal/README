@@ -10,9 +10,8 @@ mkjpg.sh	Produces the log-frequency-axis spectrograms used in
 		in August 2012.
 		See http://wikidelia.net/wiki/Spectrograms
 
-run.sh/run.c	Converts the spectrograms in James Percival's thesis back
-		into audio. Sound quality varies according to the
-		resolution of the spectrogram in question.
+run.sh/run.c	Convert spectrograms back into audio.  Sound quality varies
+		according to the resolution of the spectrogram in question.
 		I have never heard of anyone else ever attempting to do this;
 		surely I can't be the first!
 		See:

@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# run: Convert the spectrogams in James Percival's thesis back into audio,
+# run: Convert the spectrograms in James Percival's thesis back into audio,
 # a driver program for run.c.
 #
 # Copyright (c) Martin Guy <martinwguy@gmail.com> 2016.
@@ -14,7 +14,7 @@
 # --fill	Set all FFT input values by interpolating from input points
 # --floor N	Noise floor; truncate all amplitudes below -N dB to zero.
 # --fps N	interpolate between pixel columns to give N columns per second
-# --partials	Tell "run" to dump the first 10 audio frames
+# --partials	Tell "run" to dump the first 10 audio frames for debugging
 
 set -e		# Exit if anything fails unexpectedly
 
