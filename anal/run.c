@@ -8,7 +8,7 @@
  *	dbmin dbmax		Range of dB values in the color scale.
  *		dbmin is the amplitude represented by the bottom pixel of the
  *		color scale, dbmax the value represented by the top color.
- *		To normalise the output, give dbmax as 0 and dbmin as minus te
+ *		To normalise the output, give dbmax as 0 and dbmin as minus the
  *		total dynamic range.
  *	fmin fmax		Range of frequency values in the graph
  *		fmin is the frequency in Hz represented by the bottom row of
