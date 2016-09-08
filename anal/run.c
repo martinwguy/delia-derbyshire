@@ -190,7 +190,7 @@ main(int argc, char **argv)
     /* Make our color-to-loudness reverse mapping table */
     init_scale(scaledata, scaleheight, dbmin, dbmax);
 
-    /* Convert the colour values to amplitude values */
+    /* Convert the color values to amplitude values */
     amplitudes = calloc(graphheight, sizeof(*amplitudes));
     if (!amplitudes) oom();
     for (y=0; y<graphheight; y++) {
@@ -240,7 +240,7 @@ main(int argc, char **argv)
      * the size of this fraction then add it to the audio output using a
      * Hann window which, being cos^2, has the nice properties that it
      * crosses .5 at 1/4 and 3/4 of its width, that each half has
-     * rotational symmetry and the endpoints are at 0 which mean that two
+     * rotational symmetry and the endpoints are at 0 which means that two
      * adjacent half-overlapped windows sum to 1.0 and the sound output
      * for the middle half of each window depends mostly on the data for
      * the corresponding pixel column.
@@ -366,7 +366,7 @@ main(int argc, char **argv)
 	fftw_execute(p);
 
 	/* Now out[0..fft_size-1] represent the audio for one frame.
-	 * Add this to the audio through the window
+	 * Add this to the audio through the window.
 	 */
 	/* Where do we start writing in the output array? */
 	{
@@ -454,6 +454,8 @@ read_png(char *filename, png_structp *pngp, png_infop *infop, char *type)
 
     *pngp = png; *infop = info;
 
+    /* Measure image and allocate memory */
+
     height = png_get_image_height(png, info);
     row_pointers = (png_bytep *) calloc(height, sizeof(png_bytep));
     if (!row_pointers) oom();
@@ -474,8 +476,8 @@ read_png(char *filename, png_structp *pngp, png_infop *infop, char *type)
 /* Associative array to map colors to values in decibels.
  * Since several adjacent entries in the color scale can be of the same color
  * we find the mean value for that color by summing the dB values in "db",
- * keeping tack of how many values we have summed in "count" and dividing
- * "db" by "count" when we have finished scanning the colour map.
+ * keeping track of how many values we have summed in "count" and dividing
+ * "db" by "count" when we have finished scanning the color map.
  */
 typedef struct scale {
     union {
@@ -489,7 +491,7 @@ typedef struct scale {
 
 #define db2amp(db) ((db)<noise_floor ? 0.0 : pow(10.0, (db)/20.0))
 
-static scale_t *scale;	/* Array of colour/db pairs */
+static scale_t *scale;	/* Array of color/db pairs */
 static int scaleitems;	/* Number of elements that are in use in scale[] */
 static int lastscaleitem; /* Last items that came from the color scale itself */
 static int scalesize;	/* Number of elements allocated to scale[] */
@@ -521,7 +523,7 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
 	 */
 	db = dbmax + y * dbmin / (scaleheight-1);
 
-	/* See if the colour is already in the mapping table */
+	/* See if the color is already in the mapping table */
 	for (entry=0; entry<scaleitems; entry++) {
 	    if (scale[entry].color == color) {
 		scale[entry].db += db;
@@ -548,8 +550,8 @@ init_scale(png_bytep *scaledata, long scaleheight, double dbmin, double dbmax)
      * below it but not up by the (nonexistent) entry above it. So just take
      * the top value as-is, being the centre pixel of the 3-pixel high
      * same-color band it should be part of. Furthermore, the dbmax value
-     * ssems to refer to the white one-pixel top border of the scale, not to
-     * the top pixel row of the colour scale, so this adjusts for that too.
+     * seems to refer to the white one-pixel top border of the scale, not to
+     * the top pixel row of the color scale, so we adjust for that too.
      */
     scale[0].db = dbmax;
     scale[0].amp = db2amp(dbmax);
@@ -576,17 +578,17 @@ color2amp(png_byte *px, int x, int y)
 	if (scale[entry].color == color)
 	    return scale[entry].amp;
 
-    /* Colour is not in the scale.  Either it's black, or above the top
-     * of the range of colors, off the bottom or between other colours.
+    /* Color is not in the scale.  Either it's black, above the top
+     * of the range of colors, off the bottom or between other colors.
      * For black, just return 0 amplitude (-inf dB).
      * For values above the maximum do linear interpolation from the top two
      * entries according to the red value which seems to increase isotonically.
      * For values off the bottom, we do nothing yet.
      * For values in between,
-     * - first, try to find two adjacent values in the existing colour table
+     * - first, try to find two adjacent values in the existing color table
      *   whereby the red value lies between the red values, the green between
      *   the green etc. and interpolate between the two dB values.
-     * - if there are none, just find the closest colour value and use that.
+     * - if there are none, just find the closest color value and use that.
      */
 
     /* Black? Zero amplitude. */
@@ -648,7 +650,7 @@ color2amp(png_byte *px, int x, int y)
 #define G_WEIGHT (0.587)
 #define B_WEIGHT (0.114)
 
-    /* See if it falls between two other colours */
+    /* See if it falls between two other colors */
     for (entry=0; entry<lastscaleitem; entry++) {
 	png_byte r = px[0], g = px[1], b = px[2];
 	png_byte r0 = scale[entry].colors[0], r1 = scale[entry+1].colors[0];
@@ -746,7 +748,7 @@ interpolate(double y1, double y2, double mu)
 
     /* Cosine interpolation does not exhibit the cubic splines' overshoot
      * and depends only on the two bounding points.
-     * but multiplying the signal by a constant-frequency cosine
+     * However, multiplying the signal by a constant-frequency cosine
      * may be like putting it through a ring modulator.
      */
     double mu2 = (1 - cos(mu * M_PI)) / 2;
