@@ -41,8 +41,8 @@
  *
 #ifdef PARTIALS
  *	--partials		Write audio of each frame to files
- *		A debugging aid that write the first ten audio fragments
- *		to separate files, before they are merged to form the output.
+ *		A debugging aid that writes the first ten audio fragments
+ *		to ten WAV files before they are merged to form the output.
 #endif
  */
 #include <stdlib.h>
