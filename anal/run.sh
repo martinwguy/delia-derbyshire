@@ -39,6 +39,12 @@ while [ $# -gt 1 ]; do
     shift
 done
 
+run="$(echo "$0" | sed 's/\.sh$//')"
+test -x "$run" || {
+    echo "Cannot find "run" binary"
+    exit 1
+}
+
 [ "$floor" ] && floorflag="--floor $floor"
 [ "$fps" ] && fpsflag="--fps $fps"
 
@@ -73,8 +79,8 @@ done
     echo -n "-71 -12 11 6972 19 91 150 "
     echo "Fig IV.4 CDD-1-6-3 15'54\"-18'26\" Random Together I"
 
-    echo -n "-73 -0 16 6809 30 91 240 "
-    echo "test"
+    #echo -n "-73 -0 16 6809 30 91 240 "
+    #echo "test"
 ) | while read dbmin dbmax fmin fmax fmaxat groffset duration filestem
 do
     # A single png file as parameter limits processing to that file.
@@ -114,7 +120,7 @@ do
     # and the top pixel is $fmaxat pixels above the highest marked frequency
     ftop=`echo "$fmax + $fmaxat * $hz_per_pixel_row" | bc -l`
 
-    ./run $fillflag $floorflag $fpsflag $partialsflag \
+    $run $fillflag $floorflag $fpsflag $partialsflag \
 	$dbmin $dbmax $fmin $ftop $duration graph$$.png scale$$.png "$audiofile"
 
     rm -f graph$$.png scale$$.png
