@@ -30,8 +30,11 @@ export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
 suffix=jpg
 
 # To get a grayscaled spectrogram instead of a colored one, set
-# grayscale=--gray-scale
+# grayscale=true
 grayscale=
+
+# Output a printer-friendly gram with a light background?
+light=
 
 # Should we overlay the output with black and white lines
 # incorrespondence with a piano's black and white keys?
@@ -62,6 +65,7 @@ if [ $# = 0 ]; then
 	echo "DYN_RANGE=100    Amplitude of black in the output, in dB below maximum volume,"
 	echo "                 Smaller values brighten the darker areas of the graph."
 	echo "--gray           Make a grayscale spectrogram instead of a color-mapped one."
+	echo "--light          Make a printer-friendly spectrogram with a light background."
 	echo "--piano          Overlay single-pixel black and white horizontal lines to mark"
 	echo "                 the position of conventional keyboard tuned to A=440Hz."
 	echo "--png            Output a PNG file instead of a JPEG."
@@ -80,7 +84,12 @@ do
 		continue
 		;;
 	--gray|--grey)
-		grayscale=--gray-scale
+		grayscale=true
+		continue
+		;;
+	--light)
+		light=true
+		use_sox=true  # sndfile-spectrogram has no light bg option
 		continue
 		;;
 	--piano)
@@ -188,6 +197,7 @@ do
 
     if [ $use_sox = false ] && sndfile-spectrogram | grep -q log-freq ; then
 	# Use built-in log frequency axis if sndfile-spectrogram has it
+	test "$grayscale" && grayscale=--gray-scale
 	sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		--log-freq --min-freq=$MIN_FREQ_OUT --max-freq=$MAX_FREQ_OUT \
 		--fft-freq="$FFTFREQ" \
@@ -198,9 +208,11 @@ do
 	# If not, do a linear spectrogram and distort it
 	if $use_sox; then
 	    test "$grayscale" && grayscale=-m
+	    test "$light" && light=-l
 	    sox $wav -n spectrogram -x $width -y $LIN_HEIGHT -z $DYN_RANGE \
-		-n -r $grayscale -o $png
+		-n -r $grayscale $light -o $png
 	else
+	    test "$grayscale" && grayscale=--gray-scale
 	    sndfile-spectrogram --dyn-range=$DYN_RANGE --no-border $grayscale \
 		$wav \
 		$width $LIN_HEIGHT $png
