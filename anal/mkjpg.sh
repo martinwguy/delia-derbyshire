@@ -262,7 +262,7 @@ do
 	# output image.  We assume that the output frequency ranges starts
 	# at an A.
 	$piano && {
-	    echo "Applying piano lines..."
+	    $verbose && echo "Applying piano lines..."
 	    maxy="$(expr "$PPOCT" \* "$OCTAVES" - 1)"
 	    maxx="$(expr "$(identify -format %w $png)" - 1)"
 	    echo -n convert $png -strokewidth 1 > $pianocmd
