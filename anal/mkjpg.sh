@@ -202,7 +202,15 @@ do
 		--log-freq --min-freq=$MIN_FREQ_OUT --max-freq=$MAX_FREQ_OUT \
 		--fft-freq="$FFTFREQ" \
 		$wav \
-		$width $LOG_HEIGHT $png || { rm -f $wav $png; exit 1; }
+		$width $LOG_HEIGHT $png || {
+	    # sndfile-spectrogram failed. Why?
+	    if [ $width -gt 32767 ]; then
+		echo "mkjpg: image too wide ($width) for sndfile-spectrogram (max 32767). Try --sox" 1>&2
+	    # else sndfile-spectrogram has already printed a failure message
+	    fi
+	    rm -f $wav $png;
+	    exit 1;
+	}
 	rm -f $wav
     else
 	# If not, do a linear spectrogram and distort it
