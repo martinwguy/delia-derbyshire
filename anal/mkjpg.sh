@@ -10,7 +10,6 @@
 #	Martin Guy <martinwguy@gmail.com>, August 2012 - January 2016
 #	for http://wikidelia.net
 
-
 # Assign default values to environment variables
 # giving 8x12x9=864 pixels high
 
@@ -40,6 +39,9 @@ grayscale=
 
 # Output a printer-friendly gram with a light background?
 light=
+
+# Run all filenames a parallel jobs?
+parallel=false
 
 # Should we overlay the output with black and white lines
 # incorrespondence with a piano's black and white keys?
@@ -82,133 +84,153 @@ if [ $# = 0 ]; then
 	exit 1
 fi
 
-wav=mkjpg$$.wav
+wav=`tempfile -p mkjpg -s .wav -d .` || {
+	echo "Can't create temporary file name" 1>&2
+	exit 1
+}
 
 for a
 do
-	case "$a" in
-	*=*)	eval "$a"
-		continue
-		;;
-	--gray|--grey)
-		grayscale=true
-		continue
-		;;
-	--light)
-		light=true
-		use_sox=true  # sndfile-spectrogram has no light bg option
-		continue
-		;;
-	--piano)
-		piano=true
-		continue
-		;;
-	--png)	suffix=png
-		continue
-		;;
-	--in-place)
-		inplace=true
-		continue
-		;;
-	--sox)	use_sox=true
-		continue
-		;;
-	--thumb)	# 1/8th of normal size in each direction
-		thumb=true
-		PPSEMI=2
-		PPSEC=12.5
-		export PPSEMI PPSEC
-		continue
-		;;
-	--verbose|-v)
-		verbose=true
-		continue
-		;;
-	-*)	exec $0		# Give help message
-		exit 1
-		;;
-	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
-		rm -f $wav
-		oggdec --quiet -o $wav "$a"
-		;;
-	*.mp3)	outfile="`basename "$a" .mp3`".$suffix
-		rm -f $wav
-		lame --quiet --decode "$a" $wav
-		;;
-	*.flac)	outfile="`basename "$a" .flac`".$suffix
-		rm -f $wav
-		flac -s -d -o $wav "$a"
-		;;
-	*.m4a)	outfile="`basename "$a" .m4a`".$suffix
-		rm -f $wav
-		MPLAYER_VERBOSE=0 mplayer -quiet -noconsolecontrols \
-			-ao pcm:file=$wav "$a" > /dev/null
-		;;
-	*.wav)	outfile=`echo "$a" | sed "s/wav\$/$suffix/"`
-		rm -f $wav
-		ln -s "$a" $wav
-		;;
-	*)	echo "Eh? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
-		exit 1
-		;;
-	esac
+    case "$a" in
+    *=*)	eval "$a"
+	    continue
+	    ;;
+    --gray|--grey)
+	    grayscale=true
+	    continue
+	    ;;
+    --light)
+	    light=true
+	    use_sox=true  # sndfile-spectrogram has no light bg option
+	    continue
+	    ;;
+    --piano)
+	    piano=true
+	    continue
+	    ;;
+    --png)	suffix=png
+	    continue
+	    ;;
+    --in-place)
+	    inplace=true
+	    continue
+	    ;;
+    --parallel|-j)
+	    parallel=true
+	    continue
+	    ;;
+    --sox)	use_sox=true
+	    continue
+	    ;;
+    --thumb)	# 1/8th of normal size in each direction
+	    thumb=true
+	    PPSEMI=2
+	    PPSEC=12.5
+	    export PPSEMI PPSEC
+	    continue
+	    ;;
+    --verbose|-v)
+	    verbose=true
+	    continue
+	    ;;
+    -*)	exec $0		# Give help message
+	    exit 1
+	    ;;
+    *.ogg)	outfile="`basename "$a" .ogg`".$suffix
+	    rm -f $wav
+	    oggdec --quiet -o $wav "$a"
+	    ;;
+    *.mp3)	outfile="`basename "$a" .mp3`".$suffix
+	    rm -f $wav
+	    lame --quiet --decode "$a" $wav
+	    ;;
+    *.flac)	outfile="`basename "$a" .flac`".$suffix
+	    rm -f $wav
+	    flac -s -d -o $wav "$a"
+	    ;;
+    *.m4a)	outfile="`basename "$a" .m4a`".$suffix
+	    rm -f $wav
+	    MPLAYER_VERBOSE=0 mplayer -quiet -noconsolecontrols \
+		    -ao pcm:file=$wav "$a" > /dev/null
+	    ;;
+    *.wav)	outfile=`echo "$a" | sed "s/wav\$/$suffix/"`
+	    rm -f $wav
+	    ln -s "$a" $wav
+	    ;;
+    *)	echo "Eh? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
+	    exit 1
+	    ;;
+    esac
 
-	outfile="`echo "$a" | sed "s/wav\$/$suffix/"`"
+    # Turn an audio file into an image file
+    (
 
-	$inplace || outfile="`basename "$outfile"`".$suffix
+    outfile="`echo "$a" | sed "s/wav\$/$suffix/"`"
 
-	### Here beginneth what used to be a Makefile
+    $inplace || outfile="`basename "$outfile"`".$suffix
 
-	## Derived constants
+    ### Here beginneth what used to be a Makefile
 
-	# Pixel rows per octave. They can set PPOCT or PPSEMI.
-	# If PPOCT is set, it overrides PPSEMI, if not, it is
-	# calculated from PPSEMI. Only PPOCT is used below.
-	if [ ! "$PPOCT" ]; then
-		PPOCT=$(expr "$PPSEMI" \* 12)
-	else
-		PPSEMI=
-	fi
+    ## Derived constants
 
-	# The frequency of the top row in the output
-	MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
+    # Pixel rows per octave. They can set PPOCT or PPSEMI.
+    # If PPOCT is set, it overrides PPSEMI, if not, it is
+    # calculated from PPSEMI. Only PPOCT is used below.
+    if [ ! "$PPOCT" ]; then
+	    PPOCT=$(expr "$PPSEMI" \* 12)
+    else
+	    PPSEMI=
+    fi
 
-	# Output N octaves at PPOCT pixels per octave.
-	# Rounding of result to integer is done crudely
-	# by adding 0.5 and dropping all decimals in bc's output
-	LOG_HEIGHT=$(echo "l($MAX_FREQ_OUT/$MIN_FREQ_OUT) / l(2) * $PPOCT + 0.5" | bc -l | sed 's/\..*//')
+    # The frequency of the top row in the output
+    MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
 
-	# LIN_HEIGHT is the height of the graphic, which is half the FFT size
-	# hence half the lowest resolvable frequency/spacing of frequency bands.
-	# which determines the time and frequency resolutions.
-	LIN_HEIGHT=$(echo "$SRATE / $FFTFREQ / 2 + 0.5" | bc -l | sed 's/\..*//')
+    # Output N octaves at PPOCT pixels per octave.
+    # Rounding of result to integer is done crudely
+    # by adding 0.5 and dropping all decimals in bc's output
+    LOG_HEIGHT=$(echo "l($MAX_FREQ_OUT/$MIN_FREQ_OUT) / l(2) * $PPOCT + 0.5" | bc -l | sed 's/\..*//')
 
-	MAX_FREQ_IN=$(expr $SRATE / 2)
-	MAX_Y_IN=$(expr $LIN_HEIGHT - 1)
-	MAX_Y_OUT=$(expr $LOG_HEIGHT - 1)
+    # LIN_HEIGHT is the height of the graphic, which is half the FFT size
+    # hence half the lowest resolvable frequency/spacing of frequency bands.
+    # which determines the time and frequency resolutions.
+    LIN_HEIGHT=$(echo "$SRATE / $FFTFREQ / 2 + 0.5" | bc -l | sed 's/\..*//')
 
-	# Temporary files:
-	# $png - the linear frequency axis spectrogram
-	# $map - the distortion map used to make the log freq graph from $png
-	# $png - the log-frequency-axis output file which we then convert into
-	#	 jpg or png as requested.
-	png=/tmp/mkjpg$$.png
-	map=/tmp/mkjpg$$-map.png
-	pianocmd=/tmp/piano-cmd$$
+    MAX_FREQ_IN=$(expr $SRATE / 2)
+    MAX_Y_IN=$(expr $LIN_HEIGHT - 1)
+    MAX_Y_OUT=$(expr $LOG_HEIGHT - 1)
 
-	trap "rm -f $wav $png $map $pianocmd" INT QUIT
+    # Temporary files:
+    # $png - the linear frequency axis spectrogram
+    # $map - the distortion map used to make the log freq graph from $png
+    # $png - the log-frequency-axis output file which we then convert into
+    #	 jpg or png as requested.
+    png=/tmp/mkjpg$$.png
+    map=/tmp/mkjpg$$-map.png
+    pianocmd=/tmp/piano-cmd$$
+    # or, if tempfile is available, use that.
+    f=`tempfile` && {
+	rm $f
+	png=`tempfile -p mkjpg -s .png`
+	map=`tempfile -p map   -s .png`
+	pianocmd=`tempfile -p piano`
+    }
 
-	### Turn a WAV into a PPM file
+    trap "rm -f $wav $png $map $pianocmd" INT QUIT
 
-	# Find the image width, which depends on the length of the piece.
-	width="$( echo "(`soxi -s $wav` / $SRATE) * $PPSEC + 0.5" |
-		  bc -l | sed 's/\..*//' )"
-	test "$width" || exit 1
+    ### Turn a WAV into a PPM file
 
-	$verbose && {
-		echo "Producing $width x $LIN_HEIGHT spectrogram for"
-		echo "          $width x $LOG_HEIGHT output"
-	}
+    # Find the image width, which depends on the length of the piece.
+    soxi -s $wav
+    file $wav
+    ls -ld $wav
+    width="$( echo "(`soxi -s $wav` / $SRATE) * $PPSEC + 0.5" |
+	      bc -l | sed 's/\..*//' )"
+    test "$width" || exit 1
+
+    $verbose && {
+	    echo "Producing $width x $LIN_HEIGHT spectrogram for"
+	    echo "          $width x $LOG_HEIGHT output"
+    }
 
     if [ $use_sox = false ] && sndfile-spectrogram | grep -q log-freq ; then
 	# Use built-in log frequency axis if sndfile-spectrogram has it
@@ -278,6 +300,7 @@ do
 		-fx "v.p{i,u[2] * $LIN_HEIGHT}" \
 		$png || { rm -f $png $map; exit 1; }
     fi
+    rm $map
 
 	### Here endeth what used to be a Makefile
 
@@ -310,8 +333,8 @@ do
 	    done
 	    echo " $png" >> $pianocmd
 	    . $pianocmd
-	    rm -f $pianocmd
 	}
+	rm -f $pianocmd
 
 	# Convert final image to desired format and filename
 	#echo "Converting to final format..."
@@ -330,4 +353,12 @@ do
 		exit 1
 		;;
 	esac
+    ) &
+    $parallel || {  echo "waiting..."; wait; }
+
+    wav=`tempfile -p mkjpg -s .wav -d .`
 done
+
+rm -f $wav
+
+$parallel && wait
