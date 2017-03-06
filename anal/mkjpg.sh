@@ -29,6 +29,10 @@ export SRATE MIN_FREQ_OUT OCTAVES FFTFREQ PPSEC PPSEMI DYN_RANGE
 # Should we leave a png file rather than a jpg?
 suffix=jpg
 
+# Should be leave the output file next to the audio file it comes from
+# instead of in the current directory?
+inplace=false
+
 # To get a grayscaled spectrogram instead of a colored one, set
 # grayscale=true
 grayscale=
@@ -69,6 +73,8 @@ if [ $# = 0 ]; then
 	echo "--piano          Overlay single-pixel black and white horizontal lines to mark"
 	echo "                 the position of conventional keyboard tuned to A=440Hz."
 	echo "--png            Output a PNG file instead of a JPEG."
+	echo "--in-place       Leave the output file next to its audio file instead of"
+	echo "                 in the current directory."
 	echo "--sox            Use "sox spectrogram" instead of sndfile-spectrogram."
 	echo "--thumb          Give a thumbnail version, 1/8th of default size."
 	echo "-v               Verbose mode."
@@ -99,6 +105,10 @@ do
 	--png)	suffix=png
 		continue
 		;;
+	--in-place)
+		inplace=true
+		continue
+		;;
 	--sox)	use_sox=true
 		continue
 		;;
@@ -113,7 +123,7 @@ do
 		verbose=true
 		continue
 		;;
-	-*)	exec $0
+	-*)	exec $0		# Give help message
 		exit 1
 		;;
 	*.ogg)	outfile="`basename "$a" .ogg`".$suffix
@@ -133,7 +143,7 @@ do
 		MPLAYER_VERBOSE=0 mplayer -quiet -noconsolecontrols \
 			-ao pcm:file=$wav "$a" > /dev/null
 		;;
-	*.wav)	outfile="`basename "$a" .wav`".$suffix
+	*.wav)	outfile=`echo "$a" | sed "s/wav\$/$suffix/"`
 		rm -f $wav
 		ln -s "$a" $wav
 		;;
@@ -141,6 +151,10 @@ do
 		exit 1
 		;;
 	esac
+
+	outfile="`echo "$a" | sed "s/wav\$/$suffix/"`"
+
+	$inplace || outfile="`basename "$outfile"`".$suffix
 
 	### Here beginneth what used to be a Makefile
 
