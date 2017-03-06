@@ -17,8 +17,9 @@
 : ${SRATE:=44100}
 : ${MIN_FREQ_OUT:=27.5}	# A(0)
 : ${OCTAVES:=9}		# A(0) to A(9) (14080Hz)
-: ${FFTFREQ:=3.125}	# The lowest resolvable frequency and the height of
+: ${FFTFREQ:=5.625}	# The lowest resolvable frequency and the height of
 			# each frequency band in the linear spectrogram.
+			# Defaulted to 3.125 until March 2017.
 : ${PPSEC:=50}		# Pixel columns per second
 : ${PPSEMI:=8}		# Pixels per semitone
 # ${PPOCT:=$PPSEMI*12}	# Pixels per octave. If set, overrides PPSEMI.
@@ -61,7 +62,7 @@ if [ $# = 0 ]; then
 	echo "                 MIN_FREQ_OUT=27.5 and OCTAVES=9 give A(0) to A(9) (14080Hz)."
 	echo "PPSEC=50         Pixel columns per second in the output file"
 	echo "PPSEMI=8         Pixels per semitone in the output file"
-	echo "FFTFREQ=3.125    The lowest resolvable frequency and the height of each band"
+	echo "FFTFREQ=5.625    The lowest resolvable frequency and the height of each band"
 	echo "                 in the linear spectrogram. Lower values increase frequency"
 	echo "                 resolution but smear the output horizontally while"
 	echo "                 higher values improve the output's temporal definition but"
