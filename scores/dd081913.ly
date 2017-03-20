@@ -4,6 +4,7 @@
  title = "Science All Around - Sound"
  subtitle = "score fragment dd081913"
  composer = "Delia Derbyshire"
+ tagline = "Reconstructed from Delia's score and typeset in Lilypond by Martin Guy in 2012. See http://wikidelia.net/wiki/DD081913"
 }
 
 \score {
