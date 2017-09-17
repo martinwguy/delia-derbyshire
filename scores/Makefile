@@ -23,6 +23,7 @@ pdf: LePontMirabeau.pdf MusicToUndressTo.pdf \
 	Clothes.pdf \
 	FreshAire.pdf \
 	MoogiesBloogies.pdf \
+	Peter.pdf \
 	PseudoFolk.pdf \
 	ScienceAndHealth.pdf \
 	dd081913.pdf dd081955.pdf dd090009.pdf
@@ -37,6 +38,7 @@ ogg: LePontMirabeau.ogg MusicToUndressTo.ogg \
 	Clothes.ogg \
 	FreshAire.ogg \
 	MoogiesBloogies.ogg \
+	Peter.ogg \
 	PseudoFolk.ogg \
 	ScienceAndHealth.ogg \
 	dd081913.ogg dd081955.ogg dd090009.ogg
