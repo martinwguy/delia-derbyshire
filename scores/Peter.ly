@@ -1,7 +1,9 @@
 % Score for Delia Derbyshire's score "Peter" in her papers for
 % "The Legend of Hell House".
 %
-%	Martin Guy <martinwguy@gmail.com>, Febuary 2017.
+% TODO: All bar lines should span the two staves
+%
+%	Martin Guy <martinwguy@gmail.com>, Febuary & September 2017.
 
 \version "2.18.2"
 
@@ -11,7 +13,7 @@
   subtitle = "1973"
   tagline = "Reconstructed from Delia's score DD170314. See http://wikidelia.net/wiki/Peter"
 }
-    \defineBarLine "|" #'("||" "" "|")
+
 
 \score {
   <<
