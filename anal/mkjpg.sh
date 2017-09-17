@@ -84,6 +84,8 @@ if [ $# = 0 ]; then
 	exit 1
 fi
 
+# The next wavfile temp filename that we will use.
+# They have to be different for each file so that you can run jobs in parallel.
 wav=`tempfile -p mkjpg -s .wav -d .` || {
 	echo "Can't create temporary file name" 1>&2
 	exit 1
@@ -92,7 +94,7 @@ wav=`tempfile -p mkjpg -s .wav -d .` || {
 for a
 do
     case "$a" in
-    *=*)	eval "$a"
+    *=*)    eval "$a"
 	    continue
 	    ;;
     --gray|--grey)
@@ -108,7 +110,7 @@ do
 	    piano=true
 	    continue
 	    ;;
-    --png)	suffix=png
+    --png)  suffix=png
 	    continue
 	    ;;
     --in-place)
@@ -117,9 +119,10 @@ do
 	    ;;
     --parallel|-j)
 	    parallel=true
+	    in_background='&'
 	    continue
 	    ;;
-    --sox)	use_sox=true
+    --sox)  use_sox=true
 	    continue
 	    ;;
     --thumb)	# 1/8th of normal size in each direction
@@ -145,6 +148,7 @@ do
 	    lame --quiet --decode "$a" $wav
 	    ;;
     *.flac)	outfile="`basename "$a" .flac`".$suffix
+echo "outfile=[$outfile]"
 	    rm -f $wav
 	    flac -s -d -o $wav "$a"
 	    ;;
@@ -154,7 +158,7 @@ do
 		    -ao pcm:file=$wav "$a" > /dev/null
 	    ;;
     *.wav)	outfile=`echo "$a" | sed "s/wav\$/$suffix/"`
-	    rm -f $wav
+	    rm -f $wav		# Our temp file name, not the original!
 	    ln -s "$a" $wav
 	    ;;
     *)	echo "Eh? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
@@ -164,10 +168,7 @@ do
 
     # Turn an audio file into an image file
     (
-
-    outfile="`echo "$a" | sed "s/wav\$/$suffix/"`"
-
-    $inplace || outfile="`basename "$outfile"`".$suffix
+    $inplace || outfile="`basename "$outfile"`"
 
     ### Here beginneth what used to be a Makefile
 
@@ -175,12 +176,12 @@ do
 
     # Pixel rows per octave. They can set PPOCT or PPSEMI.
     # If PPOCT is set, it overrides PPSEMI, if not, it is
-    # calculated from PPSEMI. Only PPOCT is used below.
+    # calculated from PPSEMI.
     if [ ! "$PPOCT" ]; then
-	    PPOCT=$(expr "$PPSEMI" \* 12)
-    else
-	    PPSEMI=
+	PPOCT=$(expr "$PPSEMI" \* 12)
     fi
+    # Only PPOCT is used below.
+    PPSEMI=
 
     # The frequency of the top row in the output
     MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
@@ -220,9 +221,6 @@ do
     ### Turn a WAV into a PPM file
 
     # Find the image width, which depends on the length of the piece.
-    soxi -s $wav
-    file $wav
-    ls -ld $wav
     width="$( echo "(`soxi -s $wav` / $SRATE) * $PPSEC + 0.5" |
 	      bc -l | sed 's/\..*//' )"
     test "$width" || exit 1
@@ -349,16 +347,18 @@ do
 		convert $png "$outfile"
 		rm $png
 		;;
-	*)	echo "Unknown image suffix in final conversion" 1>&2
+	*)	echo "Unknown image suffix in final conversion to \"$outfile\"" 1>&2
 		exit 1
 		;;
 	esac
     ) &
-    $parallel || {  echo "waiting..."; wait; }
+    $parallel || wait
 
+    # The next wavfile temp filename that we will use.
     wav=`tempfile -p mkjpg -s .wav -d .`
 done
 
+# tempfile seems to create an empty file
 rm -f $wav
 
 $parallel && wait
