@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>Delia Derbyshire's prepayment Meter</title>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<H1 ALIGN=CENTER>Delian websites' prepayment meter</H1>
+<HR>
+This page lets you read the meter of delia-derbyshire.net and wikidelia.net's
+web server's prepayment account.
+<P ALIGN=CENTER>
+<?php
+ini_set("soap.wsdl_cache_enabled", "0");
+$username = "your_email@gmail.com";
+$password = "whatever";
+$prepay_id = 7638;
+
+$client = new SoapClient("https://my.interserver.net/api.php?wsdl");
+
+try  { 
+  $sid = $client->api_login($username, $password);
+  if (strlen($sid) == 0)
+    die("Got A Blank Session");
+  $res = $client->api_get_prepay_list($sid);
+  //echo '$res = '.var_export($res, true).'<P>';
+ } catch (Exception $ex) {
+  echo "Exception Occured!\n";
+  echo "Code:{$ex->faultcode}\n";
+  echo "String:{$ex->faultstring}\n";
+}; 
+
+// $res is an array of prepayment accounts.
+// Mow we only have one prepay_ID so instead of figuring out how to scan PHP
+// arrays I've deleted all the other empty PrePay IDs so there's only one.
+ $pp = $res[0];
+
+
+echo "There are<BR><BIG><BIG><BIG>";
+// echo $pp['prepay_remaining'];   // This line stops the script in its tracks!
+foreach ($pp as $k => $v) {
+  if ($k == 'prepay_remaining') { $remaining = $v; echo $v; }
+}
+echo "</BIG></BIG></BIG><BR>dollars remaining in the account.";
+echo "<P>";
+echo "and Interserver deduct $6 per month on the 18th, which means it's covered up to the next 18th of the month";
+$monthsremaining = floor($remaining / 6);
+if ($monthsremaining >= 1) {
+    echo " plus another ";
+}
+if ($monthsremaining == 1) {
+    echo "month";
+} else {
+    echo $monthsremaining;
+    echo "months";
+}
+echo ".";
+?>
+<P>
+The domain names delia-derbyshire.net and wikidelia.net expire on the
+3rd January 2025 and the 18th December 2024 respectively, so it'd be worth paying up to 18th December 2024.
+<P>
+I may already be dead or worse, so if you want to keep the wikidelia online,
+please <A HREF="http://wikidelia.net/wiki/Accounts">make a donation</A>.
+<HR>
+<I>Thanks to <A HREF="http://interserver.net">interserver.net</A>'s technical support fer help in getting this page working.<BR>Curious techies can check <A HREF="balance.txt">this page's PHP source code</A>.
+</body>
+</html>
