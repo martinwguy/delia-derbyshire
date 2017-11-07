@@ -184,13 +184,9 @@ Delia's BBC Studio
 <B>
 <BR><I>Undated</I>
 <BR><A HREF="#Air">Air</A>
-<BR><A HREF="#ChromophoneBand">Chromophone Band</A>
 <BR><A HREF="#Cloud">Cloud</A>
 <BR><A HREF="#TheDelianMode">The Delian Mode</A>
-<BR><A HREF="#DoorToDoor">Door To Door</A>
-<BR><A HREF="#HappyBirthday">Happy Birthday</A>
 <BR><A HREF="#Mattachin">Mattachin</A>
-<BR><A HREF="#Medea">Medea</A>
 <BR><A HREF="#MusicToUndressTo">Music to Undress to</A>
 <BR><A HREF="#TimeToGo">Time To Go</A>
 <BR><A HREF="#TravellingInWinter">Travelling in Winter</A>
@@ -237,14 +233,17 @@ Delia's BBC Studio
 <B>
 <BR><I>1967</I>
 <BR><A HREF="#BrightonFestival">The Brighton Festival</A>
+<BR><A HREF="#ChromophoneBand">Chromophone Band</A>
 <BR><A HREF="#Philips">Philips</A>
 <BR><A HREF="#FashionShow">ICI Fashion Show</A>
+<BR><A HREF="#HappyBirthday">Happy Birthday</A>
 <BR><A HREF="#TowardsTomorrow">Towards Tomorrow</A>
 <BR><A HREF="#BlueVeilsAndGoldenSands">Blue Veils and Golden Sands</A>
 <BR><A HREF="#Macbeth1967">RSC Macbeth</A>
 <BR><A HREF="#TigerTalks">Tiger Talks</A>
 <BR><A HREF="#WrappingEvent">Wrapping Event</A>
 <BR><I>1968</I>
+<BR><A HREF="#DoorToDoor">Door To Door</A>
 <BR><A HREF="#PotAuFeu">Pot Au Feu</A>
 <BR><A HREF="#WhoIs">Who Is</A>
 <BR><A HREF="#BringBack">Bring Back</A>
@@ -291,6 +290,7 @@ Delia's BBC Studio
 <B>
 <I>1970</I>
 <BR><A HREF="#Bagman">The Bagman</A>
+<BR><A HREF="#Medea">Medea</A>
 <BR><A HREF="#RobertLowell">Robert Lowell</A>
 <BR><A HREF="#PoetsInPrison">Poets in Prison</A>
 <BR><A HREF="#MusicOfSpheres">Music Of Spheres</A>
@@ -363,25 +363,6 @@ EOT;
 </P>
 
 <H3>
-<A NAME=ChromophoneBand HREF="http://wiki.delia-derbyshire.net/wiki/Chromophone Band">Chromophone Band</A> (1:56)
-</H3>
-<P>
-"written by Dudley Simpson and realised by Delia.
-It isn't a classic Delia moment by any means [.&nbsp;.&nbsp;.]
-it sounds rather end-of-pier [.&nbsp;.&nbsp;.]
-although a distinctive DD rhythm track redeems it somewhat."
-<SMALL>
-<BR>Released on "Doctor Who Volume 1: The Early Years 1963-1969" (BBC Music WMSF 6023-2)
-</SMALL>
-<?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/Delia Derbyshire &amp; Dudley Simpson - Chromophone Band.mp3">
-1:56/MP3@160kbps/44100Hz(2.2MB)</A>
-
-EOT;
-?>
-</P>
-
-<H3>
 <A NAME=Cloud HREF="http://wiki.delia-derbyshire.net/wiki/Cloud">Cloud</A>
 </H3>
 <P>
@@ -421,65 +402,6 @@ It can be heard as the backing music to
 EOT;
 ?>
 </P>
-
-<H3>
-<A NAME=DoorToDoor HREF="http://wiki.delia-derbyshire.net/wiki/Door To Door">Door to Door</A> (0:30)
-</H3>
-<P>
-"Shows that she could also do the upbeat promotional thing well;
-the rings and knocks are worked perfectly into the perfect 60s
-advertising campaign soundtrack."
-<BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://www.elidor.freeserve.co.uk/radiophonic.htm">Robin Carmody, 11th July / 16th October 2000</A>
-<BR>
-"reduced her to fits of giggles when played during a BBC Radio Scotland 
-interview"
-<BR>
-"<I>Well, I think that's really at the more trivial end of what I did.
-Yes, isn't it jolly?</I>"
-<BR>&nbsp;&nbsp;&nbsp;-- Delia in
-<A HREF="BBCScotlandInterview.html#DoorToDoor">the Radio Scotland
-interview</A>
-<SMALL>
-<BR>Released on 10" vinyl "Music from The BBC Radiophonic Workshop" by Rephlex as CAT147LP (2003)
-<BR>Released on vinyl "BBC Radiophonic Music" by BBC Records as REC25M
-(1971 and 19&nbsp;May 2003) and on CD as REC25MCD (26&nbsp;November 2002)
-</SMALL>
-<?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/Delia Derbyshire - Door to Door.mp3">
-0:30/MP3@96kbps/44100Hz(359KB)</A> from Gnutella
-
-EOT;
-?>
-</P>
-
-<H3>
-<A NAME=HappyBirthday HREF="http://wiki.delia-derbyshire.net/wiki/Happy Birthday">Happy Birthday</A> (0:24)
-</H3>
-Delia's joyful 24-second reworking of the classic "Happy Birthday To You" theme.
-<P>
-<SMALL>
-Released on 10" vinyl "Music from The BBC Radiophonic Workshop" by Rephlex as CAT147LP (2003)
-<BR>Included in CD "BBC Radiophonic Music" by BBC Records as REC25MCD (26&nbsp;November 2002)
-</SMALL>
-<?php if ($audio) echo <<<EOT
-<BR><A HREF="audio/Delia Derbyshire - Happy Birthday.mp3">
-0:24/MP3@192kbps/44100(880KB)</A> from Gnutella
-
-EOT;
-?>
-</P>
-
-<H3>
-<A NAME=Medea HREF="http://wiki.delia-derbyshire.net/wiki/Medea">Medea</A>
-</H3>
-<P>
-At Kaleidophon, she produced music for David Thomson's production of
-Euripides' play "Medea" which opened at the Greenwich Theatre on April 14
-(of which year?)
-<BR>&nbsp;&nbsp;&nbsp;-- Kirsten Cubitt's article
-"<A HREF="Dial a tune/">Dial a Tune</A>" in The Guardian, 3 September 1970.
-</P>
-
 <H3>
 <A NAME=MusicToUndressTo HREF="http://wiki.delia-derbyshire.net/wiki/Music to Undress to">Music to Undress to</A>
 </H3>
@@ -1844,6 +1766,25 @@ dated Tuesday, 28th March
 </UL>
 
 <H3>
+<A NAME=ChromophoneBand HREF="http://wiki.delia-derbyshire.net/wiki/Chromophone Band">Chromophone Band</A> (1:56)
+</H3>
+<P>
+"written by Dudley Simpson and realised by Delia.
+It isn't a classic Delia moment by any means [.&nbsp;.&nbsp;.]
+it sounds rather end-of-pier [.&nbsp;.&nbsp;.]
+although a distinctive DD rhythm track redeems it somewhat."
+<SMALL>
+<BR>Released on "Doctor Who Volume 1: The Early Years 1963-1969" (BBC Music WMSF 6023-2)
+</SMALL>
+<?php if ($audio) echo <<<EOT
+<BR><A HREF="audio/Delia Derbyshire &amp; Dudley Simpson - Chromophone Band.mp3">
+1:56/MP3@160kbps/44100Hz(2.2MB)</A>
+
+EOT;
+?>
+</P>
+
+<H3>
 <A NAME=Philips HREF="http://wiki.delia-derbyshire.net/wiki/Philips">Philips</A> (February 1967)
 </H3>
 <P>
@@ -1863,6 +1804,23 @@ which was the first in the world to use electronic music."
 <BR>The concert programme described it as "A presentation of menswear styles in bri-nylon, terylene and crimplene designed and made up by students of the Fashion School of the Royal College of Art" on 6th April 1967.
 <BR>The music is included in the Attic Tapes and is a collage of her other
 pieces, artfully blended and reworked to transition from one to the next.
+</P>
+
+<H3>
+<A NAME=HappyBirthday HREF="http://wiki.delia-derbyshire.net/wiki/Happy Birthday">Happy Birthday</A> (0:24)
+</H3>
+Delia's joyful 24-second reworking of the classic "Happy Birthday To You" theme.
+<P>
+<SMALL>
+Released on 10" vinyl "Music from The BBC Radiophonic Workshop" by Rephlex as CAT147LP (2003)
+<BR>Included in CD "BBC Radiophonic Music" by BBC Records as REC25MCD (26&nbsp;November 2002)
+</SMALL>
+<?php if ($audio) echo <<<EOT
+<BR><A HREF="audio/Delia Derbyshire - Happy Birthday.mp3">
+0:24/MP3@192kbps/44100(880KB)</A> from Gnutella
+
+EOT;
+?>
 </P>
 
 <H3>
@@ -2019,6 +1977,37 @@ knowledge of a film of the Wrapping Event with an existing soundtrack."
 </P>
 
 <H3 ALIGN=CENTER><I>1968</I></H3>
+
+<H3>
+<A NAME=DoorToDoor HREF="http://wiki.delia-derbyshire.net/wiki/Door To Door">Door to Door</A> (0:30)
+</H3>
+<P>
+"Shows that she could also do the upbeat promotional thing well;
+the rings and knocks are worked perfectly into the perfect 60s
+advertising campaign soundtrack."
+<BR>&nbsp;&nbsp;&nbsp;-- <A HREF="http://www.elidor.freeserve.co.uk/radiophonic.htm">Robin Carmody, 11th July / 16th October 2000</A>
+<BR>
+"reduced her to fits of giggles when played during a BBC Radio Scotland 
+interview"
+<BR>
+"<I>Well, I think that's really at the more trivial end of what I did.
+Yes, isn't it jolly?</I>"
+<BR>&nbsp;&nbsp;&nbsp;-- Delia in
+<A HREF="BBCScotlandInterview.html#DoorToDoor">the Radio Scotland
+interview</A>
+<SMALL>
+<BR>Released on 10" vinyl "Music from The BBC Radiophonic Workshop" by Rephlex as CAT147LP (2003)
+<BR>Released on vinyl "BBC Radiophonic Music" by BBC Records as REC25M
+(1971 and 19&nbsp;May 2003) and on CD as REC25MCD (26&nbsp;November 2002)
+</SMALL>
+<?php if ($audio) echo <<<EOT
+<BR><A HREF="audio/Delia Derbyshire - Door to Door.mp3">
+0:30/MP3@96kbps/44100Hz(359KB)</A> from Gnutella
+
+EOT;
+?>
+</P>
+
 
 <H3>
 <A NAME=Mattachin HREF="http://wiki.delia-derbyshire.net/wiki/Mattachin">Mattachin</A> (1968?) (1:06)
@@ -2784,6 +2773,18 @@ on audio cassette as BBC 855 (1993) and on CD as BBC CD855.
 EOT;
 ?>
 </P>
+
+<H3>
+<A NAME=Medea HREF="http://wiki.delia-derbyshire.net/wiki/Medea">Medea</A>
+</H3>
+<P>
+At Kaleidophon, she produced music for David Thomson's production of
+Euripides' play "Medea" which opened at the Greenwich Theatre on April 14
+(of which year?)
+<BR>&nbsp;&nbsp;&nbsp;-- Kirsten Cubitt's article
+"<A HREF="Dial a tune/">Dial a Tune</A>" in The Guardian, 3 September 1970.
+</P>
+
 
 <H3>
 <A NAME=RobertLowell HREF="http://wiki.delia-derbyshire.net/wiki/Lowell">Music for Robert Lowell documentary film</A> (1970)
