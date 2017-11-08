@@ -17,6 +17,9 @@
 # the form dd012345_title, which are linked to in the short index
 # contained in "header.html".
 #
+# t=Whatever inserts a title before the numbered paper.
+# n=2 or n=3 inserts an header of level H2 or level H3 instead of text title.
+#
 #	Martin Guy <martinwguy@gmail.com>, May 2010
 
 for mini in thumb toe
@@ -208,9 +211,10 @@ do
 145530) n=3 t='<A NAME=WildlifeSafariToArgentina>Wildlife Safari to Argentina</A>, early 1972';;
 150219) t='-';;
 150337) t='Draft of Letter re Erik Satie';;
-150417) t='Bundle "Atwan Layton"';;
+150417) t='Bundle "Stuart Layton"';;
 150510) n=3 t='<A NAME=Electrosonic>Electrosonic</A>';;
 150657) n=3 t='<A NAME=EngineeringCraftStudies>Engineering Craft Studies</A>';;
+150925) t='???';;
 151003) n=3 t='<A NAME=WildlifeSafariToSouthernSouthAmerica>Wildlife Safari to Southern South America, 1972</A>';;
 
 151603) n=2 t='<A NAME=TRW6891Folder>Folder "TRW 6891 / Out of the Unknown: The Naked Sun", 1968</A>';;
