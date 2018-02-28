@@ -1,0 +1,14 @@
+This is the master copy of my works published on delia-derbyshire.net
+
+The web site, a single-page attempt to catalogue her works, is in index.php
+from which index.html and index.htm are created, without and with links to
+all the MP3 files respetively, as well as copies of all the documents it
+links to.
+
+Scores of her music, in Lilypond, are in the "scores" folder.
+
+There is Bourne shell and C code to create the spectrograms used in the
+WikiDelia and to convert the spectrograms in James Percival's thesis
+back into audio, all in the "anal" folder,
+
+quotes.txt is my personal collection of anything Delia is known to have said.
