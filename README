@@ -1,8 +1,9 @@
-This is the master copy of my works published on delia-derbyshire.net
+This is the master copy of my works for delia-derbyshire.net
+studying electronic music pioneer Delia Derbyshire from the sixties.
 
 The web site, a single-page attempt to catalogue her works, is in index.php
 from which index.html and index.htm are created, without and with links to
-all the MP3 files respetively, as well as copies of all the documents it
+all the MP3 files respectively, as well as copies of all the documents it
 links to.
 
 Scores of her music, in Lilypond, are in the "scores" folder.
@@ -12,3 +13,5 @@ WikiDelia and to convert the spectrograms in James Percival's thesis
 back into audio, all in the "anal" folder,
 
 quotes.txt is my personal collection of anything Delia is known to have said.
+
+Any questions, delia.derbyshire.net@gmail.com
