@@ -51,8 +51,10 @@ if ($monthsremaining >= 1) {
 if ($monthsremaining == 1) {
     echo "month";
 } else {
-    echo $monthsremaining;
-    echo "months";
+    if ($monthsremaining > 1) {
+	echo $monthsremaining;
+	echo " months";
+    }
 }
 echo ".";
 ?>
