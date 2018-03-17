@@ -4018,18 +4018,6 @@ Compiled by Martin Guy &lt;martinwguy&#64;gmail.com>
 <input type="hidden" name="bn" value="PP-DonationsBF">
 <input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" name="submit" alt="Make a donation via PayPal">
 </form>
-
-<td align=right valign=top width=90>
-<!-- Shinystat counter/stats -->
-<script type="text/javascript" language="JavaScript" src="http://codice.shinystat.com/cgi-bin/getcod.cgi?USER=deliaderbyshire"></script>
-<noscript>
-<a href="http://www.shinystat.com" target="_top">
-<img src="http://www.shinystat.com/cgi-bin/shinystat.cgi?USER=deliaderbyshire" alt="Free blog counters" border="0"></a>
-</noscript>
-
-EOT;
- ?>
-<?php if ($audio) echo <<<EOT
 <td align=right>
 <A HREF="index.html#Donate">Make a donation</A>
 
