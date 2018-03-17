@@ -38,6 +38,8 @@
  *		Write all FFT points by interpolating between input values
  *		(the default is to write each input once to the nearest
  *		FFT input point)
+ *	--verbose
+ *		Show calculated parameters (FFT/second, max freq etc)
  *
 #ifdef PARTIALS
  *	--partials		Write audio of each frame to files
@@ -88,6 +90,9 @@ static double fps = 0.0;
  * instead of sparsely populating it? */
 static int fill = 0;
 
+/* Whistle while we work? */
+static int verbose = 0;
+
 void
 main(int argc, char **argv)
 {
@@ -133,6 +138,10 @@ main(int argc, char **argv)
 	    partials = 1;
 	else
 #endif
+	if (strcmp(argv[1], "--versobe") == 0 ||
+	    strcmp(argv[1], "-v") == 0) {
+		verbose++;
+	} else
 	{
 	    fprintf(stderr, "Unknown flag '%s'.\n", argv[1]);
 	    exit(1);
