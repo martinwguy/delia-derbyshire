@@ -1,4 +1,4 @@
-CFLAGS=-g -DPARTIALS
+CFLAGS=-O
 
 all: run run.pdf
 
