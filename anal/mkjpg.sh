@@ -50,6 +50,10 @@ piano=false
 # Should we use "sox spectrogram" instead of sndfile-spectrogram?
 use_sox=false
 
+# Select one channel only instead of mixing all down?
+# Value is numeric: 1=left, 2=right etc.
+channel=
+
 # Whistle while we work?
 verbose=false
 
@@ -79,7 +83,8 @@ if [ $# = 0 ]; then
 	echo "--in-place       Leave the output file next to its audio file instead of"
 	echo "                 in the current directory."
 	echo "--sox            Use "sox spectrogram" instead of sndfile-spectrogram."
-	echo "--thumb          Give a thumbnail version, 1/8th of default size."
+	echo "-l               Analyse only the left channel."
+	echo "-r               Analyse only the right channel."
 	echo "-v               Verbose mode."
 	exit 1
 fi
@@ -125,11 +130,10 @@ do
     --sox)  use_sox=true
 	    continue
 	    ;;
-    --thumb)	# 1/8th of normal size in each direction
-	    thumb=true
-	    PPSEMI=2
-	    PPSEC=12.5
-	    export PPSEMI PPSEC
+    -l)	    channel=1
+	    continue
+	    ;;
+    -r)	    channel=2
 	    continue
 	    ;;
     --verbose|-v)
@@ -161,7 +165,7 @@ echo "outfile=[$outfile]"
 	    rm -f $wav		# Our temp file name, not the original!
 	    ln -s "$a" $wav
 	    ;;
-    *)	echo "Eh? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
+    *)	echo "What's \"$a\"? Ogg, Flac, MP3, M4A or WAV files only." 1>&2
 	    exit 1
 	    ;;
     esac
@@ -217,6 +221,20 @@ echo "outfile=[$outfile]"
     }
 
     trap "rm -f $wav $png $map $pianocmd" INT QUIT
+
+    # Do we need to do a spectro of one channel only?
+    if [ "$channel" ]; then
+	# Strip out one channel with sox
+	wavmono=`tempfile -p mkjpg-mono -s .wav -d .`
+	if sox $wav $wavmono remix $channel; then
+	    rm $wav
+	    wav=$wavmono
+	else
+	    echo "Sox failed to make a mono audio file." 1>&2
+	    rm -f $wav $wavmono
+	    exit 1
+	fi
+    fi
 
     ### Turn a WAV into a PPM file
 
