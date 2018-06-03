@@ -57,6 +57,9 @@ channel=
 # Whistle while we work?
 verbose=false
 
+# Options to all invocations of sox
+soxopts="--multi-threaded --buffer 131072"
+
 if [ $# = 0 ]; then
 	echo "Usage: ./mkjpg.sh [PARAMETERS] [--options] file.{wav,mp3,ogg,flac} ..."
 	echo "Parameters:"
@@ -227,7 +230,7 @@ echo "outfile=[$outfile]"
     if [ "$channel" ]; then
 	# Strip out one channel with sox
 	wavmono=`tempfile -p mkjpg-mono -s .wav -d .`
-	if sox $wav $wavmono remix $channel; then
+	if sox $soxopts $wav $wavmono remix $channel; then
 	    rm $wav
 	    wav=$wavmono
 	else
@@ -271,7 +274,8 @@ echo "outfile=[$outfile]"
 	if $use_sox; then
 	    test "$grayscale" && grayscale=-m
 	    test "$light" && light=-l
-	    sox $wav -n spectrogram -x $width -y $LIN_HEIGHT -z $DYN_RANGE \
+	    time sox $soxopts $wav -n spectrogram \
+		-x $width -y $LIN_HEIGHT -z $DYN_RANGE \
 		-n -r $grayscale $light -o $png
 	else
 	    test "$grayscale" && grayscale=--gray-scale
