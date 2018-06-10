@@ -192,7 +192,8 @@ echo "outfile=[$outfile]"
     PPSEMI=
 
     # The frequency of the top row in the output
-    MAX_FREQ_OUT=$(echo "2 ^ $OCTAVES * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
+    # e(l(2) * $OCTAVES) is 2 ^ $OCTAVES with fractional powers.
+    MAX_FREQ_OUT=$(echo "e(l(2) * $OCTAVES) * $MIN_FREQ_OUT + 0.5" | bc -l | sed 's/\..*//')
 
     # Output N octaves at PPOCT pixels per octave.
     # Rounding of result to integer is done crudely
