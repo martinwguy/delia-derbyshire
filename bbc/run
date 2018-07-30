@@ -1,3 +1,0 @@
-#! /bin/sh
-
-sed -r -f re index.html > index2.html
