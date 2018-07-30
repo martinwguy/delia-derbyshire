@@ -1,6 +1,6 @@
-./index.htm
-./index.html
-./papers.zip
+/index.htm
+/index.html
+/papers.zip
 *.wiki
 anal/constant-q-cpp/
 anal/cq/
@@ -18,6 +18,8 @@ images/
 LIAF/
 log/
 lyrics/
+papers/index.html
+papers.zip
 petition/
 rec/
 scans/
