@@ -7,7 +7,9 @@
 <body>
 <H1 ALIGN=CENTER>Delian websites' prepayment meter</H1>
 <HR>
-This page lets you read the meter of delia-derbyshire.net and wikidelia.net's
+This page lets you read the meter of
+<A HREF="http://delia-derbyshire.net">delia-derbyshire.net</A> and
+<A HREF="http://wikidelia.net">wikidelia.net</A>'s
 web server's prepayment account.
 <P ALIGN=CENTER>
 <?php
@@ -62,9 +64,15 @@ echo ".";
 The domain names delia-derbyshire.net and wikidelia.net expire on the
 3rd January 2025 and the 18th December 2024 respectively, so it'd be worth paying up to 18th December 2024.
 <P>
-I may already be dead or worse, so if you want to keep the wikidelia online,
-please <A HREF="http://wikidelia.net/wiki/Accounts">make a donation</A>.
+If you would like
+<A HREF="http://delia-derbyshire.net">delia-derbyshire.net</A> and
+<A HREF="http://wikidelia.net">the wikidelia</A> to stay online,
+you can charge the prepayment meter directly by using
+<A HREF="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=vps%40interserver.net&item_name=WikiDelia&custom=PREPAYvps7638&amount=6.00&currency_code=USD">this link</A> and you can check that it worked by reloading this page.
 <HR>
-<I>Thanks to <A HREF="http://interserver.net">interserver.net</A>'s technical support fer help in getting this page working.<BR>Curious techies can check <A HREF="balance.txt">this page's PHP source code</A>.
+<I>Thanks to <A HREF="http://interserver.net">interserver.net</A>'s
+technical support for their help in getting this page working.<BR>
+If you're interested in the technical details,
+you can check <A HREF="balance.txt">this page's PHP source code</A>.
 </body>
 </html>
