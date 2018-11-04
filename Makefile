@@ -23,7 +23,6 @@ update upload: all
 		--exclude .git\* \
 		--exclude log \
 		--exclude VIDEO \
-		--exclude rec/TheseHopefulMachines \
 		--partial --inplace \
 		--bwlimit=100 \
 		./ delia-derbyshire.net:audio/D-D/
