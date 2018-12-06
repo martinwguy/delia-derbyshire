@@ -22,7 +22,7 @@
 
    \clef treble
 
-   % Only the second and third staves have a printed tme signature
+   % Only the second and third staves have a printed time signature
    \override Staff.TimeSignature #'stencil = ##f
 
    \relative c'' {
