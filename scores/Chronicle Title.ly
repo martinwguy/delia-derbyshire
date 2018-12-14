@@ -16,6 +16,7 @@
 
 \markup "Typeset by martinwguy from Delia's handwritten score DD114058 in December 2018."
 \markup "Tempos are measured from her audio realisation of the piece."
+\markup "A &elqq;sackbut&erqq; is a XV° century form of the trombone."
 
 \score {
  \new PianoStaff
@@ -23,9 +24,7 @@
   % No curly bracket at the start of the staves
   \set GrandStaff.systemStartDelimiter = #'SystemStartBar
 
-  \new Staff \with {
-   midiInstrument = #"trumpet"
-  } {
+  \new Staff {
    \clef treble
    \time 6/8
    \override Staff.TimeSignature #'stencil = ##f
@@ -38,10 +37,12 @@
    \tempo 2.=55
      r2. | r2. | r2. |
    \tempo 2.=43
+     \set Staff.midiInstrument = #"trombone"
      a4.^"&elqq;sackbut&erqq;" \tuplet 2/3 { d8 cis } |
      \tuplet 2/3 { fis cis } \tuplet 2/3 { d cis } |
      \tuplet 2/3 { a gis } \tuplet 2/3 { fis gis } |
      \tempo 2.=37
+     \set Staff.midiInstrument = #"trumpet"
      cis4.^"&elqq;trumpet&erqq;" d8-. fis-. gis-. | a-. gis-. d-. fis-. gis-. a-. |
      \override TextSpanner.bound-details.left.text = "Rallentando"
      gis-.\startTextSpan fis-. cis-. d-. fis-. gis-. | \tempo 2.=17 cis1\stopTextSpan |
@@ -49,28 +50,26 @@
    }
   }
 
-  \new Staff \with {
-   midiInstrument = #"trumpet"
-  } {
+  \new Staff {
    \clef treble
    \override Staff.TimeSignature #'stencil = ##f
    \relative c' {
     \new Voice {
      \stemUp
+     \set Staff.midiInstrument = #"trombone"
      d2.^"&elqq;sackbut&erqq;" | gis4. fis | a fis |
      gis2. | fis | d | fis4. d | fis a | gis fis | gis1
     }
    }
   }
 
-  \new Staff \with {
-   midiInstrument = #"trumpet"
-  } {
+  \new Staff {
    \clef bass
    \override Staff.TimeSignature #'stencil = ##f
    \relative c' {
     \new Voice {
      \stemDown \tieDown
+     \set Staff.midiInstrument = #"voice oohs"
      a2.^"low voice" ~ | a ~ | a |
      fis ~ | fis ~ | fis |
      \tieNeutral
