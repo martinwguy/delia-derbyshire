@@ -1,11 +1,13 @@
 % Reconstruction of one of Delia Derbyshire's themes for "Ape and Essence"
-% from manuscript score in her papers.
+% from the first row of manuscript score DD122833 in her papers.
 % See http://wikidelia.net/wiki/Ape and Essence
 \version "2.12.3"
 
 \header {
  title = "Ape"
+ subtitle = "hh.[?] tour, without any 4ths in mel.[ody]"
  composer = "Delia Derbyshire"
+ opus = "February-April 1966"
 }
 
 \score {
