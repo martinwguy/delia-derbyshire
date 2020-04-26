@@ -18,7 +18,7 @@ pretend:
 # quico:audio/D-D/
 # 4star: www/D-D
 update upload: all
-	rsync -avz $(PRETEND) --delete \
+	rsync -avzH $(PRETEND) --delete \
 		--skip-compress=mp3,ogg,m4a,flac,avi,mkv,mp4,m1v,jpg,tar,gz \
 		--exclude .git\* \
 		--exclude log \
