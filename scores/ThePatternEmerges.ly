@@ -1,6 +1,8 @@
 % This is the Lilypond source for "The Pattern Emerges" by Delia Derbyshire
 % released on the album "Electrosonic" in 1972
-% created by Martin Guy <martinwguy@gmail.com> in July 2012. % % For further info on this piece of music see
+% created by Martin Guy <martinwguy@gmail.com> in July 2012.
+%
+% For further info on this piece of music see
 % http://wikidelia.net/wiki/The_Pattern_Emerges
 
 \version "2.16.2"
