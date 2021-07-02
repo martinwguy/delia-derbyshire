@@ -14,11 +14,6 @@
 }
 
 global = {
-  % Don't print the time signature.
-  %\override Staff.TimeSignature.stencil = ##f
-  % Print accidentals on all sharp/flat notes and nothing on naturals.
-  % This seems to be the style in which Delia usually writes.
-  \accidentalStyle forget
   \key g \minor   % Key signature with C D Eb A Bb. It's not in G minor.
 }
 
